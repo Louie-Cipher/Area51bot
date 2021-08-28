@@ -100,7 +100,7 @@ module.exports = {
 
     } else {
 
-      let multa = Math.floor( (profileData1.coins + profileData1.bank / 100) * 25 );
+      let multa = Math.floor( ( (profileData1.coins + profileData1.bank) / 100) * 25 );
       if (multa < 0) { multa = 200 }
 
       //if(multa > profileData1.coins) multa = profileData1.coins;
