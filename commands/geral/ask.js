@@ -44,7 +44,7 @@ module.exports = {
       .setDescription(description);
 
 
-    message.channel.send(embed);
+    message.reply(embed);
 
 
   }
