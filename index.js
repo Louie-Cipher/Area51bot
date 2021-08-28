@@ -4,7 +4,7 @@ const disbutton = require('discord-buttons');
 const fs = require('fs');
 
 const embeds = require('./embeds.js');
-const keepAlive = require("./server");
+//const keepAlive = require("./server");
 
 const prefix = 'a.';
 
@@ -104,5 +104,5 @@ async function voiceXPloop(client) {
 voiceXPloop(client);
 */
 
-keepAlive();
+//keepAlive();
 client.login(process.env['BOT_TOKEN']);
