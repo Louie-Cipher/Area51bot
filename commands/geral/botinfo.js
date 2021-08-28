@@ -20,10 +20,10 @@ module.exports = {
     let dbSize;
 
     await profileModel.collection.stats(function(err, results) {
-        dbSize = results.storageSize
+        dbSize = results.size
     });
 
-    const readyAt = new Date(client.readyAt.getTime() + 10800000);
+    const readyAt = new Date(client.readyAt.getTime() - 10800000);
     const readyString = `${readyAt.getDate()}/${readyAt.getMonth() + 1}/${readyAt.getDate()} - ${readyAt.getHours()}:${readyAt.getMinutes()}`
 
     let cpu = await system.cpu();
@@ -38,14 +38,14 @@ module.exports = {
             {name: '⏰ Online desde', value: readyString, inline: true},
             {name: 'Versão do Discord.js', value: package.dependencies["discord.js"], inline: true},
             //{name: 'Versão do NodeJS', value: '', inline: true},
-            {name: '🏦 Banco de dados 🎲', value: `${totalProfiles} usuários\n${dbSize} Kb`},
-            {name: '🖥 Uso de CPU', value: `${cpu.cores} cores\n${cpu.speed} GHz`, inline: true},
-            {name: '🖥 Uso de RAM', value: `${ram.used}`, inline: true},
+            {name: '🏦 Banco de dados 🎲', value: `${totalProfiles} usuários\n${dbSize / 1024} Kb de 512 Mb`},
+            {name: '🖥 CPU', value: `${cpu.cores} Cores\n${cpu.speed} GHz`, inline: true},
+            {name: '🖥  RAM', value: `TOTAL: ${ram.total / 1024 / 1024} Mb\nEM USO: ${ram.active / 1024 / 1024} Mb`, inline: true},
             {name: '🖥 OS', value: os.logofile, inline: true},
         );
 
     
-    message.reply(embed)
+    message.channel.send(message.author, embed);
 
   }
 }
