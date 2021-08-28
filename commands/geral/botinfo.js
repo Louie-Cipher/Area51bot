@@ -37,7 +37,7 @@ module.exports = {
         .addFields(
             {name: '⏰ Online desde', value: readyString, inline: true},
             {name: 'Versão do Discord.js', value: package.dependencies["discord.js"], inline: true},
-            {name: 'Versão do NodeJS', value: '', inline: true},
+            //{name: 'Versão do NodeJS', value: '', inline: true},
             {name: '🏦 Banco de dados 🎲', value: `${totalProfiles} usuários\n${dbSize} Kb`},
             {name: '🖥 Uso de CPU', value: `${cpu.cores} cores\n${cpu.speed} GHz`, inline: true},
             {name: '🖥 Uso de RAM', value: `${ram.used}`, inline: true},
