@@ -67,13 +67,14 @@ module.exports = {
       let rand = Math.floor(Math.random() * 2);
 
       let resultEmbed = new Discord.MessageEmbed()
-      .setColor('#00ffff')
-      .setTitle('Cara ou Coroa');
+        .setTitle('Cara ou Coroa');
 
       if (rand == 0) {
 
-      resultEmbed.setDescription(`Parabéns ${player1}, você venceu, e ganhou ${valor} Stars🎉\n
-      Infelizmente, eu perdi 😭`);
+      resultEmbed
+        .setDescription(`Parabéns ${player1}, você venceu, e ganhou ${valor} Stars🎉\n
+      Infelizmente, eu perdi 😭`)
+        .setColor('#00ff00');
 
       let profileUpdate1 = await profileModel.findOneAndUpdate(
         {
@@ -89,8 +90,10 @@ module.exports = {
 
     } else {
 
-      resultEmbed.setDescription(`Sinto muito ${player1}, você perdeu. prejuízo de ${valor} Stars😭\n
-      Eba, eu venci! 🎉`);
+      resultEmbed
+        .setDescription(`Sinto muito ${player1}, você perdeu. prejuízo de ${valor} Stars😭\n
+      Eba, eu venci! 🎉`)
+        .setColor('#ff0000')
       let profileUpdate1 = await profileModel.findOneAndUpdate(
         {
           userID: player1.id,
