@@ -3,7 +3,6 @@ const DisTube = require('distube');
 const disbutton = require('discord-buttons');
 const fs = require('fs');
 
-const config = require('./config.json');
 const embeds = require('./embeds.js');
 const keepAlive = require("./server");
 
