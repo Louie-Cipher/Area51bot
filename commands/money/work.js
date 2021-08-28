@@ -28,7 +28,7 @@ module.exports = {
         return message.channel.send({content: message.author, embed: {
           color: '#b3c20c',
           title: '⏳ Você já trabalhou nas últimas 2 horas',
-          description: `⏳⭐ Volte novamente em ${diferenca.getMinutes()} minutos`,
+          description: `⏳⭐ Volte novamente em: ${diferenca.getHours()} h e ${diferenca.getMinutes()} min`,
           footer: { text: `dica: Você sabia que sendo booster do servidor,\nvocê ganha 30 estrelas a mais no work?` }
         }});
 
