@@ -44,7 +44,7 @@ module.exports = {
     if(profileData1.lastRob) {
       let lastRob = new Date(profileData1.lastRob);
       let dateNow = new Date();
-      let nextRob = new Date( 3600000 - lastRob.getTime() )
+      let nextRob = new Date( 3600000 + lastRob.getTime() )
       let diferenca = new Date(nextRob.getTime() - dateNow.getTime())
 
       if ( (dateNow.getTime() - lastRob.getTime()) < 3600000) return message.channel.send({content: message.author, embed: {
