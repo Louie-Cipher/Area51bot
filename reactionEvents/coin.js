@@ -4,12 +4,11 @@ const profileModel = require('../mongoSchema/profile');
 module.exports = {
 
   async trigger(client, reaction, user) {
-    if(reaction.users.cache.size > 2) return;
-    if(reaction.message.author.id != client.user.id) return;
+    if (reaction.users.cache.size > 2) return;
+    if (reaction.message.author.id != client.user.id) return;
     if (user.bot) return;
-    if(!reaction.message.embeds[0]) return;
+    if (!reaction.message.embeds[0]) return;
 
-    let chalengeMessage = await reaction.message;
     let chalengeEmbed = await reaction.message.embeds[0];
 
     let player1;
@@ -32,14 +31,14 @@ module.exports = {
     let profileData1 = await profileModel.findOne({userID: player1.id});
     let profileData2 = await profileModel.findOne({userID: player2.id});
 
-    if(profileData1.coins < valor) return message.channel.send({embed: {
+    if(profileData1.coins < valor) return message.reply({content: message.author, embed: {
       color: '#b3c20c',
-      title: `Você não possui esse valor na carteira.`,
+      title: `Você não possui mais esse valor na carteira.`,
       description: `Você atualmente possui **${profileData1.coins} estrelas**`
     }});
-    if(profileData2.coins < valor) return message.channel.send({embed: {
+    if(profileData2.coins < valor) return message.reply({content: message.author, embed: {
       color: '#b3c20c',
-      title: `${player2.tag} não possui esse valor na carteira.`,
+      title: `${player2.tag} não possui mais esse valor na carteira.`,
       description: `${player2.tag} atualmente possui **${profileData1.coins} estrelas**`
     }});
 
@@ -52,8 +51,8 @@ module.exports = {
       
 
     if (rand == 0) {
-      resultEmbed.setDescription(`Parabéns ${player2}, você venceu, e ganhou ${valor} Stars
-      Sinto muito ${player1}, você perdeu`);
+      resultEmbed.setDescription(`🎉Parabéns ${player2}, você venceu, e ganhou ${valor} Stars ✨\n
+      😭 Sinto muito ${player1}, você perdeu 😭`);
 
       let profileUpdate1 = await profileModel.findOneAndUpdate(
         {
@@ -108,7 +107,7 @@ module.exports = {
       }
     
 
-    reaction.message.edit('Resultado da aposta', resultEmbed);
+    reaction.message.edit(`Resultado da aposta de ${player1} e ${player2}`, resultEmbed);
 
     reaction.remove()
 
