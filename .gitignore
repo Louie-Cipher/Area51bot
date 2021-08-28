@@ -1,0 +1,9 @@
+#🤫 segredos 🐱‍👤 (variáveis de ambiente)
+.env
+
+#coisas do nodejs
+/node_modules
+.package-lock.json
+
+#coisas do VScode
+.vscode
