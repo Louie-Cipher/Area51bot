@@ -17,7 +17,7 @@ module.exports = {
   async execute(client, message, args) {
 
     let totalProfiles = await profileModel.countDocuments();
-    let dbSize;
+    let dbSize = 0;
 
     await profileModel.collection.stats(function(err, results) {
         dbSize = results.size
@@ -38,9 +38,9 @@ module.exports = {
             {name: '⏰ Online desde', value: readyString, inline: true},
             {name: 'Versão do Discord.js', value: package.dependencies["discord.js"], inline: true},
             //{name: 'Versão do NodeJS', value: '', inline: true},
-            {name: '🏦 Banco de dados 🎲', value: `${totalProfiles} usuários\n${dbSize / 1024} Kb de 512 Mb`},
-            {name: '🖥 CPU', value: `${cpu.cores} Cores\n${cpu.speed} GHz`, inline: true},
-            {name: '🖥  RAM', value: `TOTAL: ${ram.total / 1024 / 1024} Mb\nEM USO: ${ram.active / 1024 / 1024} Mb`, inline: true},
+            {name: '🏦 Banco de dados 🎲', value: `${totalProfiles} usuários\n${Math.round(dbSize / 1024)} Kb de 512 Mb`},
+            {name: '🖥 CPU', value: `${cpu.cores} Cores\n${Math.round(cpu.speed)} GHz`, inline: true},
+            {name: '🖥  RAM', value: `TOTAL: ${Math.round(ram.total / 1024 / 1024)} Mb\nEM USO: ${Math.round(ram.active / 1024 / 1024)} Mb`, inline: true},
             {name: '🖥 OS', value: os.logofile, inline: true},
         );
 
