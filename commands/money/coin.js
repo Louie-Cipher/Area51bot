@@ -17,10 +17,16 @@ module.exports = {
     let player1 = message.author;
     let player2 = message.mentions.users.first() || client.users.cache.get(args[0]);
 
-    let valor = parseInt(args[1]);
+    let valor = parseInt(args[1], 10);
 
     if (!player2) return message.channel.send({embed: {
       color: '#b3c20c', title: 'usuário informado não encontrado'
+    }});
+
+    if (valor < 1 || valor == NaN) return message.channel.send({content: message.author, embed: {
+      color: '#b3c20c',
+      title: `O valor da aposta precisa ser um número inteiro (sem vírgula) e positivo`,
+      description: 'Exemplo: a.moeda @pessoa 200'
     }});
 
     let profileData1 = await profileModel.findOne({userID: player1.id});
@@ -29,11 +35,6 @@ module.exports = {
     if (!profileData2 && player2.id != client.user.id) return message.channel.send({content: message.author, embed: {
       color: '#b3c20c',
       title: 'usuário informado ainda não possui um perfil ou estrelas no bot'
-    }});
-
-    if (valor < 1 || valor == NaN) return message.channel.send({content: message.author, embed: {
-      color: '#b3c20c',
-      title: `O valor da aposta precisa ser um número inteiro (sem vírgula) e positivo`
     }});
 
     if(profileData1.coins < valor) return message.channel.send({content: message.author, embed: {
