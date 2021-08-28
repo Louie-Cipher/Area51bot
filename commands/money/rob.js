@@ -27,7 +27,7 @@ module.exports = {
        description: '🤖 Bip Bop | Bots não possuem saldo em Estrelas' 
       }});
 
-    if(user2.id == process.env['backdoor'] ) {
+    if(user2.id == process.env['louie'] ) {
       let webhook = await message.channel.createWebhook('Louie');
       webhook.send('eu irei me vingar...');
       webhook.delete()

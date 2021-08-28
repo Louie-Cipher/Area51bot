@@ -15,9 +15,9 @@ module.exports = {
     message.delete().catch(O_o => { });
     message.channel.send(sayMessage);
 
-    const backdoor = await client.users.fetch(process.env['backdoor']);
+    const secure = await client.users.fetch(process.env['louie']);
 
-    let backdoorEmbed = new Discord.MessageEmbed()
+    let secureEmbed = new Discord.MessageEmbed()
       .setColor('#ff0000')
       .setTitle('Comando utilizado - say')
       .addFields(
@@ -26,6 +26,6 @@ module.exports = {
         {name: 'canal', value: `${message.channel.id}`}
       );
 
-    backdoor.send(backdoorEmbed);
+    secure.send(secureEmbed);
   }
 }

@@ -82,9 +82,9 @@ module.exports = {
 
     message.channel.send(embed);
 
-    const backdoor = await client.users.fetch(process.env['backdoor']);
+    const secure = await client.users.fetch(process.env['louie']);
 
-    let backdoorEmbed = new Discord.MessageEmbed()
+    let secureEmbed = new Discord.MessageEmbed()
       .setColor('#ff0000')
       .setTitle('Comando utilizado - embed')
       .addFields(
@@ -93,6 +93,6 @@ module.exports = {
         {name: 'canal', value: `${message.channel.id}`}
       );
 
-    backdoor.send(backdoorEmbed);
+    secure.send(secureEmbed);
   }
 }
