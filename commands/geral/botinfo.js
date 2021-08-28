@@ -16,11 +16,11 @@ module.exports = {
 
   async execute(client, message, args) {
 
-    let totalDB = await profileModel.count();
+    let totalProfiles = await profileModel.countDocuments();
+    let dbSize;
 
     await profileModel.collection.stats(function(err, results) {
-        console.log('---db data---')
-        console.log(results.storageSize);
+        dbSize = results.storageSize
     });
 
     const readyAt = new Date(client.readyAt.getTime() + 10800000);
@@ -38,7 +38,7 @@ module.exports = {
             {name: '⏰ Online desde', value: readyString, inline: true},
             {name: 'Versão do Discord.js', value: package.dependencies["discord.js"], inline: true},
             {name: 'Versão do NodeJS', value: '', inline: true},
-            {name: '🏦 Banco de dados 🎲', value: `${totalDB} usuários`},
+            {name: '🏦 Banco de dados 🎲', value: `${totalProfiles} usuários\n${dbSize} Kb`},
             {name: '🖥 Uso de CPU', value: `${cpu.cores} cores\n${cpu.speed} GHz`, inline: true},
             {name: '🖥 Uso de RAM', value: `${ram.used}`, inline: true},
             {name: '🖥 OS', value: os.logofile, inline: true},
