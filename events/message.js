@@ -29,6 +29,8 @@ module.exports = {
             coins: 100,
             bank: 200,
             lastEditXP: Date.now(),
+            lastRob: new Date(946684800000),
+            lastWork: new Date(946684800000),
             lastEditMoney: Date.now(),
             lastDaily: Date.now(),
             created: Date.now()
