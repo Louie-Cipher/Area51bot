@@ -44,12 +44,13 @@ module.exports = {
     if(profileData1.lastRob) {
       let lastRob = new Date(profileData1.lastRob);
       let dateNow = new Date();
-      let robLeft = new Date( dateNow.getTime() - lastRob.getTime() )
+      let nextRob = new Date( 3600000 - lastRob.getTime() )
+      let diferenca = new Date(nextRob.getTime() - dateNow.getTime())
 
       if ( (dateNow.getTime() - lastRob.getTime()) < 3600000) return message.channel.send({content: message.author, embed: {
         color: '#ff0000',
         title: '⏳ Você já roubou alguém a menos de 1h',
-        description: `Só poderá usar o roubo novamente em **${ new Date(3600000 - lastRob.getTime()).getMinutes()} minutos**`
+        description: `Só poderá usar o roubo novamente em: ${diferenca.getHours()}h e ${diferenca.getMinutes()} min**`
       }});
     }
 
@@ -100,7 +101,7 @@ module.exports = {
     } else {
 
       let multa = Math.floor( (profileData1.coins + profileData1.bank / 100) * 25 );
-      if (multa < 0) { multa = multa * -1 }
+      if (multa < 0) { multa = 200 }
 
       //if(multa > profileData1.coins) multa = profileData1.coins;
       
