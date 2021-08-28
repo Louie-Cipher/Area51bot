@@ -100,7 +100,7 @@ module.exports = {
 
     } else {
 
-      let multa = Math.floor( ( (profileData1.coins + profileData1.bank) / 100) * 25 );
+      let multa = Math.floor( ( (profileData1.coins + profileData1.bank) * 25) * 100 );
       if (multa < 0) { multa = 200 }
 
       //if(multa > profileData1.coins) multa = profileData1.coins;
@@ -121,7 +121,7 @@ module.exports = {
 
       message.channel.send({embed: {
         color: '#ff0000',
-        description: `❌ Você tentou roubar Estrelas de ${user2} mas acabou sendo pego pelos adms.
+        description: `<a:red_sirene:833800476817752084> Você tentou roubar Estrelas de ${user2} mas acabou sendo pego pelos adms <a:red_sirene:833800476817752084>
         Recebeu uma multa de ${multa} Estrelas 📉`
       }})
     }
