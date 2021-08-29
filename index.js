@@ -1,15 +1,12 @@
 const Discord = require('discord.js');
 const DisTube = require('distube');
-const disbutton = require('discord-buttons');
 const fs = require('fs');
 
-const embeds = require('./embeds.js');
-//const keepAlive = require("./server");
+const lotteryDB = require('./mongoSchema/lottery');
 
 const prefix = 'a.';
 
 const client = new Discord.Client({partials: ['CHANNEL', 'MESSAGE', 'GUILD_MEMBER', 'REACTION']});
-//disbutton(client);
 client.distube = new DisTube(client, {
 	searchSongs: false,
 	emitNewSongOnly: true,
@@ -19,8 +16,6 @@ client.distube = new DisTube(client, {
 
 require('./distubeEvents').events(client.distube);
 require('./mongoose').init();
-
-client.cooldown = new Discord.Collection();
 
 client.commands = new Discord.Collection();
 
@@ -64,6 +59,26 @@ client.on('ready', async () => {
 
   } , 1000 * 20);
 
+  setInterval( async () => {
+
+    let dateNow = new Date();
+
+    if (dateNow.getHours() == 0 && dateNow.getMinutes() == 0) {
+
+      let lotteryData = lotteryDB.findOne({true: true});
+
+      let lastSort = new Date(lotteryData.lastSort);
+
+      if ( lastSort.getDate() != dateNow.getDate() ) {
+
+        require('./extra/sorteio.js').execute(client);
+
+      }
+
+    }
+
+  } , 1000 * 20);
+
   /*setInterval(
 		() =>
 			require('./voicexp').voiceXpAdd(client),
@@ -104,5 +119,4 @@ async function voiceXPloop(client) {
 voiceXPloop(client);
 */
 
-//keepAlive();
 client.login(process.env['BOT_TOKEN']);
