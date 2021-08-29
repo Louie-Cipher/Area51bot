@@ -14,7 +14,7 @@ module.exports = {
 
     let description = '';
 
-    if (!args[0] || ['dinheiro', 'money', 'star', 'stars', 'estrela', 'estrelas'].includes(args[0])) {
+    if (!args[0] || ['dinheiro', 'money', 'star', 'stars', 'estrela', 'estrelas'].includes(args[0].toLowerCase())) {
       let totalResults = await profileModel.find()
         .sort({
           coins: -1,
@@ -33,7 +33,7 @@ module.exports = {
 
       })
     }
-    else if (['carteira', 'wallet'].includes(args[0])) {
+    else if (['carteira', 'wallet'].includes(args[0].toLowerCase())) {
       let totalResults = await profileModel.find()
         .sort({
           coins: -1
@@ -51,7 +51,7 @@ module.exports = {
 
       })
     }
-    else if (['bank', 'banco'].includes(args[0])) {
+    else if (['bank', 'banco'].includes(args[0].toLowerCase())) {
       let totalResults = await profileModel.find()
         .sort({
           banco: -1
@@ -69,7 +69,7 @@ module.exports = {
 
       })
     }
-    else if (['xp', 'XP', 'Xp', 'pontos'].includes(args[0]) || !args[0]) {
+    else if (['xp', 'pontos'].includes(args[0].toLowerCase()) || !args[0]) {
 
       let totalResults = await profileModel.find()
         .sort({
@@ -83,6 +83,25 @@ module.exports = {
         let user = client.users.cache.get(resultData.userID);
         
         embed.addField(`${i}° - ${user.tag}`, `XP: ${resultData.chatXP}\n`);
+
+        i++;
+
+      })
+
+    } else if (['call', 'voz', 'voice'].includes(args[0].toLowerCase())) {
+
+      let totalResults = await profileModel.find()
+        .sort({
+          voiceXP: -1
+        })
+        .limit(10)
+
+      let i=1;
+      totalResults.forEach(resultData => {
+
+        let user = client.users.cache.get(resultData.userID);
+        
+        embed.addField(`${i}° - ${user.tag}`, `XP por call: ${resultData.voiceXP}\n`);
 
         i++;
 
