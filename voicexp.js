@@ -1,31 +1,41 @@
+const Discord = require('discord.js');
 const profileModel = require('./mongoSchema/profile');
+
 module.exports = {
 
   name: 'Voice XP',
 
+  /**
+   * @param {Discord.Client} client
+   */
+
   async voiceXpAdd(client) {
 
-    //console.log('-- Voice XP checking--');
+    console.log('-- Voice XP checking--');
 
-    var randomVoiceXP = Math.ceil(Math.random() * 3) + 2;
-
-    //console.log(randomVoiceXP)
+    var randomVoiceXP = Math.floor(Math.random() * 2) + 1;
 
     let guild = client.guilds.cache.get('768565432663539723');
 
-    for (const channel of guild.channels.cache) {
+    for (let channel of guild.channels.cache) {
 
-      if (channel.type == 'GUILD_VOICE' && channel.members.size > 1) {
-        for (const member of channel.members) {
-          if(!member.user.bot && !member.voice.mute && !member.voice.deaf) {
+      if (channel[1].type == 'voice' && channel[1].members.size > 1) {
 
-            let profileData = await profileModel.findOne({userID: member.user.id});
+        for (let member of channel[1].members) {
 
-            if(!profileData) {
+          if (!member[1].user.bot && !member[1].voice.mute && !member[1].voice.deaf) {
+
+            console.log('---membro---');
+            console.log(member[1].user.tag);
+
+            let profileData = await profileModel.findOne({ userID: member[0] });
+
+
+            if (!profileData) {
               let profileNew = await profileModel.create({
-                userID: message.author.id,
+                userID: member[0],
                 chatXP: 1,
-                voiceXP: 1,
+                voiceXP: randomVoiceXP,
                 coins: 100,
                 bank: 200,
                 lastEditXP: Date.now(),
@@ -36,15 +46,15 @@ module.exports = {
               profileNew.save();
             }
             else {
-            
-            let profileUpdate = await profileModel.findOneAndUpdate(
-              { userID: member.user.id },
-              {
-                inc: {voiceXP: randomVoiceXP},
-                lastEditXP: Date.now()
-              }
-            )
-            profileUpdate.save();
+
+              let profileUpdate = await profileModel.findOneAndUpdate(
+                { userID: member[0] },
+                {
+                  $inc: { voiceXP: randomVoiceXP },
+                  lastEditXP: Date.now()
+                }
+              )
+              profileUpdate.save();
             }
 
 
