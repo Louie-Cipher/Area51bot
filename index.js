@@ -77,12 +77,12 @@ client.on('ready', async () => {
 
     }
 
-  } , 1000 * 60 * 5);
+  } , 1000 * 20);
 
   setInterval(
 		() =>
 			require('./voicexp').voiceXpAdd(client),
-		1000 * 10
+		1000 * 60 * 5
   );
 
 });
