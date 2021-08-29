@@ -67,11 +67,14 @@ module.exports = {
         botChannel.updateOverwrite(message.guild.roles.everyone, { SEND_MESSAGES: null });
 
         let lotteryUpdate = await lotteryDB.findOneAndUpdate(
-            {_id: '000000000000000000000001'},
+            {true: true},
             {
-                $push: { premiadoID }
+                $push: { winners: premiadoID },
+                $pullAll: { users },
+                lastSort: Date.now()
             }
         )
+        lotteryUpdate.save();
 
         let profileData = await profileModel.findOneAndUpdate(
             {userID: premiado.id},
