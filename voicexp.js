@@ -38,6 +38,8 @@ module.exports = {
                 voiceXP: randomVoiceXP,
                 coins: 100,
                 bank: 200,
+                lastRob: new Date(946684800000),
+                lastWork: new Date(946684800000),
                 lastEditXP: Date.now(),
                 lastEditMoney: Date.now(),
                 lastDaily: Date.now(),
