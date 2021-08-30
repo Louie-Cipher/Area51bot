@@ -88,7 +88,7 @@ module.exports = {
                     { name: '\u200B', value: '\u200B' },
                     { name: 'Estatísticas geral', value: '\u200B' },
                     { name: 'Concorrendo hoje', value: lotteryData.users.length, inline: true },
-                    { name: 'Prêmio atual', value: lotteryData.users.length * 150, inline: true },
+                    { name: 'Prêmio atual', value: (lotteryData.users.length * 150) + 5000, inline: true },
                     { name: 'Último vencedor', value: lastWinner, inline: true },
                 );
 

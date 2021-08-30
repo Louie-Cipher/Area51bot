@@ -45,19 +45,19 @@ module.exports = {
 
         botChannel.send(firstEmbed);
 
-        delay(5000);
+        await delay(5000);
 
-        botChannel.send(premiado);
+        botChannel.send({content: `${premiado}`});
 
         let resultMsg = await botChannel.send({embed: {
             color: '#ffff00',
             title: '🎉 Parabéns ' + premiado.username,
-            description: `🌟 Você ganhou ${users.length * 150} estrelas! 🌟`
+            description: `🌟 Você ganhou ${(users.length * 150) + 5000} estrelas! 🌟`
         }});
 
         resultMsg.pin();
 
-        delay(5000);
+        await delay(5000);
 
         botChannel.send({embed: {
             color: '#ffff00',
@@ -79,17 +79,17 @@ module.exports = {
         let profileData = await profileModel.findOneAndUpdate(
             {userID: premiado.id},
             {
-                $inc: { coins: users.length * 150 },
+                $inc: { bank: (users.length * 150) + 5000 },
                 lastEditMoney: Date.now()
             }
         )
         profileData.save();
 
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
 
     }
 
 }
 
-function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
