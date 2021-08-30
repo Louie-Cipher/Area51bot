@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
-const profileModel = require('../mongoSchema/profile');
-const lotteryDB = require('../mongoSchema/lottery');
+const profileModel = require('../../mongoSchema/profile');
+const lotteryDB = require('../../mongoSchema/lottery');
 
 module.exports = {
 
