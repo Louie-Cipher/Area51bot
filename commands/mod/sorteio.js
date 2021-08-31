@@ -7,6 +7,7 @@ module.exports = {
     name: 'sorteio',
     aliases: ['manualsort'],
     description: "sorteia manualmente a Loteria Intergaláctica",
+    userPermissions: 'ADMINISTRATOR',
 
     /** 
      * @param {Discord.Client} client
@@ -20,7 +21,7 @@ module.exports = {
         if (message.author.id != process.env.louie) return message.channel.send({embed: {
             color: '#ffff00',
             title: 'Loteria intergaláctica',
-            description: 'Por questões de segurança e instabilidade, apenas a Louie pode executar essa função'
+            description: 'Por questões de segurança do banco de dados e instabilidade, apenas a Louie pode executar essa função'
         }});
 
         let botChannel = await client.channels.fetch('862354794323902474');
