@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const profileModel = require('./mongoSchema/profile');
+const profileModel = require('../mongoSchema/profile');
 
 module.exports = {
 
