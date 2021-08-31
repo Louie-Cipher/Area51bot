@@ -11,7 +11,7 @@ module.exports = {
   async event(client, message) {
 
     if (message.author.id == '297153970613387264' && message.embeds) {
-      require('../loritta').trigger(client, message)
+      require('../extra/loritta').trigger(client, message)
     }
 
     if (message.author.bot) return;
