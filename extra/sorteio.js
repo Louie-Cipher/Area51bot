@@ -11,6 +11,7 @@ module.exports = {
     async execute(client) {
 
         let botChannel = await client.channels.fetch('862354794323902474');
+        let guild = await client.guilds.fetch('768565432663539723');
 
         let lotteryData = await lotteryDB.findOne({true: true});
 
@@ -31,7 +32,7 @@ module.exports = {
 
         }
 
-        botChannel.updateOverwrite(message.guild.roles.everyone, { SEND_MESSAGES: false });
+        botChannel.updateOverwrite(guild.roles.everyone, { SEND_MESSAGES: false });
 
         let premiadoID = users[Math.floor( Math.random() * users.length )];
 
@@ -43,7 +44,7 @@ module.exports = {
             .setDescription(`🥁 Rufem os tambores 🥁\n\nO vencedor da Loteria intergaláctica de hoje é:`);
 
 
-        botChannel.send(firstEmbed);
+        botChannel.send({embeds: [firstEmbed]});
 
         await delay(5000);
 
@@ -64,7 +65,7 @@ module.exports = {
             description: `Mais sorte na próxima vez aos demais **${users.length - 1}** apostadores de hoje`
         }});
 
-        botChannel.updateOverwrite(message.guild.roles.everyone, { SEND_MESSAGES: null });
+        botChannel.updateOverwrite(guild.roles.everyone, { SEND_MESSAGES: null });
 
         let lotteryUpdate = await lotteryDB.findOneAndUpdate(
             {true: true},
