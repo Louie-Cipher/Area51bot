@@ -1,6 +1,9 @@
 #🤫 segredos 🐱‍👤 (variáveis de ambiente)
 .env
 
+#Adcionar novos comandos à API
+addCommands.js
+
 #coisas do nodejs
 /node_modules
 package-lock.json
