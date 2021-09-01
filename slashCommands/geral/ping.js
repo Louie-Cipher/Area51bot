@@ -6,11 +6,18 @@ module.exports = {
         .setName('ping')
         .setDescription('Testa o delay do bot'),
 
-    async execute(interaction) {
+    /**
+     * @param {Discord.Client} client
+     * @param {Discord.CommandInteraction} interaction 
+     */
 
-        let pong = await interaction.reply({content: '🏓 Pong'});
+    async execute(client, interaction) {
 
-        interaction.editReply({content: `🏓 Pong | Delay do Discord: ${pong.createdAt.getTime() - interaction.message.createdAt.getTime()} ms\nDelay do bot: ${client.ws.ping} ms`})
+        let dateNow = new Date()
+
+        await interaction.reply({ content: '🏓 Pong' });
+
+        interaction.editReply({ content: `🏓 Pong | Delay do Discord: ${dateNow.getTime() - interaction.createdAt.getTime()} ms\nDelay do bot: ${client.ws.ping} ms` })
 
     }
 }
