@@ -75,7 +75,7 @@ client.on('ready', async () => {
 
   let guild = await client.guilds.cache.get('768565432663539723');
 
-  let invites = await guild.invites.fetch();
+  let invites = guild.invites.cache
 
   invites.forEach(invite => {
     invitesMap.set(invite.code, invite);
