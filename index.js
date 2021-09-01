@@ -142,10 +142,6 @@ client.on("messageReactionAdd", async function (reaction, user) {
   require('./events/messageReactionAdd').event(client, reaction, user);
 });
 
-client.on('guildMemberUpdate', async function (oldMember, newMember) {
-  require('./events/messageReactionAdd').event(client, oldMember, newMember);
-});
-
 client.on('guildMemberAdd', async function (member) {
   require('./extra/inviteTracker').event(client, member)
 });
