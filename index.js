@@ -46,7 +46,7 @@ for (const subFolder of mainCommandsFolder) {
     client.commands.set(cmd.name, cmd);
   }
 };
-/*
+
 client.slashCommands = new Discord.Collection();
 
 const slashCommandsFolder = fs.readdirSync('./slashCommands');
@@ -59,7 +59,7 @@ for (const subFolder of slashCommandsFolder) {
     let cmd = require(`./slashCommands/${subFolder}/${file}`);
     client.slashCommands.set(cmd.name, cmd);
   }
-};*/
+};
 
 let invitesMap = new Discord.Collection();
 
@@ -75,9 +75,9 @@ client.on('ready', async () => {
 
   let guild = await client.guilds.cache.get('768565432663539723');
 
-  let invites = guild.invites.cache
+  let invites = guild.invites;
 
-  invites.forEach(invite => {
+  invites.cache.forEach(invite => {
     invitesMap.set(invite.code, invite);
   });
 
