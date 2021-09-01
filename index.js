@@ -46,7 +46,7 @@ for (const subFolder of mainCommandsFolder) {
     client.commands.set(cmd.name, cmd);
   }
 };
-
+/*
 client.slashCommands = new Discord.Collection();
 
 const slashCommandsFolder = fs.readdirSync('./slashCommands');
@@ -59,7 +59,7 @@ for (const subFolder of slashCommandsFolder) {
     let cmd = require(`./slashCommands/${subFolder}/${file}`);
     client.slashCommands.set(cmd.name, cmd);
   }
-};
+};*/
 
 let invitesMap = new Discord.Collection();
 
