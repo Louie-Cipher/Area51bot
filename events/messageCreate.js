@@ -108,16 +108,16 @@ module.exports = async (client, message) => {
 
   if (cooldown.has(message.author.id)) {
 
-    let lastMsg = cooldown.get(message.author.id);
-    let nextCmd = new Date(lastMsg.getTime() + 4000);
-    let timeLeft = '';
-    if (nextCmd.getSeconds() == 0) { timeLeft = 'alguns milissegundos' }
+    let nextCmd = new Date(cooldown.get(message.author.id).getTime() + 4000)
+    let timeLeft = new Date(nextCmd.getTime() - dateNow.getTime())
+    let timeLeftFormated = '';
+    if (timeLeft.getSeconds() == 0) { timeLeft = 'alguns milissegundos' }
     else { 
-      timeLeft = nextCmd.getSeconds() + 'segundo';
-      if (nextCmd.getSeconds() > 1) timeLeft += 's';
+      timeLeftFormated = timeLeft.getSeconds() + ' segundo';
+      if (timeLeft.getSeconds() > 1) timeLeftFormated += 's';
     }
 
-    return message.reply({content: `Epa, você está usando comandos muito rápido!\nTente novamente em ${timeLeft}`});
+    return message.reply({content: `Epa, você está usando comandos muito rápido!\nTente novamente em ${timeLeftFormated}`});
 
   } else {
 
