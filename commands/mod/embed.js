@@ -50,7 +50,7 @@ module.exports = {
       {name: '<imagem>', value: 'um link de uma imagem para anexar a embed (opcional)', inline: true}
       );
 
-    if (!args[1]) return message.channel.send(helpEmbed);
+    if (!args[1]) return message.reply({embeds: [helpEmbed]});
 
     const totalMessage = args.join(' ');
 
@@ -60,7 +60,7 @@ module.exports = {
 
     const title = divideMessage[1];
 
-    if(title.length > 255) return message.channel.send(`o título da embed deve ter no máximo 256 caracteres. seu título possuia ${title.length}`)
+    if(title.length > 255) return message.reply({content: `o título da embed deve ter no máximo 256 caracteres. seu título possuia ${title.length}`})
 
     let embed = new Discord.MessageEmbed()
       .setColor(color)
@@ -69,7 +69,7 @@ module.exports = {
     if (args[2]){
       const description = divideMessage[2];
       if(description.length > 2047)
-        return message.channel.send(`o campo da embed deve ter no máximo 2048 caracteres. sua mensagem possuia ${description.length}`);
+        return message.reply({content: `o campo da embed deve ter no máximo 2048 caracteres. sua mensagem possuia ${description.length}`});
       embed.setDescription(description);
     }
     

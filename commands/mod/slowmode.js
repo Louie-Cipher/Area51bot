@@ -6,6 +6,12 @@ module.exports = {
   description: 'define um intervalo de tempo que os membros precisam esperar para enviar novas mensagens',
   userPermissions: 'MANAGE_CHANNELS',
 
+  /**
+   * @param {Discord.Client} client 
+   * @param {Discord.Message} message 
+   * @param {String[]} args 
+   */
+
   async execute(client, message, args) {
 
     let embed = new Discord.MessageEmbed()
@@ -15,20 +21,16 @@ module.exports = {
         use 0 para desativar o modo lento`)
       .setFooter('(motivo é opcional)');
 
-    if(!args[0]) return message.channel.send(embed)
+    if (!args[0]) return message.reply({ embeds: [embed] })
 
-    const time = args[0];
+    const time = parseInt(args[0], 10);
 
-    const mensagem = args.join(' ').split(time);
-    const reason = mensagem[1];
+    message.channel.setRateLimitPerUser(time, `por: ${message.author.id}`)
 
-    if (reason){
-      message.channel.setRateLimitPerUser(time)
-    } else {
-      message.channel.setRateLimitPerUser(time, `${reason}`);
-    }
+    let mode = `ativado. tempo: ${time}`
+    if (time == 0) mode = 'desativado'
 
-    message.channel.send({embed: {description: `modo lento do canal ativado. tempo: ${time}`}})
+    message.reply({ embeds: [{ description: `modo lento do canal ${mode}` }] })
 
   }
 }

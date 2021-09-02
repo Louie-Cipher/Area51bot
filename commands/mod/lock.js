@@ -37,18 +37,18 @@ module.exports = {
       message.channel.permissionOverwrites.set([
         {
           id: message.guild.roles.everyone.id,
-          null: [Discord.Permissions.FLAGS.SEND_MESSAGES],
+          deny: [Discord.Permissions.FLAGS.SEND_MESSAGES],
         },
       ], 'por: ' + message.member.id);
-      target = '@everyone'
+      target = '@ everyone'
     }
 
     const embed = new Discord.MessageEmbed()
       .setColor('#ffff00')
       .setTitle('Canal Bloqueado com sucesso!')
-      .setDescription(`agora ${target} não pode(m) mais enviar mensagens nesse canal`);
+      .setDescription(`agora "${target}" não pode(m) mais enviar mensagens nesse canal`);
 
-    message.channel.send({ embeds: [embed] });
+    message.reply({ embeds: [embed] });
 
   }
 }
