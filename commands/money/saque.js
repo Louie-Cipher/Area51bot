@@ -8,30 +8,22 @@ module.exports = {
 
   async execute(client, message, args) {
 
-    if(!args[0]) return message.reply({content: message.author, embed: {
-      color: '#f0f000',
-      title: 'Informe um valor para sacar',
-      description: ` O valor precisa ser um número inteiro (sem virgula) e positivo`
-      /*fields: [
-        {name: '%', value: 'porcentagem em relação ao valor que você possui no banco'},
-        {name: 'all', value: 'todo o valor que você possui no banco'},
-        {name: 'k', value: 'milhar. multiplica o valor informado por mil'},
-        {name: 'm', value: 'milhão. multiplica o valor informado por 1 milhão'},
-        {name: 'b', value: 'bilhão. multiplica o valor informado por 1 bilhão'},
-        {name: '+ ou - ou * ou /', value: `realiza a operação matemática informada com o primeiro numero e o segundo número
-        (separe os valores e o sinal da operação com espaço)
-        exemplo: 500 * 10`},
-      ]*/
-    }});
+    if (!args[0]) return message.reply({
+      embeds: [{
+        color: '#f0f000',
+        title: 'Informe um valor para sacar',
+        description: ` O valor precisa ser um número inteiro (sem virgula) e positivo`
+      }]
+    });
 
-    let profileData = await profileModel.findOne({userID: message.author.id});
+    let profileData = await profileModel.findOne({ userID: message.author.id });
 
     let allNames = ['all', 'tudo', 'total'];
 
     let valor = 0;
 
     //all
-    if (allNames.includes(args[0]) ) {
+    if (allNames.includes(args[0])) {
       valor = profileData.bank;
     }/*
     //porcentagem
@@ -67,39 +59,31 @@ module.exports = {
       valor = parseInt(args[0], 10);
     }
 
-    if(!valor || valor < 1 || valor == NaN) return message.channel.send({content: message.author, embed: {
-      color: '#f0f000',
-      title: 'Valor informado invalido',
-      description: `**${valor}** não é um valor válido. O valor precisa ser um número inteiro (sem virgula) e positivo`
-      /*fields: [
-        {name: '%', value: 'porcentagem em relação ao valor que você possui no banco'},
-        {name: 'all', value: 'todo o valor que você possui no banco'},
-        {name: 'k', value: 'milhar. multiplica o valor informado por mil'},
-        {name: 'm', value: 'milhão. multiplica o valor informado por 1 milhão'},
-        {name: 'b', value: 'bilhão. multiplica o valor informado por 1 bilhão'},
-        {name: '+ ou - ou * ou /', value: `realiza a operação matemática informada com o primeiro numero e o segundo número
-        (separe os valores e o sinal da operação com espaço)
-        exemplo: 500 * 10`},
-      ]*/
-    }});
+    if (!valor || valor < 1 || valor == NaN) return message.reply({
+      embeds: [{
+        color: '#f0f000',
+        title: 'Valor informado invalido',
+        description: `**${valor}** não é um valor válido. O valor precisa ser um número inteiro (sem virgula) e positivo`
+      }]
+    });
 
     let failEmbed = new Discord.MessageEmbed()
       .setColor('#b3c20c')
       .setTitle('Você não possui esse valor na carteira para sacar')
       .setDescription(`Você atualmente tem ${profileData.coins} stars na carteira, e ${profileData.bank} no banco`);
 
-    if( profileData.bank < valor ) return message.channel.send(message.author, failEmbed);
+    if (profileData.bank < valor) return message.reply({ embeds: [failEmbed] });
 
     let profileUpdate = await profileModel.findOneAndUpdate(
       {
         userID: message.author.id,
       }, {
-          $inc:{
-            bank: -valor,
-            coins: valor
-          },
-          lastEditMoney: Date.now()
-        }
+      $inc: {
+        bank: -valor,
+        coins: valor
+      },
+      lastEditMoney: Date.now()
+    }
     );
     profileUpdate.save();
 
@@ -107,12 +91,12 @@ module.exports = {
       .setColor('#00ffff')
       .setTitle('Saque efetuado com sucesso')
       .addFields(
-        {name: 'valor', value: valor,},
-        {name: 'valor atual na carteira', value: (profileData.coins + valor)},
-        {name: 'saldo atual no banco', value: (profileData.bank - valor)}
+        { name: 'valor', value: valor, },
+        { name: 'valor atual na carteira', value: (profileData.coins + valor) },
+        { name: 'saldo atual no banco', value: (profileData.bank - valor) }
       );
 
-    message.channel.send(`${message.author}`, embed);
+    message.reply({ embeds: [embed] });
 
   }
 }
