@@ -1,21 +1,18 @@
 const Discord = require('discord.js')
 
-module.exports = {
+module.exports = async (client, reaction, user) => {
 
-  async trigger(client, reaction, user) {
+  if (reaction.users.cache.size > 2) return;
 
-    if(reaction.users.cache.size > 2) return;
+  let aproveMessage = await reaction.message.embeds[0];
 
-    let aproveMessage = await reaction.message.embeds[0];
+  let desabafoChannel = await client.channels.fetch('880547715245809714');
 
-    let desabafoChannel = await client.channels.fetch('880547715245809714');
+  let desabafoEmbed = new Discord.MessageEmbed()
+    .setColor('#bababa')
+    .setTitle('💭 Desabafo')
+    .setDescription(aproveMessage.description);
 
-    let desabafoEmbed = new Discord.MessageEmbed()
-      .setColor('#bababa')
-      .setTitle('💭 Desabafo')
-      .setDescription(aproveMessage.description);
+  desabafoChannel.send(desabafoEmbed);
 
-    desabafoChannel.send(desabafoEmbed);
-
-  }
 }
