@@ -1,28 +1,24 @@
 const Discord = require('discord.js');
-const {client} = require('../index');
 
-module.exports = {
-    /**
-     * 
-     * @param {Discord.Client} client 
-     * @param {Discord.Interaction} interaction 
-     */
-    async event(client, interaction) {
-        
-        if (interaction.isCommand()) {
+/**
+ * @param {Discord.Client} client 
+ * @param {Discord.CommandInteraction} interaction 
+ */
 
-            await interaction.deferReply({ephemeral: true}).catch( ()=> {} )
+module.exports = async (client, interaction) => {
 
-            let cmd = client.slashCommands.get(interaction.commandName);
+    if (interaction.isCommand()) {
 
-            try {
-                cmd.execute(client, interaction);
-            } catch (error) {
-                console.error(error)
-            }
+        await interaction.deferReply({ ephemeral: true }).catch(() => { })
 
+        let cmd = client.slashCommands.get(interaction.commandName);
 
+        try {
+            cmd.execute(client, interaction);
+        } catch (error) {
+            console.error(error)
         }
+
 
     }
 }
