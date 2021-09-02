@@ -6,6 +6,12 @@ module.exports = {
   aliases: ['saldo', 'dinheiro', 'valor', 'balance', 'bal'],
   description: "mostra informações sobre a quantia em Stars de um usuário",
 
+  /**
+   * @param {Discord.Client} client 
+   * @param {Discord.Message} message 
+   * @param {String[]} args 
+   */
+
   async execute(client, message, args) {
 
     let user = message.mentions.users.first() || client.users.cache.get(args[0]);
@@ -24,7 +30,7 @@ module.exports = {
 
     let profileData = await profileModel.findOne({ userID: user.id });
 
-    if (!profileData) return message.channel.send({ embeds: [{ color: '#009999', title: 'Esse usuário ainda não possui um perfil no Area51Bot', description: 'um perfil será criado automaticamente após o usuário enviar uma mensagem pela primeira vez' }] });
+    if (!profileData) return message.reply({ embeds: [{ color: '#009999', title: 'Esse usuário ainda não possui um perfil no Area51Bot', description: 'um perfil será criado automaticamente após o usuário enviar uma mensagem pela primeira vez' }] });
 
     let lastEdit = new Date(profileData.lastEditMoney.getTime() - 10800000);
 
@@ -37,13 +43,13 @@ module.exports = {
     if (profileData.userID == message.author.id || message.member.permissions.has('MANAGE_MESSAGES')) {
 
       embed.addFields(
-        { name: 'carteira', value: profileData.coins },
-        { name: 'banco', value: profileData.bank },
+        { name: 'carteira', value: profileData.coins.toString() },
+        { name: 'banco', value: profileData.bank.toString() },
         { name: 'última alteração de saldo', value: dateFormat }
       )
     } else {
       embed.addFields(
-        { name: 'saldo total', value: profileData.coins + profileData.bank }
+        { name: 'saldo total', value: (profileData.coins + profileData.bank).toString() }
       )
     }
 
