@@ -5,7 +5,6 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('lock')
         .setDescription('bloqueia os membros de enviar mensagens em um chat')
-        .addChannelOption(option => { option.setName('canal').setDescription('o canal para bloquear. se não informado, aplica o lock nesse chat').setRequired(false) })
         .setDefaultPermission(false),
 
     /**
@@ -14,7 +13,14 @@ module.exports = {
 
     async execute(interaction) {
 
-        interaction.channel.updateOverwrite(interaction.guild.roles.everyone, { SEND_MESSAGES: false });
+        let permissions = await interaction.channel.permissionOverwrites.resolve()
+
+        permissions.set([
+            {
+               id: interaction.guild.roles.everyone,
+               deny: [Discord.Permissions.FLAGS.SEND_MESSAGES],
+            },
+          ], 'por: '+interaction.member.id);
 
     }
 }
