@@ -13,6 +13,6 @@ module.exports = async (client, reaction, user) => {
     .setTitle('💭 Desabafo')
     .setDescription(aproveMessage.description);
 
-  desabafoChannel.send(desabafoEmbed);
+  desabafoChannel.send({content: [desabafoEmbed]});
 
 }

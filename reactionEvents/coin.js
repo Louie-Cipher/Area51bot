@@ -34,19 +34,21 @@ module.exports = async (client, reaction, user) => {
   let profileData1 = await profileModel.findOne({ userID: player1.id });
   let profileData2 = await profileModel.findOne({ userID: player2.id });
 
-  if (profileData1.coins < valor) return message.reply({
-    content: message.author, embed: {
+  if (profileData1.coins < valor) return message.channel.send({
+    content: player1.toString() + ' e ' + player2.toString(),
+    embeds: [{
       color: '#b3c20c',
       title: `Você não possui mais esse valor na carteira.`,
       description: `Você atualmente possui **${profileData1.coins} estrelas**`
-    }
+    }]
   });
-  if (profileData2.coins < valor) return message.reply({
-    content: message.author, embed: {
+  if (profileData2.coins < valor) return message.channel.send({
+    content: player1.toString() + ' e ' + player2.toString(),
+    embeds: [{
       color: '#b3c20c',
       title: `${player2.tag} não possui mais esse valor na carteira.`,
       description: `${player2.tag} atualmente possui **${profileData1.coins} estrelas**`
-    }
+    }]
   });
 
   let rand = Math.floor(Math.random() * 2);
@@ -84,9 +86,11 @@ module.exports = async (client, reaction, user) => {
     }
     );
     profileUpdate2.save();
-  } else {
-    resultEmbed.setDescription(`Parabéns ${player1}, você venceu, e ganhou ${valor} Stars
-      Sinto muito ${player2}, você perdeu`);
+
+  }
+  else {
+    resultEmbed.setDescription(`🎉 Parabéns ${player1}, você venceu, e ganhou ${valor} Stars
+      😭 Sinto muito ${player2}, você perdeu`);
 
     let profileUpdate1 = await profileModel.findOneAndUpdate(
       {
@@ -114,7 +118,7 @@ module.exports = async (client, reaction, user) => {
   }
 
 
-  reaction.message.edit(`Resultado da aposta de ${player1} e ${player2}`, resultEmbed);
+  reaction.message.edit({ content: `Resultado da aposta de ${player1} e ${player2}`, embeds: [resultEmbed] });
 
   reaction.remove()
 

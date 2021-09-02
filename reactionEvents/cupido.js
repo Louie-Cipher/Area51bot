@@ -28,8 +28,8 @@ module.exports = async (client, reaction, user) => {
     .setColor('#ff00a2')
     .setTitle('Correio amoroso')
 
-  correioChannel.send(correioEmbed);
-  let correioMessage = await correioChannel.send(aproveMessage.description)
+  correioChannel.send({embeds: [correioEmbed]});
+  let correioMessage = await correioChannel.send({content: aproveMessage.description})
   correioMessage.react(emojiRand);
 
 }
