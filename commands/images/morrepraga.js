@@ -8,7 +8,11 @@ module.exports = {
 
   async execute(client, message, args) {
 
-    let user = message.mentions.users.first() || client.users.cache.get(args[0]) || message.author;
+    let user = message.mentions.users.first() || client.users.cache.get(args[0])
+
+    if (args[0] && !user) return message.reply({content: 'usuário informado não encontrado'});
+    if (!user) user = message.author;
+
     const avatar = await Canvas.loadImage(user.displayAvatarURL({dynamic: false, format: 'jpg'}));
 
     const template = await Canvas.loadImage('https://feijoadasimulator.top/br/templates/1814.png');
@@ -21,7 +25,7 @@ module.exports = {
     ctx.drawImage(avatar, 140, 200, 200, 200);
 
     const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `morrepraga.png`);
-    message.channel.send(attachment);
+    message.reply({files: [attachment]});
 
   }
 }

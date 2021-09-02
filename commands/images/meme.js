@@ -12,17 +12,21 @@ module.exports = {
 
     let image
 
-    if (!message.attachments && (!msgCtt.startsWith('https://i.imgur.com/') && (!msgCtt.endsWith('.jpg') || !msgCtt.endsWith('.png') || !msgCtt.endsWith('.jpeg') ) ) ) return message.channel.send({embed: {
-      color: '#f0ff00',
-      description: 'você precisa anexar uma imagem ou enviar um link do imgur para gerar o meme'
-    }});
-    if (!args[0]) return message.channel.send({embed: {
-      color: '#f0ff00',
-      title: 'você precisa escrever alguma frase para adcionar no meme',
-      description: 'caso queira adcionar uma frase no topo da imagem, e uma frase em baixo, separe as frases com |'
-    }});
+    if (!message.attachments && (!msgCtt.startsWith('https://i.imgur.com/') && (!msgCtt.endsWith('.jpg') || !msgCtt.endsWith('.png') || !msgCtt.endsWith('.jpeg')))) return message.reply({
+      embeds: [{
+        color: '#f0ff00',
+        description: 'você precisa anexar uma imagem ou enviar um link do imgur para gerar o meme'
+      }]
+    });
+    if (!args[0]) return message.reply({
+      embeds: [{
+        color: '#f0ff00',
+        title: 'você precisa escrever alguma frase para adcionar no meme',
+        description: 'caso queira adcionar uma frase no topo da imagem, e uma frase em baixo, separe as frases com |'
+      }]
+    });
 
-    if (message.attachments[0]) {
+    if (message.attachments) {
       image = message.attachments[0]
     }
     else {
@@ -44,52 +48,48 @@ module.exports = {
 
     let text = args.join(' ')
 
-    if(text.includes('|')) {
+    if (text.includes('|')) {
       let divideText = text.split('|')
       //            context |   text    |      X         |              Y                  | espaçamento |     largura
-      printAtWordWrap(ctx, divideText[0], canvas.width/2,         canvas.heigth/20,              20,  (canvas.height/2));
-      printAtWordWrap(ctx, divideText[1], canvas.width/2, canvas.heigth/20 * (canvas.heigth/18), 20,  (canvas.height/2));
+      printAtWordWrap(ctx, divideText[0], canvas.width / 2, canvas.heigth / 20, 20, (canvas.height / 2));
+      printAtWordWrap(ctx, divideText[1], canvas.width / 2, canvas.heigth / 20 * (canvas.heigth / 18), 20, (canvas.height / 2));
     }
     else {
-      printAtWordWrap(ctx, text,          canvas.width/2, canvas.heigth/20 * (canvas.heigth/18), 20,  (canvas.height/2));
+      printAtWordWrap(ctx, text, canvas.width / 2, canvas.heigth / 20 * (canvas.heigth / 18), 20, (canvas.height / 2));
     }
 
-    
 
-    function printAtWordWrap( context , text, x, y, lineHeight, fitWidth) {
 
-    fitWidth = fitWidth || 0;
-    
-    if (fitWidth <= 0)
-    {
-        context.fillText( text, x, y );
+    function printAtWordWrap(context, text, x, y, lineHeight, fitWidth) {
+
+      fitWidth = fitWidth || 0;
+
+      if (fitWidth <= 0) {
+        context.fillText(text, x, y);
         return;
-    }
-    var words = text.split(' ');
-    var currentLine = 0;
-    var idx = 1;
-    while (words.length > 0 && idx <= words.length) {
-        var str = words.slice(0,idx).join(' ');
-        var w = context.measureText(str).width;
-        if ( w > fitWidth )
-        {
-            if (idx==1)
-            {
-                idx=2;
-            }
-            context.fillText( words.slice(0,idx-1).join(' '), x, y + (lineHeight*currentLine) );
-            currentLine++;
-            words = words.splice(idx-1);
-            idx = 1;
-        }
-        else
-        {idx++;}
       }
-    if (idx > 0) context.fillText( words.join(' '), x, y + (lineHeight*currentLine) );
-  }
+      var words = text.split(' ');
+      var currentLine = 0;
+      var idx = 1;
+      while (words.length > 0 && idx <= words.length) {
+        var str = words.slice(0, idx).join(' ');
+        var w = context.measureText(str).width;
+        if (w > fitWidth) {
+          if (idx == 1) {
+            idx = 2;
+          }
+          context.fillText(words.slice(0, idx - 1).join(' '), x, y + (lineHeight * currentLine));
+          currentLine++;
+          words = words.splice(idx - 1);
+          idx = 1;
+        }
+        else { idx++; }
+      }
+      if (idx > 0) context.fillText(words.join(' '), x, y + (lineHeight * currentLine));
+    }
 
-  const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `meme.png`);
-    message.channel.send(attachment);
+    const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `meme.png`);
+    message.reply({ files: [attachment] });
 
   }
 }

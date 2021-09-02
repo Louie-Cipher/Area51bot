@@ -8,13 +8,13 @@ module.exports = {
 
   async execute(client, message, args) {
 
-    if(!args[0]) return message.channel.send({embed: {color: '#909020', title: 'change my mind', description: 'escreva a frase para gerar o meme junto com o comando'}});
+    if (!args[0]) return message.channel.send({ embeds: [{ color: '#909020', title: 'change my mind', description: 'escreva a frase para gerar o meme junto com o comando' }] });
 
     let frase = args.join(' ');
 
     let image = await canvacord.Canvas.changemymind(frase);
     let attachment = new Discord.MessageAttachment(image, `changemymind.png`);
-    message.channel.send(attachment);
+    message.reply({ files: [attachment] });
 
   }
 }
