@@ -19,7 +19,7 @@ module.exports = {
 
     for (let channel of guild.channels.cache) {
 
-      if (channel[1].type == 'voice' && channel[1].members.size > 1) {
+      if (channel[1].type == 'GUILD_VOICE' && channel[1].members.size > 1) {
 
         for (let member of channel[1].members) {
 
