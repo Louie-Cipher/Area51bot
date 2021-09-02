@@ -52,7 +52,7 @@ module.exports = {
       .setTitle('👷‍♀️ Trabalho 👷‍♂️')
       .setDescription(`✨ Você trabalhou e você ganhou **${randomCoins} Stars**! ✨
       agora voce possui ${profileData.bank + profileData.coins + randomCoins} Stars no total\nVolte daqui a 2h e trabalhe mais para receber mais estrelas`)
-      .setFooter('dica: Você sabia que sendo booster do servidor,\n\você ganha 30 estrelas a mais no daily?');
+      .setFooter('dica: Você sabia que sendo booster do servidor,\nvocê ganha 30 estrelas a mais no daily?');
 
     message.reply({ embeds: [embed] });
 
