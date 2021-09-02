@@ -19,8 +19,8 @@ module.exports = {
     let totalProfiles = await profileModel.countDocuments();
     let dbSize = 0;
 
-    await profileModel.collection.stats(function(err, results) {
-        dbSize = results.size
+    await profileModel.collection.stats(function (err, results) {
+      dbSize = results.size
     });
 
     const readyAt = new Date(client.readyAt.getTime() - 10800000);
@@ -31,21 +31,21 @@ module.exports = {
     let os = await system.osInfo();
 
     let embed = new Discord.MessageEmbed()
-        .setColor('#00ff30')
-        .setTitle('Informações do bot')
-        .setDescription('Aqui estão algumas informações úteis sobre mim')
-        .addFields(
-            {name: '⏰ Online desde', value: readyString, inline: true},
-            {name: 'Versão do Discord.js', value: package.dependencies["discord.js"], inline: true},
-            //{name: 'Versão do NodeJS', value: '', inline: true},
-            {name: '🏦 Banco de dados 🎲', value: `${totalProfiles} usuários\n${Math.round(dbSize / 1024)} Kb de 512 Mb`},
-            {name: '🖥 CPU', value: `${cpu.cores} Cores\n${Math.round(cpu.speed)} GHz`, inline: true},
-            {name: '🖥  RAM', value: `TOTAL: ${Math.round(ram.total / 1024 / 1024)} Mb\nEM USO: ${Math.round(ram.active / 1024 / 1024)} Mb`, inline: true},
-            {name: '🖥 OS', value: os.logofile, inline: true},
-        );
+      .setColor('#00ff30')
+      .setTitle('Informações do bot')
+      .setDescription('Aqui estão algumas informações úteis sobre mim')
+      .addFields(
+        { name: '⏰ Online desde', value: readyString, inline: true },
+        { name: 'Versão do Discord.js', value: package.dependencies["discord.js"], inline: true },
+        //{name: 'Versão do NodeJS', value: '', inline: true},
+        { name: '🏦 Banco de dados 🎲', value: `${totalProfiles} usuários\n${Math.round(dbSize / 1024)} Kb de 512 Mb` },
+        { name: '🖥 CPU', value: `${cpu.cores} Cores\n${cpu.speed} GHz`, inline: true },
+        { name: '🖥  RAM', value: `TOTAL: ${Math.round(ram.total / 1024 / 1024)} Mb\nEM USO: ${Math.round(ram.active / 1024 / 1024)} Mb`, inline: true },
+        { name: '🖥 OS', value: os.logofile, inline: true },
+      );
 
-    
-    message.channel.send(message.author, embed);
+
+    message.reply({ embeds: [embed] });
 
   }
 }
