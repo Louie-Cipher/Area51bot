@@ -6,28 +6,25 @@ module.exports = {
   description: "testa a Latência do bot",
 
   async execute(client, message, args) {
-    const msg = await message.channel.send({embed: {
-    color: 39423,
-    title: "Ping"
-    }});
+    const msg = await message.channel.send({
+      embeds: [{
+        color: 39423,
+        title: "Ping"
+      }]
+    });
 
     let embed = new Discord.MessageEmbed()
       .setColor('#00ff00')
-      .setTitle('🏓 **| Pong!**')
+      .setTitle('🏓 | Pong!')
       .addFields(
-        {name:'Latência do Server:', value:`${msg.createdTimestamp -
-      message.createdTimestamp}ms`},
-      {name: 'Latência da API:', value: `${Math.round(client.ws.ping)}ms` }
+        {
+          name: 'Latência do Server:', value: `${msg.createdTimestamp -
+            message.createdTimestamp}ms`
+        },
+        { name: 'Latência da API:', value: `${Math.round(client.ws.ping)}ms` }
       );
-      
-    msg.edit({embed: {
-      title: '🏓 | Pong!',
-      color: 39423,
-      fields: [
-        {name:'Latência do Server:', value:`${msg.createdTimestamp -
-      message.createdTimestamp}ms`},
-      {name: 'Latência da API:', value: `${Math.round(client.ws.ping)}ms` }]
-    }});
-    
+
+    msg.edit({ embeds: [embed] });
+
   }
 }
