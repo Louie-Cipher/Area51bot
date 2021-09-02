@@ -117,7 +117,7 @@ module.exports = async (client, message) => {
       if (nextCmd.getSeconds() > 1) timeLeft += 's';
     }
 
-    return message.reply({content: `Epa, você está usando comandos muito rápido!\nTente novamente em ${limeLeft}`});
+    return message.reply({content: `Epa, você está usando comandos muito rápido!\nTente novamente em ${timeLeft}`});
 
   } else {
 
