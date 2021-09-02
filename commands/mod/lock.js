@@ -6,6 +6,13 @@ module.exports = {
   description: 'retira a permissão de "@everyone" (ou o membro/cargo mencionado) enviar mensagens no chat',
   userPermissions: ['MANAGE_CHANNELS', 'MANAGE_ROLES'],
 
+  /**
+   * 
+   * @param {Discord.Client} client 
+   * @param {Discord.Message} message 
+   * @param {String[]} args 
+   */
+
   async execute(client, message, args) {
 
     let target;
@@ -18,10 +25,21 @@ module.exports = {
 
     if (role) target = role;
 
-    if(target != undefined) {
-      message.channel.updateOverwrite(target, { SEND_MESSAGES: false });
+    if (target != undefined) {
+      message.channel.permissionOverwrites.set([
+        {
+          id: role.id,
+          deny: [Discord.Permissions.FLAGS.SEND_MESSAGES],
+        },
+      ], 'por: ' + message.member.id);
+
     } else {
-      message.channel.updateOverwrite(message.guild.roles.everyone, { SEND_MESSAGES: false });
+      message.channel.permissionOverwrites.set([
+        {
+          id: message.guild.roles.everyone.id,
+          null: [Discord.Permissions.FLAGS.SEND_MESSAGES],
+        },
+      ], 'por: ' + message.member.id);
       target = '@everyone'
     }
 
@@ -30,7 +48,7 @@ module.exports = {
       .setTitle('Canal Bloqueado com sucesso!')
       .setDescription(`agora ${target} não pode(m) mais enviar mensagens nesse canal`);
 
-    message.channel.send(embed);
+    message.channel.send({ embeds: [embed] });
 
   }
 }
