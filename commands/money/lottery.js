@@ -83,12 +83,12 @@ module.exports = {
                 .setTitle('💰 Loteria Intergaláctica - Estatísticas 📊')
                 .addFields(
                     { name: 'Suas estatísticas', value: '\u200B' },
-                    { name: 'Hoje você comprou', value: userTickets + ' bilhetes', inline: true },
-                    { name: 'Você já venceu', value: userWins + ' vezes', inline: true },
+                    { name: 'Hoje você comprou', value: userTickets.toString() + ' bilhetes', inline: true },
+                    { name: 'Você já venceu', value: userWins.toString() + ' vezes', inline: true },
                     { name: '\u200B', value: '\u200B' },
-                    { name: 'Estatísticas geral', value: '\u200B' },
-                    { name: 'Concorrendo hoje', value: lotteryData.users.length, inline: true },
-                    { name: 'Prêmio atual', value: (lotteryData.users.length * 150) + 5000, inline: true },
+                    { name: 'Estatísticas gerais', value: '\u200B' },
+                    { name: 'Concorrendo hoje', value: lotteryData.users.length.toString(), inline: true },
+                    { name: 'Prêmio atual', value: ((lotteryData.users.length * 150) + 5000).toString(), inline: true },
                     { name: 'Último vencedor', value: lastWinner.toString(), inline: true },
                 );
 
