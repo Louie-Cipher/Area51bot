@@ -110,7 +110,7 @@ module.exports = async (client, message) => {
 
     let lastMsg = cooldown.get(message.author.id);
     let nextCmd = new Date(lastMsg.getTime() + 4000);
-    let limeLeft = '';
+    let timeLeft = '';
     if (nextCmd.getSeconds() == 0) { timeLeft = 'alguns milissegundos' }
     else { 
       timeLeft = nextCmd.getSeconds() + 'segundo';
