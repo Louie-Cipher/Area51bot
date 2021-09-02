@@ -6,6 +6,13 @@ module.exports = {
   aliases: ['leaderboard', 'lb', 'ranking', 'rank'],
   description: "exibe o ranking de estrelas, xp, ou outros dados",
 
+  /**
+   * 
+   * @param {Discord.Client} client 
+   * @param {Discord.Message} message 
+   * @param {String[]} args 
+   */
+
   async execute(client, message, args) {
 
     let embed = new Discord.MessageEmbed()
@@ -13,14 +20,18 @@ module.exports = {
       .setTitle('Ranking do servidor');
 
     let description = '';
+    
+    if (['dinheiro', 'money', 'star', 'stars', 'estrela', 'estrelas'].includes(args[0].toLowerCase())) {
 
-    if (!args[0] || ['dinheiro', 'money', 'star', 'stars', 'estrela', 'estrelas'].includes(args[0].toLowerCase())) {
+      embed.setDescription('Rank de estrelas');
+
       let totalResults = await profileModel.find()
         .sort({
           coins: -1,
           bank: -1
         })
         .limit(10)
+
 
       let i=1;
       totalResults.forEach(resultData => {
@@ -33,7 +44,10 @@ module.exports = {
 
       })
     }
-    else if (['carteira', 'wallet'].includes(args[0].toLowerCase())) {
+    else if (['carteira', 'wallet'].includes(args[0].toLowerCase()) && message.member.permissions.has('MANAGE_MESSAGES')) {
+
+      embed.setDescription('Rank de saldo em carteira');
+
       let totalResults = await profileModel.find()
         .sort({
           coins: -1
@@ -52,6 +66,9 @@ module.exports = {
       })
     }
     else if (['bank', 'banco'].includes(args[0].toLowerCase())) {
+
+      embed.setDescription('Rank de saldo em banco');
+
       let totalResults = await profileModel.find()
         .sort({
           banco: -1
@@ -69,26 +86,9 @@ module.exports = {
 
       })
     }
-    else if (['xp', 'pontos'].includes(args[0].toLowerCase()) || !args[0]) {
+    else if (['call', 'voz', 'voice'].includes(args[0].toLowerCase())) {
 
-      let totalResults = await profileModel.find()
-        .sort({
-          chatXP: -1
-        })
-        .limit(10)
-
-      let i=1;
-      totalResults.forEach(resultData => {
-
-        let user = client.users.cache.get(resultData.userID);
-        
-        embed.addField(`${i}° - ${user.tag}`, `XP: ${resultData.chatXP}\n`);
-
-        i++;
-
-      })
-
-    } else if (['call', 'voz', 'voice'].includes(args[0].toLowerCase())) {
+      embed.setDescription('Rank de XP por call');
 
       let totalResults = await profileModel.find()
         .sort({
@@ -108,8 +108,30 @@ module.exports = {
       })
 
     }
+    else {
 
-    message.channel.send(embed);
+      embed.setDescription('Rank de XP por chat');
+
+      let totalResults = await profileModel.find()
+        .sort({
+          chatXP: -1
+        })
+        .limit(10)
+
+      let i=1;
+      totalResults.forEach(resultData => {
+
+        let user = client.users.cache.get(resultData.userID);
+        
+        embed.addField(`${i}° - ${user.tag}`, `XP: ${resultData.chatXP}\n`);
+
+        i++;
+
+      })
+
+    }
+
+    message.reply({embeds: [embed]});
 
   }
 }
