@@ -12,50 +12,62 @@ module.exports = {
 
     let user2 = message.mentions.users.first() || client.users.cache.get(args[0]);
 
-    if(!args[0] || !args[1]) return message.channel.send({content: message.author, embed: {
-      color: '#f0f000',
-      title: 'Transferência de Estrelas',
-      description: `mencione alguém ou informe um ID, e o valor que deseja transferir da sua carteira para a carteira da pessoa
+    if (!args[0] || !args[1]) return message.reply({
+      embeds: [{
+        color: '#f0f000',
+        title: 'Transferência de Estrelas',
+        description: `mencione alguém ou informe um ID, e o valor que deseja transferir da sua carteira para a carteira da pessoa
       Exemplo: \`transfer @Louie 250\``
-    }});
+      }]
+    });
 
-    if (!user2) return message.channel.send({content: message.author, embed: {
-      color: '#b3c20c', title: 'usuário informado não encontrado'
-    }});
+    if (!user2) return message.reply({
+      embed: [{
+        color: '#b3c20c', title: 'usuário informado não encontrado'
+      }]
+    });
 
-    if (user2.bot) return message.channel.send({content: message.author, embed: {
-       title: `${user2.username}`,
-       description: '🤖 Bip Bop | Bots não possuem perfil ou saldo em Estrelas' 
-      }});
+    if (user2.bot) return message.reply({
+      embeds: [{
+        title: `${user2.username}`,
+        description: '🤖 Bip Bop | Bots não possuem perfil ou saldo em Estrelas'
+      }]
+    });
 
-    let profileData1 = await profileModel.findOne({userID: message.author.id});
-    let profileData2 = await profileModel.findOne({userID: user2.id});
+    let profileData1 = await profileModel.findOne({ userID: message.author.id });
+    let profileData2 = await profileModel.findOne({ userID: user2.id });
 
-    if (!profileData2) return message.channel.send({content: message.author, embed: {
-      color: '#b3c20c',
-      title: 'usuário informado ainda não possui Stars ou um perfil no Area51Bot'
-    }});
+    if (!profileData2) return message.reply({
+      embeds: [{
+        color: '#b3c20c',
+        title: 'usuário informado ainda não possui Stars ou um perfil no Area51Bot'
+      }]
+    });
 
-    if(!valor || valor < 1) return message.channel.send({content: message.author, embed: {
-      color: '#f0f000', title: 'informe um valor para transferir',
-      description: 'o valor precisa ser um número inteiro (sem virgula) e positivo (maior que zero)'
-    }});
+    if (!valor || valor < 1) return message.reply({
+      embeds: [{
+        color: '#f0f000', title: 'informe um valor para transferir',
+        description: 'o valor precisa ser um número inteiro (sem virgula) e positivo (maior que zero)'
+      }]
+    });
 
-    if( profileData1.coins < valor ) return message.channel.send({content: message.author, embed: {
-      color: '#b3c20c',
-      title: 'Você não possui esse valor na carteira para transferir',
-      description: `Você atualmente tem ${profileData1.coins} na carteira, e ${profileData1.bank} no banco`
-    }});
+    if (profileData1.coins < valor) return message.reply({
+      embeds: {
+        color: '#b3c20c',
+        title: 'Você não possui esse valor na carteira para transferir',
+        description: `Você atualmente tem ${profileData1.coins} na carteira, e ${profileData1.bank} no banco`
+      }
+    });
 
     let profileUpdate1 = await profileModel.findOneAndUpdate(
       {
         userID: message.author.id,
       }, {
-          $inc:{
-            coins: -valor
-          },
-          lastEditMoney: Date.now()
-        }
+      $inc: {
+        coins: -valor
+      },
+      lastEditMoney: Date.now()
+    }
     );
     profileUpdate1.save();
 
@@ -63,11 +75,11 @@ module.exports = {
       {
         userID: user2.id,
       }, {
-          $inc:{
-            coins: valor
-          },
-          lastEditMoney: Date.now()
-        }
+      $inc: {
+        coins: valor
+      },
+      lastEditMoney: Date.now()
+    }
     );
     profileUpdate2.save();
 
@@ -75,12 +87,12 @@ module.exports = {
       .setColor('#00ffff')
       .setTitle('📤Transferência efetuada com sucesso📥')
       .addFields(
-        {name: 'valor', value: valor,},
-        {name: 'seu saldo atual', value: (profileData1.coins - valor)},
-        {name: `saldo atual de ${user2.username}`, value: (profileData2.bank + valor)}
+        { name: 'valor', value: valor, },
+        { name: 'seu saldo atual', value: (profileData1.coins - valor) },
+        { name: `saldo atual de ${user2.username}`, value: (profileData2.bank + valor) }
       );
 
-    message.channel.send(message.author, embed);
+    message.reply({ embeds: [embed] });
 
   }
 }

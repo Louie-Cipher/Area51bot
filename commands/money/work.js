@@ -10,27 +10,29 @@ module.exports = {
 
     let boost = 0
 
-    if(message.member.roles.cache.has('828983379135299634')) boost = 30
+    if (message.member.roles.cache.has('828983379135299634')) boost = 30
 
     var randomCoins = Math.floor(Math.random() * 40) + 80 + boost;
 
-    let profileData = await profileModel.findOne({userID: message.author.id});
+    let profileData = await profileModel.findOne({ userID: message.author.id });
 
     let dateNow = new Date();
 
-    if(profileData.lastWork) {
+    if (profileData.lastWork) {
 
       let lastWork = new Date(profileData.lastWork);
-      let nextWork = new Date( 7200000 + lastWork.getTime() );
+      let nextWork = new Date(7200000 + lastWork.getTime());
       let diferenca = new Date(nextWork.getTime() - dateNow.getTime())
 
-      if ( dateNow.getTime() - lastWork.getTime() < 7200000 )
-        return message.channel.send({content: message.author, embed: {
-          color: '#b3c20c',
-          title: '⏳ Você já trabalhou nas últimas 2 horas',
-          description: `⏳⭐ Volte novamente em: ${diferenca.getHours()} h e ${diferenca.getMinutes()} min`,
-          footer: { text: `dica: Você sabia que sendo booster do servidor,\nvocê ganha 30 estrelas a mais no work?` }
-        }});
+      if (dateNow.getTime() - lastWork.getTime() < 7200000)
+        return message.reply({
+          embeds: [{
+            color: '#b3c20c',
+            title: '⏳ Você já trabalhou nas últimas 2 horas',
+            description: `⏳⭐ Volte novamente em: ${diferenca.getHours()} h e ${diferenca.getMinutes()} min`,
+            footer: { text: `dica: Você sabia que sendo booster do servidor,\nvocê ganha 30 estrelas a mais no work?` }
+          }]
+        });
 
 
     }
@@ -39,9 +41,9 @@ module.exports = {
       {
         userID: message.author.id,
       }, {
-          $inc: {coins: randomCoins},
-          lastWork: Date.now()
-        }
+      $inc: { coins: randomCoins },
+      lastWork: Date.now()
+    }
     )
     profileData.save();
 
@@ -52,7 +54,7 @@ module.exports = {
       agora voce possui ${profileData.bank + profileData.coins + randomCoins} Stars no total\nVolte daqui a 2h e trabalhe mais para receber mais estrelas`)
       .setFooter('dica: Você sabia que sendo booster do servidor,\n\você ganha 30 estrelas a mais no daily?');
 
-    message.channel.send(`${message.author}`, embed);
+    message.reply({ embeds: [embed] });
 
 
   }

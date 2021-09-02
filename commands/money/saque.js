@@ -8,7 +8,7 @@ module.exports = {
 
   async execute(client, message, args) {
 
-    if(!args[0]) return message.channel.send({content: message.author, embed: {
+    if(!args[0]) return message.reply({content: message.author, embed: {
       color: '#f0f000',
       title: 'Informe um valor para sacar',
       description: ` O valor precisa ser um número inteiro (sem virgula) e positivo`

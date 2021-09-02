@@ -11,19 +11,20 @@ module.exports = {
     let user = message.mentions.users.first() || client.users.cache.get(args[0]);
 
     if (args[0] && !user)
-      return message.channel.send({content: message.author, embed: {color: '#b3c20c', title: 'usuário informado não encontrado'}})
+      return message.reply({ embeds: [{ color: '#b3c20c', title: 'usuário informado não encontrado' }] })
 
-    if(!user) user = message.author;
+    if (!user) user = message.author;
 
     if (user.bot)
-      return message.channel.send({content: message.author, 
-        embed: {
-          title: `${user.tag}` , description: 'Bip Bop | Bots não possuem perfil no Area51Bot' }
+      return message.reply({
+        embeds: [{
+          title: `${user.tag}`, description: 'Bip Bop | Bots não possuem perfil no Area51Bot'
+        }]
       });
 
-    let profileData = await profileModel.findOne({userID: user.id});
+    let profileData = await profileModel.findOne({ userID: user.id });
 
-    if (!profileData) return message.channel.send({content: message.author, embed: {color: '#009999', title: 'Esse usuário ainda não possui um perfil no Area51Bot', description: 'um perfil será criado automaticamente após o usuário enviar uma mensagem pela primeira vez'}});
+    if (!profileData) return message.channel.send({ embeds: [{ color: '#009999', title: 'Esse usuário ainda não possui um perfil no Area51Bot', description: 'um perfil será criado automaticamente após o usuário enviar uma mensagem pela primeira vez' }] });
 
     let lastEdit = new Date(profileData.lastEditMoney.getTime() - 10800000);
 
@@ -33,21 +34,21 @@ module.exports = {
       .setColor('#00ffff')
       .setTitle(`Saldo em Stars de ${user.username}`);
 
-      if(profileData.userID == message.author.id || message.member.permissions.has('MANAGE_MESSAGES')) {
+    if (profileData.userID == message.author.id || message.member.permissions.has('MANAGE_MESSAGES')) {
 
-        embed.addFields(
-          {name: 'carteira', value: profileData.coins},
-          {name: 'banco', value: profileData.bank},
-          {name: 'última alteração de saldo', value: dateFormat }
-        )
-      } else {
-        embed.addFields(
-          {name: 'saldo total', value: profileData.coins + profileData.bank}
-        )
-      }
-        
+      embed.addFields(
+        { name: 'carteira', value: profileData.coins },
+        { name: 'banco', value: profileData.bank },
+        { name: 'última alteração de saldo', value: dateFormat }
+      )
+    } else {
+      embed.addFields(
+        { name: 'saldo total', value: profileData.coins + profileData.bank }
+      )
+    }
 
-    message.channel.send(`${message.author}`, embed);
+
+    message.reply({ embeds: [embed] });
 
   }
 }

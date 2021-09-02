@@ -19,12 +19,12 @@ module.exports = {
 
             let profileData = await profileModel.findOne({ userID: message.author.id });
 
-            if (profileData.coins < 100) return message.channel.send({content: message.author, 
-                content: message.author, embed: {
+            if (profileData.coins < 100) return message.reply({
+                embeds: [{
                     color: '#b3c20c',
                     title: 'Saldo insuficiente para realizar a compra',
                     description: `Cada bilhete da Loteria Intergaláctica custa 100 estrelas. seu saldo atual na carteira é de ${profileData.coins} estrelas`
-                }
+                }]
             });
 
             let profileUpdate = await profileModel.findOneAndUpdate({ userID: message.author.id },
@@ -35,7 +35,7 @@ module.exports = {
             )
             profileUpdate.save();
 
-            let lotteryData = await lotteryDB.findOne({true: true});
+            let lotteryData = await lotteryDB.findOne({ true: true });
 
             if (!lotteryData) {
                 let createLottery = await lotteryDB.create({
@@ -47,24 +47,24 @@ module.exports = {
                 createLottery.save();
             }
 
-            let lotteryUpdate = await lotteryDB.findOneAndUpdate({true: true},
+            let lotteryUpdate = await lotteryDB.findOneAndUpdate({ true: true },
                 {
                     $push: { users: message.author.id }
                 }
             );
             lotteryUpdate.save()
 
-            message.channel.send({content: message.author,
-                embed: {
+            message.reply({
+                embeds: [{
                     color: '#00ff30',
                     title: 'Bilhete da Loteria Intergaláctica adquirido com sucesso',
                     description: `O sorteio ocorrerá as 21:00, no chat <#862354794323902474>\nPara ver mais informações sobre o sorteio de hoje, utilize \`a.loteria info\``
-                }
+                }]
             })
 
         } else {
 
-            let lotteryData = await lotteryDB.findOne({true: true});
+            let lotteryData = await lotteryDB.findOne({ true: true });
 
             let lastWinner = await client.users.fetch(lotteryData.winners[lotteryData.winners.length - 1]);
 
@@ -89,10 +89,10 @@ module.exports = {
                     { name: 'Estatísticas geral', value: '\u200B' },
                     { name: 'Concorrendo hoje', value: lotteryData.users.length, inline: true },
                     { name: 'Prêmio atual', value: (lotteryData.users.length * 150) + 5000, inline: true },
-                    { name: 'Último vencedor', value: lastWinner, inline: true },
+                    { name: 'Último vencedor', value: lastWinner.toString(), inline: true },
                 );
 
-            message.channel.send(message.author, infoEmbed);
+            message.reply({ embeds: [infoEmbed] });
 
         }
 

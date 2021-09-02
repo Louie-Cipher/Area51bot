@@ -8,28 +8,34 @@ module.exports = {
 
   async execute(client, message, args) {
 
-    if (!args[0]) return message.channel.send({content: message.author, embed: {
-      color: '#ff5900',
-      description: 'Informe um valor para apostar'
-    }});
+    if (!args[0]) return message.reply({
+      embeds: [{
+        color: '#ff5900',
+        description: 'Informe um valor para apostar'
+      }]
+    });
 
     let value = parseInt(args[0], 10);
 
-    if (!value || value === NaN || value < 1) return message.channel.send({content: message.author, embed: {
-      color: '#ff5900',
-      title: 'Valor informado inválido',
-      description: 'O valor precisa ser um número inteiro (sem virgula), e positivo'
-    }});
+    if (!value || value === NaN || value < 1) return message.reply({
+      embeds: [{
+        color: '#ff5900',
+        title: 'Valor informado inválido',
+        description: 'O valor precisa ser um número inteiro (sem virgula), e positivo'
+      }]
+    });
 
-    let profileData = await profileModel.findOne({userID: message.author.id});
+    let profileData = await profileModel.findOne({ userID: message.author.id });
 
-    if (!profileData) return message.reply('Houve um erro de comunicação com o banco de dados. por favor, tente novamente mais tarde');
+    if (!profileData) return message.reply({ content: 'Houve um erro de comunicação com o banco de dados. por favor, tente novamente mais tarde' });
 
-    if (value > profileData.coins || profileData.coins - value < 0) return message.reply({content: message.author, embed: {
-      color: '#ff5900',
-      title: 'Você não possui esse valor para apostar',
-      description: `Você atualmente possui **${profileData.coins} estrelas**`
-    }});
+    if (value > profileData.coins || profileData.coins - value < 0) return message.reply({
+      embeds: [{
+        color: '#ff5900',
+        title: 'Você não possui esse valor para apostar',
+        description: `Você atualmente possui **${profileData.coins} estrelas**`
+      }]
+    });
 
     let user;
     let bot;
@@ -56,7 +62,7 @@ module.exports = {
 
     let result = '';
 
-    if (user == bot){
+    if (user == bot) {
       embed.setColor('#f3ff6e');
       result = '🤝 Empate. foi um bom jogo';
     }
@@ -68,26 +74,26 @@ module.exports = {
       embed.setColor('#b80000');
       result = `😭 Sinto muito, você perdeu! Você perdeu ${value} estrelas`;
 
-      let profileUpdate = await profileModel.findOneAndUpdate({userID: message.author.id},
-      {
-        $inc: {
-          coins: -value
-        },
-        lastEditMoney: dateNow
-      });
+      let profileUpdate = await profileModel.findOneAndUpdate({ userID: message.author.id },
+        {
+          $inc: {
+            coins: -value
+          },
+          lastEditMoney: dateNow
+        });
       profileUpdate.save();
     }
     else {
       embed.setColor('#00ff00')
       result = `🎉 Parabéns, você venceu! E ganhou ${value} estrelas`
 
-      let profileUpdate = await profileModel.findOneAndUpdate({userID: message.author.id},
-      {
-        $inc: {
-          coins: value
-        },
-        lastEditMoney: dateNow
-      });
+      let profileUpdate = await profileModel.findOneAndUpdate({ userID: message.author.id },
+        {
+          $inc: {
+            coins: value
+          },
+          lastEditMoney: dateNow
+        });
       profileUpdate.save();
     }
 
@@ -97,7 +103,7 @@ module.exports = {
 
     embed.setDescription(description + result)
 
-    message.channel.send(`${message.author}`, embed);
-   
+    message.reply({ embeds: [embed] });
+
   }
 }

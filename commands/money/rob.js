@@ -12,41 +12,41 @@ module.exports = {
 
     let user2 = message.mentions.users.first() || client.users.cache.get(args[0]);
 
-    if (!args[0]) return message.channel.send({
-      content: message.author, embed: {
+    if (!args[0]) return message.reply({
+      embeds: [{
         color: '#f0f000',
         title: 'Roubo',
         description: `mencione alguém ou informe um ID da pessoa que deseja roubar`
-      }
+      }]
     });
 
-    if (!user2) return message.channel.send({
-      content: message.author, embed: {
+    if (!user2) return message.reply({
+      embeds: [{
         color: '#b3c20c', title: 'usuário informado não encontrado'
-      }
+      }]
     });
 
-    if (user2.bot) return message.channel.send({
-      content: message.author, embed: {
+    if (user2.bot) return message.reply({
+      embeds: [{
         title: `${user2.username}`,
         description: '🤖 Bip Bop | Bots não possuem saldo em Estrelas'
-      }
+      }]
     });
 
     if (user2.id == process.env['louie']) {
       let webhook = await message.channel.createWebhook('Louie');
-      webhook.send('eu irei me vingar...');
+      webhook.send({ content: 'eu irei me vingar...' });
       webhook.delete()
     }
 
     let profileData1 = await profileModel.findOne({ userID: message.author.id });
     let profileData2 = await profileModel.findOne({ userID: user2.id });
 
-    if (!profileData2) return message.channel.send({
-      content: message.author, embed: {
+    if (!profileData2) return message.reply({
+      embeds: [{
         color: '#b3c20c',
         title: 'usuário informado ainda não possui Estrelas'
-      }
+      }]
     });
 
     if (profileData1.lastRob) {
@@ -55,12 +55,12 @@ module.exports = {
       let nextRob = new Date(3600000 + lastRob.getTime())
       let diferenca = new Date(nextRob.getTime() - dateNow.getTime())
 
-      if ((dateNow.getTime() - lastRob.getTime()) < 3600000) return message.channel.send({
-        content: message.author, embed: {
+      if ((dateNow.getTime() - lastRob.getTime()) < 3600000) return message.reply({
+        embeds: [{
           color: '#ff0000',
           title: '⏳ Você já roubou alguém a menos de 1h',
           description: `Só poderá usar o roubo novamente em: ${diferenca.getHours()}h e ${diferenca.getMinutes()} min**`
-        }
+        }]
       });
     }
 
@@ -99,11 +99,11 @@ module.exports = {
 
 
 
-      message.channel.send({
-        embed: {
+      message.reply({
+        embeds: [{
           color: '#00ff00',
           description: `🔫 Você roubou ${robPercent} estrelas de ${user2}`
-        }
+        }]
       });
 
     } else {
@@ -122,12 +122,12 @@ module.exports = {
       profileUpdate1.save();
 
 
-      message.channel.send({
-        embed: {
+      message.reply({
+        embeds: [{
           color: '#ff0000',
           description: `<a:red_sirene:833800476817752084> Você tentou roubar Estrelas de ${user2} mas acabou sendo pego pelos adms <a:red_sirene:833800476817752084>
         Recebeu uma multa de ${multa} Estrelas 📉`
-        }
+        }]
       })
     }
 
