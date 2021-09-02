@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 module.exports = {
 
@@ -6,9 +7,9 @@ module.exports = {
 
   mongoose.connect(process.env['mongodb_login'], {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true
+    useUnifiedTopology: true
+    //useFindAndModify: false,
+    //useCreateIndex: true
   })
 
   mongoose.connection.on('connected', () => {
