@@ -106,7 +106,7 @@ client.on('ready', async () => {
 
     setInterval(
         () =>
-            require('./extra/voicexp').voiceXpAdd(client),
+            require('./extra/voicexp')(client),
         1000 * 60 * 5
     );
 
