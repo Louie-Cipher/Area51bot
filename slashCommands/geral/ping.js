@@ -13,7 +13,7 @@ module.exports = {
 
     async execute(client, interaction) {
 
-        await interaction.editReply({ content: '🏓 Pong', ephemeral: true });
+        await interaction.reply({ content: '🏓 Pong', ephemeral: true });
 
         let dateNow = new Date()
 
