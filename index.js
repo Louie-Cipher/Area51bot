@@ -43,7 +43,7 @@ for (const subFolder of slashCommandsFolder) {
 
     for (const file of categoryFolder) {
         let cmd = require(`./slashCommands/${subFolder}/${file}`);
-        slashCommands.set(cmd.name, cmd);
+        slashCommands.set(cmd.data.name, cmd);
     }
 };
 
