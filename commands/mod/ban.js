@@ -38,7 +38,7 @@ module.exports = {
 
       if (fullArgs.includes('|')) {
         daysDelete = parseInt(fullArgs.split('|')[1], 10);
-        banReason = fullArgs.substring(args[0].length - 1, fullArgs.length)
+        banReason = fullArgs.substring(args[0].length - 1, (fullArgs.lastIndexOf('|')) )
       }
       if (daysDelete > 7) daysDelete = 7
       else if (daysDelete < 0) daysDelete = 0
@@ -75,6 +75,7 @@ module.exports = {
       if (interaction.member.id != message.author.id) return;
 
       if (interaction.component.customId == 'cancelar') {
+        interaction.reply({ ephemeral: true, content: '❎ Banimento cancelado. essa foi quase' });
         return confirmMsg.edit({ embeds: [{ title: '❎ Banimento cancelado. essa foi quase' }] });
       }
 
@@ -83,7 +84,7 @@ module.exports = {
       member.ban({ days: daysDelete, reason: 'Banido por: ' + message.author.id + '\nMotivo: ' + banReason });
 
       let logEmbed = new Discord.MessageEmbed()
-        .setColor('#ff1000')
+        .setColor('RED')
         .setTitle('Membro banido')
         .addFields(
           { name: 'usuário banido', value: `${user.tag}` },
