@@ -33,7 +33,7 @@ for (const subFolder of mainCommandsFolder) {
     }
 };
 
-client.slashCommands = new Discord.Collection();
+let slashCommands = new Discord.Collection();
 
 const slashCommandsFolder = fs.readdirSync('./slashCommands');
 
@@ -43,7 +43,7 @@ for (const subFolder of slashCommandsFolder) {
 
     for (const file of categoryFolder) {
         let cmd = require(`./slashCommands/${subFolder}/${file}`);
-        client.slashCommands.set(cmd.name, cmd);
+        slashCommands.set(cmd.name, cmd);
     }
 };
 
@@ -122,7 +122,7 @@ client
     })
     .on('interactionCreate', async interaction => {
         try {
-            require('./events/interactionCreate')(client, interaction);
+            require('./events/interactionCreate')(client, interaction, slashCommands);
         } catch (error) {
             console.error(error)
         }
