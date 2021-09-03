@@ -45,7 +45,7 @@ module.exports = {
 
         }
 
-        botChannel.permissionOverwrites.edit(guild.roles.everyone, {
+        botChannel.permissionOverwrites.edit(message.guild.roles.everyone, {
             'SEND_MESSAGES': false
         })
 
@@ -80,7 +80,7 @@ module.exports = {
             description: `Mais sorte na próxima vez aos demais **${users.length - 1}** apostadores de hoje`
         }});
 
-        botChannel.permissionOverwrites.edit(guild.roles.everyone, {
+        botChannel.permissionOverwrites.edit(message.guild.roles.everyone, {
             'SEND_MESSAGES': null
         })
 
