@@ -22,12 +22,12 @@ module.exports = {
 
     if (!args[0]) {
       let d1 = Math.random() * 6;
-      let result = Math.round(d1);
+      let result = Math.ceil(d1);
       embed.setDescription(`resultado: ${result}`);
     }
     else if (args[0] && !args[1]) {
       let d1 = Math.random() * parseInt(args[0], 10);
-      let result = Math.round(d1);
+      let result = Math.ceil(d1);
       embed.setDescription(`resultado: ${result}`);
     }
     else if (args.length > 25) {
