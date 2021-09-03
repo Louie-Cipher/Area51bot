@@ -6,7 +6,7 @@ module.exports = {
 
     name: 'sorteio',
     aliases: ['manualsort'],
-    description: "sorteia manualmente a Loteria Intergaláctica",
+    description: "sorteia manualmente a Rifa Intergaláctica",
     userPermissions: 'ADMINISTRATOR',
 
     /** 
@@ -21,7 +21,7 @@ module.exports = {
         if (message.author.id != process.env.louie) return message.channel.send({
             embed: {
                 color: '#ffff00',
-                title: 'Loteria intergaláctica',
+                title: 'Rifa intergaláctica',
                 description: 'Por questões de segurança do banco de dados e instabilidade, apenas a Louie pode executar essa função'
             }
         });
@@ -37,8 +37,8 @@ module.exports = {
             let emptyMessage = await botChannel.send({
                 embed: {
                     color: '#ffff00',
-                    title: 'Loteria intergaláctica',
-                    description: 'Não houve apostador na loteria intergalática hoje😕\n\nPara apostar na loteria intergaláctica, use a.loteria',
+                    title: 'Rifa intergaláctica',
+                    description: 'Não houve apostador na Rifa intergalática hoje😕\n\nPara apostar na Rifa intergaláctica, use a.rifa comprar',
                     footer: { text: 'Cada bilhete custa 100 estrelas' }
                 }
             });
@@ -59,8 +59,8 @@ module.exports = {
 
         let firstEmbed = new Discord.MessageEmbed()
             .setColor()
-            .setTitle('🤑 Loteria intergaláctica 🤑')
-            .setDescription(`🥁 Rufem os tambores 🥁\n\nO vencedor da Loteria intergaláctica de hoje é:`);
+            .setTitle('🤑 Rifa intergaláctica 🤑')
+            .setDescription(`🥁 Rufem os tambores 🥁\n\nO vencedor da Rifa intergaláctica de hoje é:`);
 
 
         botChannel.send({ embeds: [firstEmbed] });

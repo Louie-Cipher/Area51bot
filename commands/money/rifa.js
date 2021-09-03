@@ -3,9 +3,9 @@ const profileModel = require('../../mongoSchema/profile');
 const lotteryDB = require('../../mongoSchema/lottery');
 
 module.exports = {
-    name: 'lottery',
-    aliases: ['loteria', 'ticket', 'bilhete', 'sorteio'],
-    description: "compra um bilhete da Loteria Intergaláctica",
+    name: 'rifa',
+    aliases: ['ticket', 'bilhete'],
+    description: "compra um bilhete da Rifa Intergaláctica",
 
     /** 
      * @param {Discord.Client} client
@@ -15,7 +15,7 @@ module.exports = {
 
     async execute(client, message, args) {
 
-        if (!args[0] || !['info', 'informacao', 'informação', 'status', 'stats', 'dados'].includes(args[0])) {
+        if (['comprar', 'buy', 'compra'].includes(args[0])) {
 
             let profileData = await profileModel.findOne({ userID: message.author.id });
 
@@ -23,7 +23,7 @@ module.exports = {
                 embeds: [{
                     color: '#b3c20c',
                     title: 'Saldo insuficiente para realizar a compra',
-                    description: `Cada bilhete da Loteria Intergaláctica custa 100 estrelas. seu saldo atual na carteira é de ${profileData.coins} estrelas`
+                    description: `Cada bilhete da Rifa Intergaláctica custa 100 estrelas. seu saldo atual na carteira é de ${profileData.coins} estrelas`
                 }]
             });
 
@@ -57,12 +57,12 @@ module.exports = {
             message.reply({
                 embeds: [{
                     color: '#00ff30',
-                    title: 'Bilhete da Loteria Intergaláctica adquirido com sucesso',
-                    description: `O sorteio ocorrerá as 21:00, no chat <#862354794323902474>\nPara ver mais informações sobre o sorteio de hoje, utilize \`a.loteria info\``
+                    title: 'Bilhete da Rifa Intergaláctica adquirido com sucesso',
+                    description: `O sorteio ocorrerá as 21:00, no chat <#862354794323902474>\nPara ver mais informações sobre o sorteio de hoje, utilize \`a.rifa info\``
                 }]
             })
 
-        } else {
+        } else if (['info', 'informacao', 'informação', 'status', 'stats', 'dados'].includes(args[0])) {
 
             let lotteryData = await lotteryDB.findOne({ true: true });
 
@@ -80,7 +80,7 @@ module.exports = {
 
             let infoEmbed = new Discord.MessageEmbed()
                 .setColor('#00ffff')
-                .setTitle('💰 Loteria Intergaláctica - Estatísticas 📊')
+                .setTitle('💰 Rifa Intergaláctica - Estatísticas 📊')
                 .addFields(
                     { name: 'Suas estatísticas', value: '\u200B' },
                     { name: 'Hoje você comprou', value: userTickets.toString() + ' bilhetes', inline: true },
@@ -94,6 +94,14 @@ module.exports = {
 
             message.reply({ embeds: [infoEmbed] });
 
+        } else {
+
+            let helpEmbed = new Discord.MessageEmbed()
+                .setColor('GREYPLE')
+                .setTitle('💰 Rifa Intergaláctica 💰')
+                .setDescription(`Para comprar um bilhete da Rifa Intergaláctica, utilize \`a.rifa comprar\` - cada bilhete custa 100 estrelas\nPara ver estatísticas sobre o sorteio de hoje ou suas informações, utilize \`a.rifa info\``);
+
+            message.reply({ embeds: [helpEmbed] })
         }
 
     }

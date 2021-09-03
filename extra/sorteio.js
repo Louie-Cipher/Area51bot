@@ -23,8 +23,8 @@ module.exports = {
             let emptyMessage = await botChannel.send({
                 embeds: [{
                     color: '#ffff00',
-                    title: 'Loteria intergaláctica',
-                    description: 'Não houve apostador na loteria intergalática hoje😕\n\nPara apostar na loteria intergaláctica, use a.loteria',
+                    title: 'Rifa intergaláctica',
+                    description: 'Não houve apostador na Rifa intergalática hoje😕\n\nPara apostar na Rifa intergaláctica, use a.rifa comprar',
                     footer: { text: 'Cada bilhete custa 100 estrelas' }
                 }]
             });
@@ -48,8 +48,8 @@ module.exports = {
 
         let firstEmbed = new Discord.MessageEmbed()
             .setColor('GREEN')
-            .setTitle('🤑 Loteria intergaláctica 🤑')
-            .setDescription(`🥁 Rufem os tambores 🥁\n\nO vencedor da Loteria intergaláctica de hoje é:`);
+            .setTitle('🤑 Rifa intergaláctica 🤑')
+            .setDescription(`🥁 Rufem os tambores 🥁\n\nO vencedor da Rifa intergaláctica de hoje é:`);
 
         botChannel.send({ embeds: [firstEmbed] });
 
