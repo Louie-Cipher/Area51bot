@@ -114,25 +114,53 @@ client.on('ready', async () => {
 
 client
     .on('messageCreate', async message => {
-        require('./events/messageCreate')(client, message);
+        try {
+            require('./events/messageCreate')(client, message);
+        } catch (error) {
+            console.error(error)
+        }
     })
     .on('interactionCreate', async interaction => {
-        require('./events/interactionCreate')(client, interaction)
+        try {
+            require('./events/interactionCreate')(client, interaction);
+        } catch (error) {
+            console.error(error)
+        }
     })
     .on("voiceStateUpdate", async (oldState, newState) => {
-        require('./events/voiceStateUpdate')(client, oldState, newState);
+        try {
+            require('./events/voiceStateUpdate')(client, oldState, newState);
+        } catch (error) {
+            console.error(error)
+        }
     })
     .on("messageReactionAdd", async (reaction, user) => {
-        require('./events/messageReactionAdd')(client, reaction, user);
+        try {
+            require('./events/messageReactionAdd')(client, reaction, user);
+        } catch (error) {
+            console.error(error)
+        }
     })
     .on('guildMemberAdd', async member => {
-        require('./extra/inviteTracker').guildMemberAdd(client, member);
+        try {
+            require('./extra/inviteTracker').guildMemberAdd(client, member);
+        } catch (error) {
+            console.error(error)
+        }
     })
     .on('inviteDelete', async invite => {
-        require('./extra/inviteTracker').inviteDelete(client, invite);
+        try {
+            require('./extra/inviteTracker').inviteDelete(client, invite);
+        } catch (error) {
+            console.error(error)
+        }
     })
     .on('inviteCreate', async invite => {
-        require('./extra/inviteTracker').inviteCreate(client, invite);
+        try {
+            require('./extra/inviteTracker').inviteCreate(client, invite);
+        } catch (error) {
+            console.error(error)
+        }
     });
 
 client.login(process.env['BOT_TOKEN']);
