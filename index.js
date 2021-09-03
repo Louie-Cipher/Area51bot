@@ -51,10 +51,10 @@ let invitesMap = new Discord.Collection();
 
 client.on('ready', async () => {
 
-    console.log('|    Comandos    |Status|');
+    console.log('|      Comandos      |Status|');
     client.commands.forEach(cmd => {
         console.log(
-            '\x1b[4m%s\x1b[0m', '| ' + cmd.name + ' '.repeat(15 - cmd.name.length) + '| ✅ |'
+            '\x1b[4m%s\x1b[0m', '| ' + cmd.name + (' '.repeat(20 - cmd.name.length)) + '| ✅ |'
         )
     });
     console.log(`\n|| ${client.user.tag} online! ||`);
