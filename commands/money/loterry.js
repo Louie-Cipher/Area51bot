@@ -3,8 +3,8 @@ const profileModel = require('../../mongoSchema/profile');
 const lotteryDB = require('../../mongoSchema/lottery');
 
 module.exports = {
-    name: 'rifa',
-    aliases: ['ticket', 'bilhete'],
+    name: 'loteria',
+    aliases: ['loterry'],
     description: "compra um bilhete da Rifa Intergaláctica",
 
     /** 
