@@ -61,10 +61,6 @@ module.exports = {
         try {
             lado = await interaction.options.get('lado', true).value;
         } catch (error) {
-            console.log(error);
-        }
-
-        if (!lado || lado == undefined) {
             lado = values[Math.floor(Math.random())]
         }
 
