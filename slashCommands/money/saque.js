@@ -52,15 +52,15 @@ module.exports = {
             .setTitle('Você não possui esse valor na carteira para sacar')
             .setDescription(`Você atualmente tem ${profileData.coins} stars na carteira, e ${profileData.bank} no banco`);
 
-        if (profileData.bank < valor) return message.reply({ embeds: [failEmbed] });
+        if (profileData.bank < value) return message.reply({ embeds: [failEmbed] });
 
         let profileUpdate = await profileModel.findOneAndUpdate(
             {
                 userID: message.author.id,
             }, {
             $inc: {
-                bank: -valor,
-                coins: valor
+                bank: -value,
+                coins: value
             },
             lastEditMoney: dateNow
         }
@@ -71,9 +71,9 @@ module.exports = {
             .setColor('#00ffff')
             .setTitle('Saque efetuado com sucesso')
             .addFields(
-                { name: 'valor', value: valor.toString() },
-                { name: 'valor atual na carteira', value: (profileData.coins + valor).toString() },
-                { name: 'saldo atual no banco', value: (profileData.bank - valor).toString() }
+                { name: 'valor', value: value.toString() },
+                { name: 'valor atual na carteira', value: (profileData.coins + value).toString() },
+                { name: 'saldo atual no banco', value: (profileData.bank - value).toString() }
             );
 
         interaction.editReply({ embeds: [embed] });
