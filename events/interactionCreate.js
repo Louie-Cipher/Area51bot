@@ -14,6 +14,8 @@ module.exports = async (client, interaction, slashCommands) => {
 
         let cmd = slashCommands.get(interaction.commandName);
 
+        if (!cmd) return interaction.editReply({content: 'Houve um erro ao executar esse comando'})
+
         try {
             cmd.execute(client, interaction);
         } catch (error) {
