@@ -29,10 +29,8 @@ module.exports = {
 
     async execute(client, interaction) {
 
-        let valueString = await interaction.options.get('valor', true);
+        let value = await interaction.options.get('valor', true).value;
 
-        let value = parseInt(valueString, 10);
-        
         let dateNow = new Date();
 
         if (!value || value === NaN || value < 1) return interaction.editReply({
@@ -55,13 +53,16 @@ module.exports = {
             }]
         });
 
-        let jogada = await interaction.options.get('jogadas', true);
+        let jogada = await interaction.options.get('jogadas', true).value;
 
         let values = ['pedra', 'papel', 'tesoura'];
         let emojis = ['🪨', '📃', '✂'];
 
         let user = values.lastIndexOf(jogada);
         let bot = Math.floor(Math.random() * 3);
+
+        console.log('---user value---')
+        console.log(user)
 
         let embed = new Discord.MessageEmbed()
             .setTitle('Pedra 🪨 papel 📃 tesoura ✂');
@@ -110,7 +111,7 @@ module.exports = {
 
         embed.setDescription(description + result)
 
-        interaction.editReply({ embeds: [embed] });
+        interaction.editReply({ embeds: [embed], ephemeral: false });
 
     }
 }
