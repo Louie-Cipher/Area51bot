@@ -29,6 +29,8 @@ module.exports = {
 
     async execute(client, interaction) {
 
+        await interaction.deferReply({ ephemeral: false })
+
         let value = await interaction.options.get('valor', true).value;
 
         let dateNow = new Date();
@@ -60,9 +62,6 @@ module.exports = {
 
         let user = values.lastIndexOf(jogada);
         let bot = Math.floor(Math.random() * 3);
-
-        console.log('---user value---')
-        console.log(user)
 
         let embed = new Discord.MessageEmbed()
             .setTitle('Pedra 🪨 papel 📃 tesoura ✂');
