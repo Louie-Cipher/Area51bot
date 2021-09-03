@@ -54,9 +54,13 @@ module.exports = {
             }]
         });
 
+        let values = ['cara', 'coroa'];
+
         let lado = await interaction.options.get('lado', true).value;
 
-        let values = ['cara', 'coroa'];
+        if (!lado || lado == undefined) {
+            lado = values[Math.floor(Math.random())]
+        }
 
         let user = values.lastIndexOf(lado);
         let bot = Math.floor(Math.random());
