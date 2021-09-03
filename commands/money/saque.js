@@ -91,9 +91,9 @@ module.exports = {
       .setColor('#00ffff')
       .setTitle('Saque efetuado com sucesso')
       .addFields(
-        { name: 'valor', value: valor, },
-        { name: 'valor atual na carteira', value: (profileData.coins + valor) },
-        { name: 'saldo atual no banco', value: (profileData.bank - valor) }
+        { name: 'valor', value: valor.toString(), },
+        { name: 'valor atual na carteira', value: (profileData.coins + valor).toString() },
+        { name: 'saldo atual no banco', value: (profileData.bank - valor).toString() }
       );
 
     message.reply({ embeds: [embed] });
