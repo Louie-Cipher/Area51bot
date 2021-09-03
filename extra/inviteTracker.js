@@ -5,7 +5,7 @@ module.exports = {
 
     /**
      * @param {Discord.Client} client
-     * @param {Discord.Member} member
+     * @param {Discord.GuildMember} member
      */
 
     async guildMemberAdd(client, member) {
@@ -45,19 +45,15 @@ module.exports = {
 
     },
 
-    /**
-     * @param {Discord.Invite} invite 
-     */
     async inviteDelete(client, invite) {
-        let { promisify } = require('util');
-        await promisify(setTimeout)(500);
+        await delay(500);
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
 
         invitesMap.delete(invite.code);
     },
 
-    /**
-     * @param {Discord.Invite} invite 
-     */
     async inviteCreate(client, invite) {
         invitesMap.set(invite.code, invite.uses)
     }
