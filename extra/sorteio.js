@@ -35,7 +35,12 @@ module.exports = {
 
         }
 
-        botChannel.updateOverwrite(guild.roles.everyone, { SEND_MESSAGES: false });
+        botChannel.permissionOverwrites.set([
+            {
+                id: message.guild.roles.everyone.id,
+                deny: [Discord.Permissions.FLAGS.SEND_MESSAGES],
+            },
+        ], 'anúncio do sorteio ');
 
         let premiadoID = users[Math.floor(Math.random() * users.length)];
 
@@ -71,7 +76,9 @@ module.exports = {
             }]
         });
 
-        botChannel.updateOverwrite(guild.roles.everyone, { SEND_MESSAGES: null });
+        botChannel.permissionOverwrites.edit(guild.roles.everyone, {
+            'SEND_MESSAGES': null
+        })
 
         let lotteryUpdate = await lotteryDB.findOneAndUpdate(
             { true: true },
