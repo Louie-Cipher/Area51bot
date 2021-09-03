@@ -29,8 +29,10 @@ module.exports = {
 
     async execute(client, interaction) {
 
-        let value = await interaction.options.get('valor', true);
+        let valueString = await interaction.options.get('valor', true);
 
+        let value = parseInt(valueString, 10);
+        
         let dateNow = new Date();
 
         if (!value || value === NaN || value < 1) return interaction.editReply({
