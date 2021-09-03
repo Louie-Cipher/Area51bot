@@ -31,7 +31,7 @@ module.exports = {
 
     let member = await message.guild.members.fetch(user.id);
 
-    if (member)
+    if (!member)
       return message.reply({
         embeds: [{
           title: `${user.tag}`, description: 'Usuário informado não é um membro do servidor Área 51'
