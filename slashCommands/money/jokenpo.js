@@ -31,6 +31,8 @@ module.exports = {
 
         let value = await interaction.options.get('valor', true);
 
+        let dateNow = new Date();
+
         if (!value || value === NaN || value < 1) return interaction.editReply({
             embeds: [{
                 color: '#ff5900',
