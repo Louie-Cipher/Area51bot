@@ -2,8 +2,8 @@ const Discord = require("discord.js")
 const profileModel = require('../../mongoSchema/profile');
 
 module.exports = {
-  name: 'jokenpo',
-  aliases: ['ppt', 'pedra', 'papel', 'tesoura'],
+  name: 'pedrapapeltesoura',
+  aliases: ['pedra', 'papel', 'tesoura'],
   description: "apostar suas estrelas no pedra papel tesoura",
 
   async execute(client, message, args) {
@@ -63,7 +63,7 @@ module.exports = {
     let result = '';
 
     if (user == bot) {
-      embed.setColor('#f3ff6e');
+      embed.setColor('YELLOW');
       result = '🤝 Empate. foi um bom jogo';
     }
     else if (
@@ -71,8 +71,8 @@ module.exports = {
       (values[user] == 'papel' && values[bot] == 'tesoura') ||
       (values[user] == 'tesoura' && values[bot] == 'pedra')
     ) {
-      embed.setColor('#b80000');
-      result = `😭 Sinto muito, você perdeu! Você perdeu ${value} estrelas`;
+      embed.setColor('RED');
+      result = `😭 Sinto muito, você perdeu! prejuízo de ${value} estrelas`;
 
       let profileUpdate = await profileModel.findOneAndUpdate({ userID: message.author.id },
         {
@@ -84,7 +84,7 @@ module.exports = {
       profileUpdate.save();
     }
     else {
-      embed.setColor('#00ff00')
+      embed.setColor('GREEN')
       result = `🎉 Parabéns, você venceu! E ganhou ${value} estrelas`
 
       let profileUpdate = await profileModel.findOneAndUpdate({ userID: message.author.id },
