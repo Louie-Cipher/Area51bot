@@ -18,26 +18,30 @@ module.exports = {
 
     async execute(client, message, args) {
 
-        if (message.author.id != process.env.louie) return message.channel.send({embed: {
-            color: '#ffff00',
-            title: 'Loteria intergaláctica',
-            description: 'Por questões de segurança do banco de dados e instabilidade, apenas a Louie pode executar essa função'
-        }});
+        if (message.author.id != process.env.louie) return message.channel.send({
+            embed: {
+                color: '#ffff00',
+                title: 'Loteria intergaláctica',
+                description: 'Por questões de segurança do banco de dados e instabilidade, apenas a Louie pode executar essa função'
+            }
+        });
 
         let botChannel = await client.channels.fetch('862354794323902474');
 
-        let lotteryData = await lotteryDB.findOne({true: true});
+        let lotteryData = await lotteryDB.findOne({ true: true });
 
         let users = lotteryData.users;
 
         if (!users || !users[0] || users.length == 0) {
 
-            let emptyMessage = await botChannel.send({embed: {
-                color: '#ffff00',
-                title: 'Loteria intergaláctica',
-                description: 'Não houve apostador na loteria intergalática hoje😕\n\nPara apostar na loteria intergaláctica, use a.loteria',
-                footer: { text: 'Cada bilhete custa 100 estrelas' }
-            }});
+            let emptyMessage = await botChannel.send({
+                embed: {
+                    color: '#ffff00',
+                    title: 'Loteria intergaláctica',
+                    description: 'Não houve apostador na loteria intergalática hoje😕\n\nPara apostar na loteria intergaláctica, use a.loteria',
+                    footer: { text: 'Cada bilhete custa 100 estrelas' }
+                }
+            });
 
             emptyMessage.pin();
 
@@ -49,7 +53,7 @@ module.exports = {
             'SEND_MESSAGES': false
         })
 
-        let premiadoID = users[Math.floor( Math.random() * users.length )];
+        let premiadoID = users[Math.floor(Math.random() * users.length)];
 
         let premiado = await client.users.fetch(premiadoID);
 
@@ -59,33 +63,37 @@ module.exports = {
             .setDescription(`🥁 Rufem os tambores 🥁\n\nO vencedor da Loteria intergaláctica de hoje é:`);
 
 
-        botChannel.send(firstEmbed);
+        botChannel.send({ embeds: [firstEmbed] });
 
         await delay(5000);
 
-        botChannel.send({content: `${premiado}`});
+        botChannel.send({ content: `${premiado}` });
 
-        let resultMsg = await botChannel.send({embed: {
-            color: '#ffff00',
-            title: '🎉 Parabéns ' + premiado.tag,
-            description: `🌟 Você ganhou ${(users.length * 150) + 5000} estrelas! 🌟`
-        }});
+        let resultMsg = await botChannel.send({
+            embeds: [{
+                color: '#ffff00',
+                title: '🎉 Parabéns ' + premiado.tag,
+                description: `🌟 Você ganhou ${(users.length * 150) + 5000} estrelas! 🌟`
+            }]
+        });
 
         resultMsg.pin();
 
         await delay(5000);
 
-        botChannel.send({embed: {
-            color: '#ffff00',
-            description: `Mais sorte na próxima vez aos demais **${users.length - 1}** apostadores de hoje`
-        }});
+        botChannel.send({
+            embeds: [{
+                color: '#ffff00',
+                description: `Mais sorte na próxima vez aos demais **${users.length - 1}** apostadores de hoje`
+            }]
+        });
 
         botChannel.permissionOverwrites.edit(message.guild.roles.everyone, {
             'SEND_MESSAGES': null
         })
 
         let lotteryUpdate = await lotteryDB.findOneAndUpdate(
-            {true: true},
+            { true: true },
             {
                 $push: { winners: premiadoID },
                 $pullAll: { users },
@@ -95,7 +103,7 @@ module.exports = {
         lotteryUpdate.save();
 
         let profileData = await profileModel.findOneAndUpdate(
-            {userID: premiado.id},
+            { userID: premiado.id },
             {
                 $inc: { bank: (users.length * 150) + 5000 },
                 lastEditMoney: Date.now()
