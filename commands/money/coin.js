@@ -68,9 +68,9 @@ module.exports = {
           title: 'Cara ou Coroa',
           description: 'Para aceitar, clique no emoji ✨ abaixo',
           fields: [
-            { name: 'Jogador N°1', value: player1 },
-            { name: 'Jogador N°2', value: player2 },
-            { name: 'Valor', value: valor }
+            { name: 'Jogador N°1', value: player1.toString() },
+            { name: 'Jogador N°2', value: player2.toString() },
+            { name: 'Valor', value: valor.toString() }
           ]
         }]
       })
@@ -119,6 +119,7 @@ module.exports = {
           lastEditMoney: Date.now()
         }
         );
+        profileUpdate1.save();
 
       }
 
