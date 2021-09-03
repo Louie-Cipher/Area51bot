@@ -52,11 +52,11 @@ module.exports = {
             .setTitle('Você não possui esse valor na carteira para sacar')
             .setDescription(`Você atualmente tem ${profileData.coins} stars na carteira, e ${profileData.bank} no banco`);
 
-        if (profileData.bank < value) return message.reply({ embeds: [failEmbed] });
+        if (profileData.bank < value) return interaction.editReply({ embeds: [failEmbed] });
 
         let profileUpdate = await profileModel.findOneAndUpdate(
             {
-                userID: message.author.id,
+                userID: interaction.user.id,
             }, {
             $inc: {
                 bank: -value,
