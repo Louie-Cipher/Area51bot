@@ -5,17 +5,23 @@ module.exports = {
   aliases: ['user'],
   description: "exibe informações sobre sua conta, ou do usuário mencionado",
 
+  /**
+   * @param {Discord.Client} client 
+   * @param {Discord.Message} message 
+   * @param {String[]} args 
+   */
+
   async execute(client, message, args) {
 
     let user = message.mentions.users.first() || client.users.cache.get(args[0]);
 
-    if(!user && args[0]) return message.channel.send(`Usuário "${args[0]}" não encontrado`);
+    if (!user && args[0]) return message.channel.send(`Usuário "${args[0]}" não encontrado`);
 
-    if(!user) user = message.author;
+    if (!user) user = message.author;
 
     let member = await message.guild.members.cache.get(user.id);
 
-    let avatar = user.avatarURL({ dynamic: true, format: "png"});
+    let avatar = user.avatarURL({ dynamic: true, format: "png" });
 
     const dateNow = new Date();
 
@@ -38,33 +44,33 @@ module.exports = {
     let userTimeFormated = 'há';
     let u = 0;
     if (userTime.getFullYear() - 1970 != 0) {
-        u++
-        userTimeFormated += ` ${userTime.getFullYear() - 1970} ano`;
-        if (userTime.getFullYear() - 1970 > 1) { userTimeFormated += 's' }
-      }
-      if (userTime.getMonth() != 0) {
-        if (u>0) {{ userTimeFormated += ',' }}
-        u++
-        userTimeFormated += ` ${userTime.getMonth()} mes`;
-        if (userTime.getMonth() > 1) { userTimeFormated += 'es' }
-      }
-      if (userTime.getDate() != 0) {
-        if (u>0) {{ userTimeFormated += ',' }}
-        u++
-        userTimeFormated += ` ${userTime.getDate()} dia`;
-        if (userTime.getDate() > 1) { userTimeFormated += 's' }
-      }
-      if (userTime.getHours() != 0) {
-        if (u>0) {{ userTimeFormated += ',' }}
-        u++
-        userTimeFormated += ` ${userTime.getHours()} hora`;
-        if (userTime.getHours() > 1) { userTimeFormated += 's' }
-      }
-      if (userTime.getMinutes() != 0) {
-        if (u>0) {{ userTimeFormated += ',' }}
-        userTimeFormated += ` ${userTime.getMinutes()} minuto`;
-        if (userTime.getMinutes() > 1) { userTimeFormated += 's' }
-      }
+      u++
+      userTimeFormated += ` ${userTime.getFullYear() - 1970} ano`;
+      if (userTime.getFullYear() - 1970 > 1) { userTimeFormated += 's' }
+    }
+    if (userTime.getMonth() != 0) {
+      if (u > 0) { { userTimeFormated += ',' } }
+      u++
+      userTimeFormated += ` ${userTime.getMonth()} mes`;
+      if (userTime.getMonth() > 1) { userTimeFormated += 'es' }
+    }
+    if (userTime.getDate() != 0) {
+      if (u > 0) { { userTimeFormated += ',' } }
+      u++
+      userTimeFormated += ` ${userTime.getDate()} dia`;
+      if (userTime.getDate() > 1) { userTimeFormated += 's' }
+    }
+    if (userTime.getHours() != 0) {
+      if (u > 0) { { userTimeFormated += ',' } }
+      u++
+      userTimeFormated += ` ${userTime.getHours()} hora`;
+      if (userTime.getHours() > 1) { userTimeFormated += 's' }
+    }
+    if (userTime.getMinutes() != 0) {
+      if (u > 0) { { userTimeFormated += ',' } }
+      userTimeFormated += ` ${userTime.getMinutes()} minuto`;
+      if (userTime.getMinutes() > 1) { userTimeFormated += 's' }
+    }
 
     let embed = new Discord.MessageEmbed()
       .setColor('#008f81')
@@ -73,7 +79,7 @@ module.exports = {
       .setThumbnail(avatar)
       .setFooter('(Data e hora em GMT -3 | horário de Brasília)')
       .addFields(
-        {name: '🆔 Discord ID', value: `${user.id}`, inline: true},
+        { name: '🆔 Discord ID', value: `${user.id}`, inline: true },
         {
           name: '📅 Conta criada em',
           value: `${userCreatedFormated} \n${userTimeFormated}`,
@@ -81,7 +87,7 @@ module.exports = {
         }
       );
 
-    if(member){
+    if (member) {
 
       //member = await message.guild.members.fetch(user);
 
@@ -109,25 +115,25 @@ module.exports = {
         if (memberTime.getFullYear() - 1970 > 1) { memberTimeFormated += 's' }
       }
       if (memberTime.getMonth() != 0) {
-        if (m>0) {{ memberTimeFormated += ',' }}
+        if (m > 0) { { memberTimeFormated += ',' } }
         m++
         memberTimeFormated += ` ${memberTime.getMonth()} mes`;
         if (memberTime.getMonth() > 1) { memberTimeFormated += 'es' }
       }
       if (memberTime.getDate() != 0) {
-        if (m>0) {{ memberTimeFormated += ',' }}
+        if (m > 0) { { memberTimeFormated += ',' } }
         m++
         memberTimeFormated += ` ${memberTime.getDate()} dia`;
         if (memberTime.getDate() > 1) { memberTimeFormated += 's' }
       }
       if (memberTime.getHours() != 0) {
-        if (m>0) {{ memberTimeFormated += ',' }}
+        if (m > 0) { { memberTimeFormated += ',' } }
         m++
         memberTimeFormated += ` ${memberTime.getHours()} hora`;
         if (memberTime.getHours() > 1) { memberTimeFormated += 's' }
       }
       if (memberTime.getMinutes() != 0) {
-        if (m>0) {{ memberTimeFormated += ',' }}
+        if (m > 0) { { memberTimeFormated += ',' } }
         memberTimeFormated += ` ${memberTime.getMinutes()} minuto`;
         if (memberTime.getMinutes() > 1) { memberTimeFormated += 's' }
       }
@@ -138,7 +144,7 @@ module.exports = {
           value: `${memberJoinedFormated} \n${memberTimeFormated}`
         })
 
-      if(member.premiumSince) {
+      if (member.premiumSince) {
 
         const premiumSince = new Date(member.premiumSince.getTime() - 10800000)
 
@@ -153,19 +159,19 @@ module.exports = {
         }
 
         embed.addFields(
-          {name: '<a:o_booster:862157168086220810> impulsionando o servidor desde', value: `${memberBoosted.day}/${memberBoosted.month}/${memberBoosted.year} - ${memberBoosted.hour}:${memberBoosted.minute}` }
+          { name: '<a:o_booster:862157168086220810> impulsionando o servidor desde', value: `${memberBoosted.day}/${memberBoosted.month}/${memberBoosted.year} - ${memberBoosted.hour}:${memberBoosted.minute}` }
         )
       }
 
-      if (member.nickname){
+      if (member.nickname) {
         embed.addFields(
-        {
-          name: 'nickname no servidor', value: member.nickname
-        })
+          {
+            name: 'nickname no servidor', value: member.nickname
+          })
       }
     }
 
-    message.channel.send(embed);
+    message.reply({ embeds: [embed] });
 
   }
 }

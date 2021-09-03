@@ -7,6 +7,12 @@ module.exports = {
   aliases: ['ajuda', 'commands', 'comandos', 'cmds', 'info'],
   description: "mostra todos os meus comandos e a descrição deles, ou seja, esse comando 😉 (quebra da 4° parede?)",
 
+  /**
+   * @param {Discord.Client} client 
+   * @param {Discord.Message} message 
+   * @param {String[]} args 
+   */
+
   async execute(client, message, args) {
 
     const funNames = ['fun', 'diversão', 'jogos', 'games', 'game'];
@@ -25,7 +31,7 @@ module.exports = {
     var moneyCommands = fs.readdirSync(`./commands/money`);
     var musicCommands = fs.readdirSync(`./commands/music`);
 
-    if (!args[0] || ( !funNames.includes(args[0]) && !geralNames.includes(args[0]) && !imagesNames.includes(args[0]) && !modNames.includes(args[0]) && !moneyNames.includes(args[0]) && !musicNames.includes(args[0]) ) ) {
+    if (!args[0] || (!funNames.includes(args[0]) && !geralNames.includes(args[0]) && !imagesNames.includes(args[0]) && !modNames.includes(args[0]) && !moneyNames.includes(args[0]) && !musicNames.includes(args[0]))) {
 
       embed
         .setTitle('👽 Olá, eu sou o Area51Bot')
@@ -61,14 +67,14 @@ module.exports = {
             value: '` ou: "money", "dinheiro", "estrelas", "stars"`\ncomandos de gerenciamento das suas Estrelas, as moedas do bot',
             inline: true
           }
-      );
+        );
 
-      if(message.member.permissions.has('MUTE_MEMBERS')){
+      if (message.member.permissions.has('MUTE_MEMBERS')) {
         embed.addFields({
-            name: 'Moderação',
-            value: '` ou: "mod", "admin", "adm"`\ncomandos para organização e controle do servidor e seus membros',
-            inline: true
-          })
+          name: 'Moderação',
+          value: '` ou: "mod", "admin", "adm"`\ncomandos para organização e controle do servidor e seus membros',
+          inline: true
+        })
       }
 
     }
@@ -86,9 +92,9 @@ module.exports = {
       }
     };*/
 
-    if (geralNames.includes(args[0]) ) {
+    if (geralNames.includes(args[0])) {
       embed.setTitle('Comandos gerais');
-      embed.addFields({name: '\u200b', value: 'ccomandos diversos e utilidades\n'});
+      embed.addFields({ name: '\u200b', value: 'comandos diversos e utilidades\n' });
       const geralCommands = fs.readdirSync(`./commands/geral`);
       for (const file of geralCommands) {
         var cmd = require(`../geral/${file}`);
@@ -99,9 +105,9 @@ module.exports = {
       }
     };
 
-    if (imagesNames.includes(args[0]) ) {
+    if (imagesNames.includes(args[0])) {
       embed.setTitle('Comandos de imagens');
-      embed.addFields({name: '\u200b', value: 'comandos de geração de memes ou outros comandos relacionados a imagens\n'});
+      embed.addFields({ name: '\u200b', value: 'comandos de geração de memes ou outros comandos relacionados a imagens\n' });
       const imagesCommands = fs.readdirSync(`./commands/images`);
       for (const file of imagesCommands) {
         var cmd = require(`../images/${file}`);
@@ -112,9 +118,9 @@ module.exports = {
       }
     };
 
-    if (modNames.includes(args[0] && message.member.permissions.has('MUTE_MEMBERS')) ) {
+    if (modNames.includes(args[0] && message.member.permissions.has('MUTE_MEMBERS'))) {
       embed.setTitle('Comandos de moderação');
-      embed.addFields({name: '\u200b', value: 'comandos para organização e controle do servidor e seus membros\n'});
+      embed.addFields({ name: '\u200b', value: 'comandos para organização e controle do servidor e seus membros\n' });
       const modCommands = fs.readdirSync(`./commands/mod`);
       for (const file of modCommands) {
         var cmd = require(`../mod/${file}`);
@@ -125,9 +131,9 @@ module.exports = {
       }
     };
 
-    if (moneyNames.includes(args[0]) ) {
+    if (moneyNames.includes(args[0])) {
       embed.setTitle('Comandos de economia');
-      embed.addFields({name: '\u200b', value: 'comandos de gerenciamento das suas Estrelas, as moedas do bot\n'});
+      embed.addFields({ name: '\u200b', value: 'comandos de gerenciamento das suas Estrelas, as moedas do bot\n' });
       const moneyCommands = fs.readdirSync(`./commands/money`);
       for (const file of moneyCommands) {
         var cmd = require(`../money/${file}`);
@@ -138,9 +144,9 @@ module.exports = {
       }
     };
 
-    if (musicNames.includes(args[0]) ) {
+    if (musicNames.includes(args[0])) {
       embed.setTitle('Comandos de música');
-      embed.addFields({name: '\u200b', value: 'comandos da reprodução de música\n'});
+      embed.addFields({ name: '\u200b', value: 'comandos da reprodução de música\n' });
       const musicCommands = fs.readdirSync(`./commands/music`);
       for (const file of musicCommands) {
         var cmd = require(`../music/${file}`);
@@ -151,7 +157,7 @@ module.exports = {
       }
     };
 
-    message.channel.send(embed);
+    message.reply({ embeds: [embed] });
 
 
   }
