@@ -6,18 +6,18 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('jokenpo')
         .setDescription('joga uma partida de pedra papel tesoura')
-        .addStringOption(option => 
+        .addStringOption(option =>
             option.setName('jogadas')
-            .setDescription('a jogada que você deseja fazer')
-            .setRequired(true)
-            .addChoice('pedra', 'pedra')
-            .addChoice('papel', 'papel')
-            .addChoice('tesoura', 'tesoura')
+                .setDescription('a jogada que você deseja fazer')
+                .setRequired(true)
+                .addChoice('pedra', 'pedra')
+                .addChoice('papel', 'papel')
+                .addChoice('tesoura', 'tesoura')
         )
-        .addIntegerOption(option => 
+        .addIntegerOption(option =>
             option.setName('valor')
-            .setDescription('o valor que deseja apostar')
-            .setRequired(true)
+                .setDescription('o valor que deseja apostar')
+                .setRequired(true)
         ),
 
 
@@ -58,6 +58,9 @@ module.exports = {
 
         let user = values.lastIndexOf(jogada);
         let bot = Math.floor(Math.random() * 3);
+
+        let embed = new Discord.MessageEmbed()
+            .setTitle('Pedra 🪨 papel 📃 tesoura ✂');
 
         let description =
             `Você jogou: *${values[user]}* ${emojis[user]}\n Eu joguei: *${values[bot]}* ${emojis[bot]}\n\n`;
