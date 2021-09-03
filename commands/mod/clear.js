@@ -29,9 +29,8 @@ module.exports = {
       message.reply({ content: `❌ Não foi possível deletar mensagens devido a: \`${error}\`` })
     }
 
-    const msg = await message.reply({ content: `🗑️ | **${args[0]} mensagens limpas nesse chat!\n  por: ${message.author}**` })
-
-    setTimeout(() => {
+    const msg = await message.channel.send({ content: `🗑️ | **${args[0]} mensagens limpas nesse chat!\n  por: ${message.author}**` })
+    setTimeout( async () => {
       msg.delete()
     }, 5000)
 
