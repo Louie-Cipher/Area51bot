@@ -45,7 +45,9 @@ module.exports = {
 
         }
 
-        botChannel.updateOverwrite(message.guild.roles.everyone, { SEND_MESSAGES: false });
+        botChannel.permissionOverwrites.edit(guild.roles.everyone, {
+            'SEND_MESSAGES': false
+        })
 
         let premiadoID = users[Math.floor( Math.random() * users.length )];
 
@@ -78,7 +80,9 @@ module.exports = {
             description: `Mais sorte na próxima vez aos demais **${users.length - 1}** apostadores de hoje`
         }});
 
-        botChannel.updateOverwrite(message.guild.roles.everyone, { SEND_MESSAGES: null });
+        botChannel.permissionOverwrites.edit(guild.roles.everyone, {
+            'SEND_MESSAGES': null
+        })
 
         let lotteryUpdate = await lotteryDB.findOneAndUpdate(
             {true: true},
