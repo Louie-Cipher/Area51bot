@@ -18,7 +18,7 @@ client.player = new Player(client, {
 });
 
 try {
-    require('./playerEvents')(player);
+    require('./playerEvents')(client.player);
 }
 catch (error) {
     console.error(error)
