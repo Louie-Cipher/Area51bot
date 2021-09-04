@@ -3,7 +3,8 @@ const profileModel = require('../mongoSchema/profile');
 const { prefix, commandChannels } = require('../config.json');
 const embeds = require('../embeds');
 
-let cooldown = new Map();
+let cooldownXP = new Map();
+let cooldownCommands = new Map();
 
 /**
  * @param {Discord.Client} client 
@@ -21,7 +22,7 @@ module.exports = async (client, message, commands) => {
 
   let dateNow = new Date();
 
-  if (!cooldown.has(message.author.id)) {
+  if (!cooldownXP.has(message.author.id)) {
 
     try {
       let profileData = await profileModel.findOne({ userID: message.author.id });
@@ -67,10 +68,10 @@ module.exports = async (client, message, commands) => {
   }
   else {
 
-    cooldown.set(message.author.id, dateNow);
+    cooldownXP.set(message.author.id, dateNow);
 
     setTimeout(() => {
-      cooldown.delete(message.author.id);
+      cooldownXP.delete(message.author.id);
     }, 1000 * 15);
   }
 
@@ -114,9 +115,9 @@ module.exports = async (client, message, commands) => {
 
   if (!cmd) return message.reply({ content: `\`${cmdName}\` não é um comando válido.` });
 
-  if (cooldown.has(message.author.id) && (dateNow.getTime() - cooldown.get(message.author.id).getTime()) < 4000) {
+  if (cooldownCommands.has(message.author.id)) {
 
-    let nextCmd = new Date(cooldown.get(message.author.id).getTime() + 4000)
+    let nextCmd = new Date(cooldownCommands.get(message.author.id).getTime() + 4000)
     let timeLeft = new Date(nextCmd.getTime() - dateNow.getTime());
 
     let timeLeftFormated = '';
@@ -128,6 +129,12 @@ module.exports = async (client, message, commands) => {
 
     return message.reply({ content: `Epa, você está usando comandos muito rápido!\nTente novamente em ${timeLeftFormated}` });
 
+  } else {
+    cooldownCommands.set(message.author.id, dateNow);
+
+    setTimeout(() => {
+      cooldownCommands.delete(message.author.id);
+    }, 1000 * 4);
   }
 
   if (message.guild) {
