@@ -72,8 +72,8 @@ module.exports = {
             .setTitle('Depósito efetuado com sucesso')
             .addFields(
                 { name: 'valor', value: value.toString() },
-                { name: 'valor atual na carteira', value: (profileData.coins + value).toString() },
-                { name: 'saldo atual no banco', value: (profileData.bank - value).toString() }
+                { name: 'valor atual na carteira', value: (profileData.coins - value).toString() },
+                { name: 'saldo atual no banco', value: (profileData.bank + value).toString() }
             );
 
         interaction.editReply({ embeds: [embed] });
