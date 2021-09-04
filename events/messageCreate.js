@@ -8,9 +8,10 @@ let cooldown = new Map();
 /**
  * @param {Discord.Client} client 
  * @param {Discord.Message} message 
+ * @param {Discord.Collection} commands
  */
 
-module.exports = async (client, message) => {
+module.exports = async (client, message, commands) => {
 
   if (message.author.id == '297153970613387264' && message.embeds) {
     require('../extra/loritta').trigger(client, message)
@@ -20,7 +21,7 @@ module.exports = async (client, message) => {
 
   let dateNow = new Date();
 
-  if (cooldown.has(message.author.id))
+  if (!cooldown.has(message.author.id)) {
 
     try {
       let profileData = await profileModel.findOne({ userID: message.author.id });
@@ -43,28 +44,26 @@ module.exports = async (client, message) => {
 
         // ----AUMENTAR XP ----//
 
-      } else if (profileData) {
+      } else {
 
-        let randomXP = Math.floor(Math.random() * 2) + 2;
-        let cooldownXP = new Date(dateNow.getTime() - profileData.lastEditXP.getTime())
+        let randomXP = Math.ceil(Math.random() * 2) + 2;
 
-        if (cooldownXP.getSeconds() > 15) {
-
-          let xpToAdd = await profileModel.findOneAndUpdate(
-            {
-              userID: message.author.id,
-            }, {
-            $inc: { chatXP: randomXP },
-            lastEditXP: Date.now()
-          }
-          );
-          xpToAdd.save()
+        let xpToAdd = await profileModel.findOneAndUpdate(
+          {
+            userID: message.author.id,
+          }, {
+          $inc: { chatXP: randomXP },
+          lastEditXP: Date.now()
         }
+        );
+        xpToAdd.save()
 
       }
+
     } catch (erro) {
       console.log(erro)
     }
+  }
 
 
   if (message.guild) {
@@ -77,7 +76,7 @@ module.exports = async (client, message) => {
   const msgContent = message.content.toLowerCase();
 
   if (msgContent == (`<@${client.user.id}>`) || msgContent == (`<@!${client.user.id}>`)) {
-    message.reply({embeds: [embeds.botHello]});
+    message.reply({ embeds: [embeds.botHello] });
   }
   if (msgContent == 'bom dia' && !message.author.bot)
     return message.reply({ content: 'Bom dia humano' });
@@ -99,38 +98,39 @@ module.exports = async (client, message) => {
 
   if (!cmdName || cmdName.length == 0) {
     cmdName = args[0];
-    let emptyCmdName = args.shift();
+    args.shift();
   }
 
-  const cmd = client.commands.get(cmdName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(cmdName));
+  const cmd = commands.get(cmdName) || commands.find(cmd => cmd.aliases && cmd.aliases.includes(cmdName));
 
-  if (!cmd) return message.reply({content: `\`${cmdName}\` não é um comando válido.`});
+  if (!cmd) return message.reply({ content: `\`${cmdName}\` não é um comando válido.` });
 
-  if (cooldown.has(message.author.id)) {
+  if (cooldown.has(message.author.id && (dateNow.getTime() - cooldown.get(message.author.id).getTime()) < 4000)) {
 
     let nextCmd = new Date(cooldown.get(message.author.id).getTime() + 4000)
-    let timeLeft = new Date(nextCmd.getTime() - dateNow.getTime())
+    let timeLeft = new Date(nextCmd.getTime() - dateNow.getTime());
+
     let timeLeftFormated = '';
     if (timeLeft.getSeconds() == 0) { timeLeft = 'alguns milissegundos' }
-    else { 
-      timeLeftFormated = timeLeft.getSeconds() + ' segundo';
+    else {
+      timeLeftFormated = timeLeft.getSeconds().toString() + ' segundo';
       if (timeLeft.getSeconds() > 1) timeLeftFormated += 's';
     }
 
-    return message.reply({content: `Epa, você está usando comandos muito rápido!\nTente novamente em ${timeLeftFormated}`});
+    return message.reply({ content: `Epa, você está usando comandos muito rápido!\nTente novamente em ${timeLeftFormated}` });
 
-  } else {
+  } else if (!cooldown.has(message.author.id)) {
 
     cooldown.set(message.author.id, dateNow);
 
     setTimeout(() => {
       cooldown.delete(message.author.id);
-    }, 4000);
+    }, 1000 * 15);
   }
 
   if (message.guild) {
 
-    let clientMember = await message.guild.members.cache.get(client.user.id)
+    let clientMember = message.guild.me;
 
     if (!commandChannels.includes(message.channel.id) && !message.member.permissions.has('MANAGE_MESSAGES'))
       return message.reply({ embeds: [embeds.blockedCommands] });
@@ -145,28 +145,28 @@ module.exports = async (client, message) => {
 
     if (cmd.botPermissions) {
       if (!clientMember.permissions.has(cmd.botPermissions))
-        return message.reply({embeds: [embeds.botPermission]});
+        return message.reply({ embeds: [embeds.botPermission] });
     }
 
     if (cmd.nsfw && !message.channel.nsfw)
       return message.reply({ embeds: [embeds.nsfw] });
 
     if (cmd.inVoiceChannel) {
-      if (!message.member.voice.channel) return message.reply({embeds: [embeds.inVoiceChannel]});
+      if (!message.member.voice.channel) return message.reply({ embeds: [embeds.inVoiceChannel] });
       if (clientMember.voice.channel) {
-        if (clientMember.voice.channel.id != message.member.voice.channel.id) return message.reply({embeds: [embeds.sameVoiceChannel]});
+        if (clientMember.voice.channel.id != message.member.voice.channel.id) return message.reply({ embeds: [embeds.sameVoiceChannel] });
       }
     }
   }
   else {
-    if (!cmd.dmAllow) return message.reply({content: '❌ Esse comando só pode ser utilizado dentro do servidor\n Atualmente, os unicos comandos disponíveis via DM são os comando `a.cupido`, `a.hate`, `a.desabafo`'})
+    if (!cmd.dmAllow) return message.reply({ content: '❌ Esse comando só pode ser utilizado dentro do servidor\n Atualmente, os unicos comandos disponíveis via DM são os comando `a.cupido`, `a.hate`, `a.desabafo`' })
   }
 
 
   try {
     cmd.execute(client, message, args);
   } catch (err) {
-    message.reply({content: 'houve um erro ao executar esse comando'});
+    message.reply({ content: 'houve um erro ao executar esse comando' });
     console.log(err);
   }
 

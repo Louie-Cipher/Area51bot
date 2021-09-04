@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const {Player} = require('discord-player');
+const { Player } = require('discord-player');
 const fs = require('fs');
 require('dotenv').config();
 const lotteryDB = require('./mongoSchema/lottery');
@@ -16,11 +16,21 @@ const player = new Player(client, {
     leaveOnEmptyCooldown: 60 * 1000,
     autoSelfDeaf: true
 });
+try {
+    require('./playerEvents')(player);
+}
+catch (error) {
+    console.error(error)
+}
 
-require('./playerEvents')(player);
-require('./mongoose').init();
+try {
+    require('./mongoose').init();
+}
+catch (error) {
+console.error(error)
+}
 
-client.commands = new Discord.Collection();
+let commands = new Discord.Collection();
 
 const mainCommandsFolder = fs.readdirSync('./commands');
 
@@ -30,7 +40,7 @@ for (const subFolder of mainCommandsFolder) {
 
     for (const file of categoryFolder) {
         let cmd = require(`./commands/${subFolder}/${file}`);
-        client.commands.set(cmd.name, cmd);
+        commands.set(cmd.name, cmd);
     }
 };
 
@@ -53,7 +63,7 @@ let invitesMap = new Discord.Collection();
 client.on('ready', async () => {
 
     console.log('|      Comandos      |Status|');
-    client.commands.forEach(cmd => {
+    commands.forEach(cmd => {
         console.log(
             '\x1b[4m%s\x1b[0m', '| ' + cmd.name + (' '.repeat(20 - cmd.name.length)) + '| ✅ |'
         )
@@ -72,7 +82,7 @@ client.on('ready', async () => {
 
     await guild.commands.fetch();
 
-    
+
 
     const activities = [
         `Utilize ${prefix}help para uma lista com meus comandos (ou pergunte à Louie)`,
@@ -120,7 +130,7 @@ client.on('ready', async () => {
 client
     .on('messageCreate', async message => {
         try {
-            require('./events/messageCreate')(client, message);
+            require('./events/messageCreate')(client, message, commands);
         } catch (error) {
             console.error(error)
         }
@@ -166,6 +176,9 @@ client
         } catch (error) {
             console.error(error)
         }
+    })
+    .on('error', async error => {
+        console.error(error)
     });
 
 client.login(process.env['BOT_TOKEN']);
