@@ -46,7 +46,7 @@ module.exports = {
 
         if (!profileData) return interaction.editReply({ content: 'Houve um erro de comunicação com o banco de dados. por favor, tente novamente mais tarde' });
 
-        if (value > profileData.coins || profileData.coins - value < 0) return message.reply({
+        if (value > profileData.coins || profileData.coins - value < 0) return interaction.editReply({
             embeds: [{
                 color: '#ff5900',
                 title: 'Você não possui esse valor para apostar',
