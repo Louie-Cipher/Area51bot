@@ -105,7 +105,7 @@ module.exports = async (client, message, commands) => {
 
   if (!cmd) return message.reply({ content: `\`${cmdName}\` não é um comando válido.` });
 
-  if (cooldown.has(message.author.id && (dateNow.getTime() - cooldown.get(message.author.id).getTime()) < 4000)) {
+  if (cooldown.has(message.author.id) && (dateNow.getTime() - cooldown.get(message.author.id).getTime()) < 4000) {
 
     let nextCmd = new Date(cooldown.get(message.author.id).getTime() + 4000)
     let timeLeft = new Date(nextCmd.getTime() - dateNow.getTime());
