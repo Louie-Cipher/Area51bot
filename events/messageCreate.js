@@ -63,6 +63,15 @@ module.exports = async (client, message, commands) => {
     } catch (erro) {
       console.log(erro)
     }
+
+  }
+  else {
+
+    cooldown.set(message.author.id, dateNow);
+
+    setTimeout(() => {
+      cooldown.delete(message.author.id);
+    }, 1000 * 15);
   }
 
 
@@ -119,13 +128,6 @@ module.exports = async (client, message, commands) => {
 
     return message.reply({ content: `Epa, você está usando comandos muito rápido!\nTente novamente em ${timeLeftFormated}` });
 
-  } else if (!cooldown.has(message.author.id)) {
-
-    cooldown.set(message.author.id, dateNow);
-
-    setTimeout(() => {
-      cooldown.delete(message.author.id);
-    }, 1000 * 15);
   }
 
   if (message.guild) {
