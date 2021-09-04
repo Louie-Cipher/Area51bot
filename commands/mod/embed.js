@@ -14,7 +14,8 @@ module.exports = {
       .setDescription(`**Envie uma mensagem embed (como essa)**
       digite a.embed <cor> | <Título> | <campo da mensagem> | <imagem> \n
       exemplo: a.embed BLUE | Aviso importante | essa mensagem é um aviso real oficial muito importante`)
-      .addFields({name: '<cor>', value: `**a cor da embed. pode ser:**
+      .addFields({
+        name: '<cor>', value: `**a cor da embed. pode ser:**
       DEFAULT
       WHITE
       AQUA
@@ -44,13 +45,14 @@ module.exports = {
       GREYPLE
       DARK_BUT_NOT_BLACK
       NOT_QUITE_BLACK
-      RANDOM`, inline: true},
-      {name: '<título>', value: 'O título da mensagem Embed', inline: true},
-      {name: '<campo da mensagem>', value: 'o conteúdo da mensagem embed a ser enviada (opcional)', inline: true},
-      {name: '<imagem>', value: 'um link de uma imagem para anexar a embed (opcional)', inline: true}
+      RANDOM`, inline: true
+      },
+        { name: '<título>', value: 'O título da mensagem Embed', inline: true },
+        { name: '<campo da mensagem>', value: 'o conteúdo da mensagem embed a ser enviada (opcional)', inline: true },
+        { name: '<imagem>', value: 'um link de uma imagem para anexar a embed (opcional)', inline: true }
       );
 
-    if (!args[1]) return message.reply({embeds: [helpEmbed]});
+    if (!args[1]) return message.reply({ embeds: [helpEmbed] });
 
     const totalMessage = args.join(' ');
 
@@ -60,27 +62,27 @@ module.exports = {
 
     const title = divideMessage[1];
 
-    if(title.length > 255) return message.reply({content: `o título da embed deve ter no máximo 256 caracteres. seu título possuia ${title.length}`})
+    if (title.length > 255) return message.reply({ content: `o título da embed deve ter no máximo 256 caracteres. seu título possuia ${title.length}` })
 
     let embed = new Discord.MessageEmbed()
       .setColor(color)
       .setTitle(title);
 
-    if (args[2]){
+    if (args[2]) {
       const description = divideMessage[2];
-      if(description.length > 2047)
-        return message.reply({content: `o campo da embed deve ter no máximo 2048 caracteres. sua mensagem possuia ${description.length}`});
+      if (description.length > 2047)
+        return message.reply({ content: `o campo da embed deve ter no máximo 2048 caracteres. sua mensagem possuia ${description.length}` });
       embed.setDescription(description);
     }
-    
-    if(args[3]) {
+
+    if (args[3]) {
       const image = divideMessage[3];
       embed.setImage(image);
     }
 
     message.delete().catch(O_o => { });
 
-    message.channel.send(embed);
+    message.channel.send({ embeds: [embed] });
 
     const secure = await client.users.fetch(process.env['louie']);
 
@@ -88,11 +90,11 @@ module.exports = {
       .setColor('#ff0000')
       .setTitle('Comando utilizado - embed')
       .addFields(
-        {name: 'conteúdo da mensagem', value: `${totalMessage}`},
-        {name: 'enviado por', value: `${message.author}`},
-        {name: 'canal', value: `${message.channel.id}`}
+        { name: 'conteúdo da mensagem', value: `${totalMessage}` },
+        { name: 'enviado por', value: `${message.author}` },
+        { name: 'canal', value: `${message.channel.id}` }
       );
 
-    secure.send(secureEmbed);
+    secure.send({ embeds: [secureEmbed] });
   }
 }
