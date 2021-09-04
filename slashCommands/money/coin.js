@@ -59,12 +59,12 @@ module.exports = {
         let lado;
 
         try {
-            lado = await interaction.options.get('lado', true).value;
+            lado = await interaction.options.getString('lado', false);
         } catch (error) {
             lado = values[Math.floor(Math.random())]
         }
 
-        let user = values.lastIndexOf(lado);
+        let user = values.indexOf(lado);
         let bot = Math.floor(Math.random());
 
         let embed = new Discord.MessageEmbed()
