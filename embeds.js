@@ -34,11 +34,11 @@ module.exports = {
 
   async userPermission(client, message, cmd) {
     const userPermission = new Discord.MessageEmbed()
-      .setColor('#ff0000')
+      .setColor('RED')
       .setTitle('Você é fraco, lhe falta permissão para usar esse comando')
       .setThumbnail('https://i.imgur.com/HMbty0g.jpeg')
       .setFooter(`para usar esse comando, é necessário a permissão "${cmd.userPermissions}"`);
-    message.channel.send(`${message.author}`, userPermission);
+    message.reply({embeds: [userPermission]});
   },
 
   botPermission: new Discord.MessageEmbed()
