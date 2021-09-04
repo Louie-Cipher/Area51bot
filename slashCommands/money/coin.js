@@ -58,11 +58,11 @@ module.exports = {
 
         let lado = await interaction.options.getString('lado', false);
 
-        if (!lado || lado === undefined) lado = values[Math.floor(Math.random())]
+        if (!lado || lado === undefined) lado = values[Math.floor(Math.random() * 2)]
 
 
         let user = values.indexOf(lado);
-        let bot = Math.floor(Math.random());
+        let bot = Math.floor(Math.random() * 2);
 
         let embed = new Discord.MessageEmbed()
             .setTitle('Cara ou coroa');
