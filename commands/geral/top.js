@@ -21,7 +21,7 @@ module.exports = {
 
     let description = '';
     
-    if (['dinheiro', 'money', 'star', 'stars', 'estrela', 'estrelas'].includes(args[0].toLowerCase())) {
+    if (args[0] && ['dinheiro', 'money', 'star', 'stars', 'estrela', 'estrelas'].includes(args[0].toLowerCase())) {
 
       embed.setDescription('Rank de estrelas');
 
@@ -44,7 +44,7 @@ module.exports = {
 
       })
     }
-    else if (['carteira', 'wallet'].includes(args[0].toLowerCase()) && message.member.permissions.has('MANAGE_MESSAGES')) {
+    else if (args[0] && ['carteira', 'wallet'].includes(args[0].toLowerCase()) && message.member.permissions.has('MANAGE_MESSAGES')) {
 
       embed.setDescription('Rank de saldo em carteira');
 
@@ -65,7 +65,7 @@ module.exports = {
 
       })
     }
-    else if (['bank', 'banco'].includes(args[0].toLowerCase())) {
+    else if (args[0] && ['bank', 'banco'].includes(args[0].toLowerCase())) {
 
       embed.setDescription('Rank de saldo em banco');
 
@@ -86,7 +86,7 @@ module.exports = {
 
       })
     }
-    else if (['call', 'voz', 'voice'].includes(args[0].toLowerCase())) {
+    else if (args[0] && ['call', 'voz', 'voice'].includes(args[0].toLowerCase())) {
 
       embed.setDescription('Rank de XP por call');
 
