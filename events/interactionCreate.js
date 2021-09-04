@@ -19,10 +19,11 @@ module.exports = async (client, interaction, slashCommands) => {
                 return await interaction.reply({
                     content: '🔇 Você precisa estar em um canal de voz para usar esse comando', ephemeral: true
                 });
-            if (interaction.guild.me.voice.channelId != interaction.member.voice.channelId)
+            if (interaction.guild.me.voice.channel && interaction.guild.me.voice.channelId != interaction.member.voice.channelId) {
                 return await interaction.reply({
                     content: '🔇 Você precisa no mesmo canal de voz que eu para usar esse comando\nAtualmente, já estou em ' + interaction.guild.me.voice.channel.name, ephemeral: true
                 });
+            }
         }
 
         try {
