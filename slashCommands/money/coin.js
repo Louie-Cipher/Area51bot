@@ -56,13 +56,10 @@ module.exports = {
 
         let values = ['cara', 'coroa'];
 
-        let lado;
+        let lado = await interaction.options.getString('lado', false);
 
-        try {
-            lado = await interaction.options.getString('lado', false);
-        } catch (error) {
-            lado = values[Math.floor(Math.random())]
-        }
+        if (!lado || lado === undefined) lado = values[Math.floor(Math.random())]
+
 
         let user = values.indexOf(lado);
         let bot = Math.floor(Math.random());
