@@ -9,13 +9,14 @@ const client = new Discord.Client({
     intents: 8191
 });
 
-const player = new Player(client, {
+client.player = new Player(client, {
     leaveOnEnd: false,
     leaveOnStop: true,
     leaveOnEmpty: true,
     leaveOnEmptyCooldown: 60 * 1000,
     autoSelfDeaf: true
 });
+
 try {
     require('./playerEvents')(player);
 }
@@ -58,7 +59,7 @@ for (const subFolder of slashCommandsFolder) {
     }
 };
 
-let invitesMap = new Discord.Collection();
+client.invites = new Discord.Collection();
 
 client.on('ready', async () => {
 
@@ -75,10 +76,8 @@ client.on('ready', async () => {
     let invites = await guild.invites.fetch()
 
     invites.forEach(invite => {
-        invitesMap.set(invite.code, invite);
+        client.invites.set(invite.code, invite);
     });
-
-    module.exports = { invitesMap, player }
 
     await guild.commands.fetch();
 

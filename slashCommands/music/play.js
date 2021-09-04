@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require('discord.js');
-const { player } = require('../../index')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -23,10 +22,10 @@ module.exports = {
         await interaction.deferReply({ ephemeral: true });
 
         let music = await interaction.options.getString('música', true);
-        let queue = await player.getQueue(interaction.guildId);
+        let queue = await client.player.getQueue(interaction.guildId);
 
         if (!queue) {
-            queue = player.createQueue(interaction.guild, {
+            queue = client.player.createQueue(interaction.guild, {
                 metadata: {
                     channel: interaction.channel
                 }
@@ -40,7 +39,7 @@ module.exports = {
             return await interaction.editReply({ content: 'Não foi possível entrar no canal de voz "' + interaction.member.voice.channel.name + '"' });
         }
 
-        const searchResult = await player
+        const searchResult = await client.player
             .search(music, {
                 requestedBy: interaction.user,
                 searchEngine: QueryType.AUTO
