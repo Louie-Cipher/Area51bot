@@ -41,8 +41,7 @@ module.exports = {
 
         const searchResult = await client.player
             .search(music, {
-                requestedBy: interaction.user,
-                searchEngine: QueryType.AUTO
+                requestedBy: interaction.user
             })
             .catch(() => { });
 
