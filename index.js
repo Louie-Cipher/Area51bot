@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-//const DisTube = require('distube');
+const {Player} = require('discord-player');
 const fs = require('fs');
 require('dotenv').config();
 const lotteryDB = require('./mongoSchema/lottery');
@@ -9,14 +9,15 @@ const client = new Discord.Client({
     intents: 8191
 });
 
-/*client.distube = new DisTube(client, {
-    searchSongs: false,
-    emitNewSongOnly: true,
-    leaveOnFinish: false,
-    leaveOnEmpty: false
-});*/
+const player = new Player(client, {
+    leaveOnEnd: false,
+    leaveOnStop: true,
+    leaveOnEmpty: true,
+    leaveOnEmptyCooldown: 60 * 1000,
+    autoSelfDeaf: true
+});
 
-//require('./distubeEvents').events(client.distube);
+require('./playerEvents')(player);
 require('./mongoose').init();
 
 client.commands = new Discord.Collection();
@@ -67,7 +68,11 @@ client.on('ready', async () => {
         invitesMap.set(invite.code, invite);
     });
 
-    module.exports = { invitesMap }
+    module.exports = { invitesMap, player }
+
+    await guild.commands.fetch();
+
+    
 
     const activities = [
         `Utilize ${prefix}help para uma lista com meus comandos (ou pergunte à Louie)`,
