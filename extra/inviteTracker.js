@@ -9,7 +9,7 @@ module.exports = {
 
     async guildMemberAdd(client, member) {
 
-        const invites = await member.guild.invites.fetch()
+        const actualInvites = await member.guild.invites.fetch()
         const inviteChannel = await client.channels.cache.get('829021601110294570');
 
         for (const inviteCached of client.invites) {
@@ -17,7 +17,7 @@ module.exports = {
             const actualInvite = await member.guild.invites.cache.get(inviteCached[0]);
             const inviter = await client.users.fetch(inviteCached[1].inviter);
 
-            if (invites[1].uses != actualInvite.uses) {
+            if (!actualInvite || actualInvites[1].uses != actualInvite.uses) {
 
                 const createdAt = new Date(member.user.createdAt.getTime() - 10800000)
                 const createdAtFormated =
@@ -37,7 +37,7 @@ module.exports = {
                         { name: 'Canal do invite', value: inviteCached[0].channel.toString() }
                     );
 
-                inviteChannel.send({ embeds: [embed] });
+                return inviteChannel.send({ embeds: [embed] });
 
             }
         }
