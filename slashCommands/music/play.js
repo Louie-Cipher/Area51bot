@@ -9,7 +9,8 @@ module.exports = {
         .addStringOption(option =>
             option.setName('música')
                 .setDescription('o link ou nome da música')
-                .setRequired(true)),
+                .setRequired(true)
+        ),
 
     inVoiceChannel: true,
     /**
@@ -19,10 +20,10 @@ module.exports = {
 
     async execute(client, interaction) {
 
-        await interaction.deferReply({ephemeral: true});
+        await interaction.deferReply({ ephemeral: true });
 
         let music = await interaction.options.getString('música', true);
-        let queue = await player.getQueue(interaction.guild);
+        let queue = await player.getQueue(interaction.guildId);
 
         if (!queue) {
             queue = player.createQueue(interaction.guild, {
@@ -36,15 +37,15 @@ module.exports = {
             if (!queue.connection) await queue.connect(interaction.member.voice.channel);
         } catch {
             queue.destroy();
-            return await interaction.editReply({ content: 'Não foi possível entrar no canal de voz "' + interaction.member.voice.channel.name + '"'});
+            return await interaction.editReply({ content: 'Não foi possível entrar no canal de voz "' + interaction.member.voice.channel.name + '"' });
         }
 
         const searchResult = await player
-        .search(query, {
-            requestedBy: interaction.user,
-            searchEngine: QueryType.AUTO
-        })
-        .catch(() => {});
+            .search(music, {
+                requestedBy: interaction.user,
+                searchEngine: QueryType.AUTO
+            })
+            .catch(() => { });
 
         if (!searchResult) return await interaction.editReply({ content: `❌ | Não foi possível achar a música "${query}"` });
 
