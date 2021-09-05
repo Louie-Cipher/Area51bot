@@ -67,7 +67,7 @@ module.exports = {
             .setColor('#ffff00')
             .setTitle('Novo Correio Amoroso')
             .setDescription(texto)
-            .addField('Mensagem de', message.author.toString())
+            .addField('Mensagem de', interaction.user.toString())
             .setFooter('Reaja com o emoji 💌 abaixo para aprovar essa mensagem');
 
         let aproveMessage = await aproveChannel.send({ embeds: [aproveEmbed] })
