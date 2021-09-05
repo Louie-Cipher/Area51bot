@@ -31,7 +31,7 @@ module.exports = {
 
         await interaction.deferReply({ ephemeral: false })
 
-        let value = await interaction.options.get('valor', true).value;
+        let value = await interaction.options.getInteger('valor', true);
 
         let dateNow = new Date();
 
@@ -55,7 +55,15 @@ module.exports = {
             }]
         });
 
-        let jogada = await interaction.options.get('jogadas', true).value;
+        let jogada = await interaction.options.getString('jogadas', true);
+
+        if ( !['pedra', 'papel', 'tesoura'].includes(jogada) ) return interaction.editReply({
+            embeds: [{
+                color: 'RED',
+                title: 'Jogada informada inválida',
+                description: 'Você precisa escolher uma das opções:\n`pedra`, `papel` ou `tesoura`'
+            }]
+        }); 
 
         let values = ['pedra', 'papel', 'tesoura'];
         let emojis = ['🪨', '📃', '✂'];
