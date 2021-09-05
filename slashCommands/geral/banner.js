@@ -22,12 +22,12 @@ module.exports = {
 
         let user = await interaction.options.getUser('usuário', true);
 
-        await user.fetch({ force: true });
+        let userFetch = await client.users.fetch(user.id, {force: true});
 
         let embed = new Discord.MessageEmbed()
-            .setColor(user.accentColor)
+            .setColor(userFetch.hexAccentColor || 'RANDOM')
             .setTitle('Banner de ' + user.tag)
-            .setImage(user.bannerURL({ dynamic: true }))
+            .setImage(userFetch.bannerURL({ dynamic: true }));
 
         interaction.editReply({ embeds: [embed] })
 
