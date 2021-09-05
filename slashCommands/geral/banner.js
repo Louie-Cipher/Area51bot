@@ -18,18 +18,18 @@ module.exports = {
 
     async execute(client, interaction) {
 
-        await interaction.reply({ ephemeral: false });
+        await interaction.fetchReply({ ephemeral: false });
 
         let user = await interaction.options.getUser('usuário', true);
 
-        let userFetch = await client.users.fetch(user.id, {force: true});
+        let userFetch = await client.users.fetch(user.id, { force: true });
 
         let embed = new Discord.MessageEmbed()
             .setColor(userFetch.hexAccentColor || 'RANDOM')
             .setTitle('Banner de ' + user.tag)
             .setImage(userFetch.bannerURL({ dynamic: true }));
 
-        interaction.editReply({ embeds: [embed] })
+        interaction.editReply({ content: 'Banner de ' + user.tag, embeds: [embed] })
 
     }
 }
