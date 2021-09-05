@@ -27,7 +27,12 @@ module.exports = {
             user = interaction.user;
             await interaction.deferReply({ ephemeral: true });
         } else {
-            await interaction.deferReply({ ephemeral: false });
+            if (user.id == interaction.user.id || interaction.member.permissions.has('MANAGE_MESSAGES')) {
+                await interaction.deferReply({ ephemeral: false });
+            } else {
+                await interaction.deferReply({ ephemeral: true });
+            }
+
         }
 
         let profileData = await profileModel.findOne({ userID: user.id });
