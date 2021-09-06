@@ -4,7 +4,7 @@ const profileModel = require('../../mongoSchema/profile');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('coinflip')
+        .setName('cara-coroa')
         .setDescription('aposta no cara ou coroa')
         .addIntegerOption(option =>
             option.setName('valor')
