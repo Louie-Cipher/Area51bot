@@ -37,7 +37,7 @@ module.exports = {
 
         botChannel.permissionOverwrites.set([
             {
-                id: message.guild.roles.everyone.id,
+                id: guild.roles.everyone.id,
                 deny: [Discord.Permissions.FLAGS.SEND_MESSAGES],
             },
         ], 'anúncio do sorteio ');
