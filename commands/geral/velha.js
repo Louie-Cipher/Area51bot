@@ -33,7 +33,7 @@ module.exports = {
 
         if (player2.bot) return message.reply({
             embeds: [{
-                title: 'Bip bop 🤖',
+                title: '🤖 Bip bop',
                 description: 'Acho que meus colegas bots não sabem jogar jogo da velha...'
             }]
         });
@@ -50,7 +50,7 @@ module.exports = {
             if (profileData1.coins < betValue) return message.reply({
                 embeds: [{
                     title: 'Saldo insuficiente para essa aposta',
-                    description: `Seu saldo em carteira atual é de ${profileData1.coins} loops`
+                    description: `Seu saldo em carteira atual é de ${profileData1.coins} estrelas`
                 }]
             });
 
@@ -151,11 +151,14 @@ module.exports = {
                 emojis.delete(jogada);
                 emojis.set(jogada, playerEmoji);
 
+                let otherPlayer = player1;
+                if (playerRound.id == player1.id) otherPlayer = player2
+
                 let roundEmbed = new Discord.MessageEmbed()
                     .setColor('#00ffff')
                     .setTitle('⭕ Jogo da Velha ❎')
                     .setDescription('Para jogar, clique nos botões abaixo')
-                    .addField('vez de', playerRound.toString());
+                    .addField('vez de', otherPlayer.toString());
 
                 let newLine1 = new Discord.MessageActionRow();
                 let newLine2 = new Discord.MessageActionRow();
@@ -216,12 +219,7 @@ module.exports = {
                     [emoji3, emoji5, emoji7].every(emoji => emoji != empty && emoji == emoji3)
                 ) {
 
-                    let otherPlayer = player1;
-
-                    if (playerRound.id == player1.id) {
-                        vitoriasP1++;
-                        otherPlayer = player2
-                    }
+                    if (playerRound.id == player1.id) vitoriasP1++;
                     else vitoriasP2++
 
                     let resultEmbed = new Discord.MessageEmbed()
@@ -280,7 +278,7 @@ module.exports = {
                         components: [newLine1, newLine2, newLine3, playAgainButton]
                     });
 
-                //--VERIFICAR SE DEU VELHA--//
+                    //--VERIFICAR SE DEU VELHA--//
                 } else if (round == 9) {
                     empates++
                     let resultEmbed = new Discord.MessageEmbed()
