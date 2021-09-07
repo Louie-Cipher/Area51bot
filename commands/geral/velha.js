@@ -1,148 +1,367 @@
 const Discord = require('discord.js');
+const profileModel = require('../../mongoSchema/profile');
 
 module.exports = {
-  name: 'velha',
-  aliases: ['tictactoe', 'jogodavelha', 'jogovelha'],
-  description: "uma partida de jogo da velha",
+    name: 'velha',
+    aliases: ['tictactoe', 'jogodavelha', 'jogovelha'],
+    description: "uma partida de jogo da velha por reações com emojis",
 
-  async execute(client, message, args) {
+    /**
+     * @param {Discord.Client} client
+     * @param {Discord.Message} message
+     * @param {String[]} args
+     */
 
-    const emptyEmoji = '⬜';
-    const p1Emoji = '❎';
-    const p2Emoji = '⭕';
+    async execute(client, message, args) {
 
-    var emoji1 = emptyEmoji;
-    var emoji2 = emptyEmoji;
-    var emoji3 = emptyEmoji;
-    var emoji4 = emptyEmoji;
-    var emoji5 = emptyEmoji;
-    var emoji6 = emptyEmoji;
-    var emoji7 = emptyEmoji;
-    var emoji8 = emptyEmoji;
-    var emoji9 = emptyEmoji;
+        let player1 = message.author;
+        let player2 = message.mentions.users.first() || client.users.cache.get(args[0]);
 
-    var player1 = message.author;
+        if (!args[0] || !player2) return message.reply({
+            embeds: [{
+                title: 'Usuário informado não encontrado',
+                description: 'Você precisa mencionar alguém para jogar jogo da velha'
+            }]
+        });
 
-    var player2 = message.mentions.users.first() || client.users.cache.get(args[0]) || client.users.cache.get(args[0]);
+        if (player2.id == client.user.id) return message.reply({
+            embeds: [{
+                title: 'Desculpa, eu não sei jogar jogo da velha, ainda',
+                description: 'Quem sabe na próxima atualização a Louie me ensine a jogar 😊'
+            }]
+        });
 
-    if (!player2) return message.reply('você precisa mencionar alguém para jogar');
-    if (player1 == player2) return message.reply('você não pode jogar consigo mesmo!');
-    if (player2.id == client.user.id) return message.reply('Eu não sei jogar jogo da velha (ainda). desculpe.');
-    if (player2.bot) return message.reply('acho que meus colegas bots não sabem jogar jogo da velha...');
+        if (player2.bot) return message.reply({
+            embeds: [{
+                title: 'Bip bop 🤖',
+                description: 'Acho que meus colegas bots não sabem jogar jogo da velha...'
+            }]
+        });
 
-    var round = 1;
-    var roundPlayer = player1
+        if (player1.id == player2.id) return message.reply({ content: 'Ei, você não pode jogar jogo da velha solo!' });
 
-    var player = p1Emoji;
+        let aposta = false;
+        let betValue = parseInt(args[1]);
 
-    var startEmbed = new Discord.MessageEmbed()
-      .setColor('#f0f0f0')
-      .setTitle('❎Jogo da Velha⭕')
-      .addFields({ name: 'Vez de:', value: `${roundPlayer}` }, {name: 'jogada n°:', value: round});
+        if (args[1] && betValue != NaN && betValue > 0) {
 
-    let messageEmbed = await message.channel.send(startEmbed)
+            let profileData1 = await profileModel.findOne({ userID: player1.id });
 
-    let line1 = await message.channel.send(emoji1 + emoji2 + emoji3);
-    line1.react('1️⃣'); line1.react('2️⃣'); line1.react('3️⃣');
+            if (profileData1.coins < betValue) return message.reply({
+                embeds: [{
+                    title: 'Saldo insuficiente para essa aposta',
+                    description: `Seu saldo em carteira atual é de ${profileData1.coins} loops`
+                }]
+            });
 
-    let line2 = await message.channel.send(emoji4 + emoji5 + emoji6);
-    line2.react('4️⃣'); line2.react('5️⃣'); line2.react('6️⃣');
+            let profileData2 = await profileModel.findOne({ userID: player2.id });
 
-    let line3 = await message.channel.send(emoji7 + emoji8 + emoji9);
-    line3.react('7️⃣'); line3.react('8️⃣'); line3.react('9️⃣');
+            if (!profileData2) return message.reply({
+                embeds: [{
+                    title: 'Usuário não encontrado no banco de dados',
+                    description: `Um perfil será criado assim que o usuário enviar a primeira mensagem`
+                }]
+            });
 
-    client.on('messageReactionAdd', async (reaction, user) => {
-      if (reaction.message.partial) await reaction.message.fetch();
-      if (reaction.partial) await reaction.fetch();
-      if (user.bot) return;
-      if (!reaction.message.guild) return;
-      if (user.id != roundPlayer.id) return;
+            if (profileData2.coins < betValue) return message.reply({
+                embeds: [{
+                    title: 'Saldo insuficiente para essa aposta',
+                    description: `${player2} não tem saldo em carteira para essa aposta`
+                }]
+            });
 
-      if (user.id == message.author.id) {player = p1Emoji}
-      if (user.id == player2.id) {player = p2Emoji}
+            aposta = true;
 
-      if (reaction.message.id == line1.id) {
+        }
 
-        if (reaction.emoji.name === '1️⃣') { emoji1 = player; }
-        if (reaction.emoji.name === '2️⃣') { emoji2 = player; }
-        if (reaction.emoji.name === '3️⃣') { emoji3 = player; }
+        const numbers = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
 
-        line1.edit(emoji1 + emoji2 + emoji3);
-        round = round + 1;
-      }
+        const empty = '⬜';
 
-      if (reaction.message.id == line2.id) {
-        if (reaction.emoji.name === '4️⃣') { emoji4 = player; }
-        if (reaction.emoji.name === '5️⃣') { emoji5 = player; }
-        if (reaction.emoji.name === '6️⃣') { emoji6 = player; }
+        let emojis = new Discord.Collection();
 
-        line2.edit(emoji4 + emoji5 + emoji6);
-        round = round + 1;
-      }
+        let line1 = new Discord.MessageActionRow();
+        let line2 = new Discord.MessageActionRow();
+        let line3 = new Discord.MessageActionRow();
 
-      if (reaction.message.id == line3.id) {
-        if (reaction.emoji.name === '7️⃣') { emoji7 = player; }
-        if (reaction.emoji.name === '8️⃣') { emoji8 = player; }
-        if (reaction.emoji.name === '9️⃣') { emoji9 = player; }
+        let i = 1;
+        numbers.forEach(number => {
+            let line;
+            if (i >= 1 && i <= 3) line = line1
+            else if (i >= 4 && i <= 6) line = line2
+            else line = line3;
 
-        line3.edit(emoji7 + emoji8 + emoji9);
-        round = round + 1;
-      }
+            line.addComponents(
+                new Discord.MessageButton()
+                    .setCustomId(number)
+                    .setLabel(empty)
+                    .setStyle('PRIMARY')
+            );
 
-      if(round % 2 == 0) {roundPlayer = player2 }
-      else {roundPlayer = player1}
+            emojis.set(number, empty);
 
-      var editEmbed = new Discord.MessageEmbed()
-        .setColor('#f0f0f0')
-        .setTitle('❎Jogo da Velha⭕')
-        .addFields({name: 'Vez de:', value: `${roundPlayer}`}, {name: 'jogada n°:', value: round});
+            i++
+        });
 
-      messageEmbed.edit(editEmbed);
 
-/*
+        let startEmbed = new Discord.MessageEmbed()
+            .setColor('#00ffff')
+            .setTitle('⭕ Jogo da Velha ❎')
+            .setDescription('Para jogar, clique nos botões abaixo')
+            .addField('vez de', player1.toString());
 
-    //  P1 Win //
+        if (aposta === true) startEmbed.addField('valor da aposta', betValue.toString());
 
-    //horizontal win p1
-      if ((emoji1 == p1Emoji && emoji2 == p1Emoji && emoji3 == p1Emoji) || (emoji4 == p1Emoji && emoji5 == p1Emoji && emoji6 == p1Emoji) || (emoji7 == p1Emoji && emoji8 == p1Emoji && emoji9 == p1Emoji))  {
-        message.channel.send(`Parabéns ${message.author}, você venceu! [horizontal]`)
-      }
 
-      //vertical win p1
-      if ((emoji1 == p1Emoji && emoji4 == p1Emoji && emoji7 == p1Emoji) || (emoji2 == p1Emoji && emoji5 == p1Emoji && emoji8 == p1Emoji) || (emoji3 == p1Emoji && emoji6 == p1Emoji && emoji9 == p1Emoji)) {
-        message.channel.send(`Parabéns ${message.author}, você venceu! [vertical]`)
-      }
+        let gameMessage = await message.reply({
+            embeds: [startEmbed],
+            components: [line1, line2, line3]
+        });
 
-      //diagonal win p1
-      if( (emoji1 == p1Emoji && emoji5 == p1Emoji && emoji9 == p1Emoji) || (emoji3 == p1Emoji && emoji5 == p1Emoji && emoji7 == p1Emoji) ){
-        message.channel.send(`Parabéns ${message.author}, você venceu! [diagonal]`)
-      }
 
-    // P2 Win //
+        let partidas = 1;
+        let vitoriasP1 = 0;
+        let vitoriasP2 = 0;
+        let empates = 0;
 
-    //horizontal win p2
-      if ((emoji1 == p2Emoji && emoji2 == p2Emoji && emoji3 == p2Emoji) || (emoji4 == p2Emoji && emoji5 == p2Emoji && emoji6 == p2Emoji) || (emoji7 == p2Emoji && emoji8 == p2Emoji && emoji9 == p2Emoji))  {
-        message.channel.send(`Parabéns ${player2}, você venceu! [horizontal]`)
-      }
+        let playAgain = [];
 
-      //vertical win p2
-      if ((emoji1 == p2Emoji && emoji4 == p2Emoji && emoji7 == p2Emoji) || (emoji2 == p2Emoji && emoji5 == p2Emoji && emoji8 == p2Emoji) || (emoji3 == p2Emoji && emoji6 == p2Emoji && emoji9 == p2Emoji)) {
-        message.channel.send(`Parabéns ${player2}, você venceu! [vertical]`)
-      }
+        let round = 1;
+        let playerRound = player1;
 
-      //diagonal win p2
-      if( (emoji1 == p2Emoji && emoji5 == p2Emoji && emoji9 == p2Emoji) || (emoji3 == p2Emoji && emoji5 == p2Emoji && emoji7 == p2Emoji)){
-        message.channel.send(`Parabéns ${player2}, você venceu! [diagonal]`)
-      }
+        let playerEmoji;
 
-      if ( (emoji1 != emptyEmoji) && (emoji2 != emptyEmoji) && (emoji3 != emptyEmoji) && (emoji4 != emptyEmoji) && (emoji5 != emptyEmoji) && (emoji6 != emptyEmoji) && (emoji7 != emptyEmoji) && (emoji8 != emptyEmoji) && (emoji9 != emptyEmoji)) {
-        message.channel.send(`${player1} ${player2}\nEmpate. bom jogo.`);
-      }
+        //--BUTTON EVENT--//
+        client.on('interactionCreate', async interaction => {
 
-      */
+            if (
+                !interaction.inGuild() || !interaction.isButton() || interaction.message.id != gameMessage.id ||
+                (interaction.user.id == player1.id && interaction.user.id == player2.id)
+            ) return;
+
+            if (numbers.includes(interaction.customId) && playerRound.id == interaction.user.id) {
+
+                await interaction.deferReply({ ephemeral: false });
+
+                if (round % 2 != 0) playerEmoji = '❎';
+                else playerEmoji = '⭕';
+
+                let jogada = interaction.customId;
+
+                emojis.delete(jogada);
+                emojis.set(jogada, playerEmoji);
+
+                let roundEmbed = new Discord.MessageEmbed()
+                    .setColor('#00ffff')
+                    .setTitle('⭕ Jogo da Velha ❎')
+                    .setDescription('Para jogar, clique nos botões abaixo')
+                    .addField('vez de', playerRound.toString());
+
+                let newLine1 = new Discord.MessageActionRow();
+                let newLine2 = new Discord.MessageActionRow();
+                let newLine3 = new Discord.MessageActionRow();
+
+                let n = 1;
+                numbers.forEach(number => {
+                    let line;
+                    if (n >= 1 && n <= 3) line = newLine1;
+                    else if (n >= 4 && n <= 6) line = newLine2;
+                    else line = newLine3;
+
+                    let label = emojis.get(number);
+                    let disabled = false;
+
+                    if (label != empty) disabled = true
+
+                    line.addComponents(
+                        new Discord.MessageButton()
+                            .setCustomId(number)
+                            .setLabel(label)
+                            .setDisabled(disabled)
+                            .setStyle('PRIMARY')
+                    );
+                    n++
+                });
+
+
+                gameMessage.edit({
+                    embeds: [roundEmbed],
+                    components: [newLine1, newLine2, newLine3]
+                });
+
+                round++
+
+                //--VERIFICAR SE A PARTIDA ACABOU--//
+
+                const emoji1 = emojis.get('one');
+                const emoji2 = emojis.get('two');
+                const emoji3 = emojis.get('three');
+                const emoji4 = emojis.get('four');
+                const emoji5 = emojis.get('five');
+                const emoji6 = emojis.get('six');
+                const emoji7 = emojis.get('seven');
+                const emoji8 = emojis.get('eight');
+                const emoji9 = emojis.get('nine');
+
+                if (
+                    [emoji1, emoji2, emoji3].every(emoji => emoji != empty && emoji == emoji3) ||
+                    [emoji4, emoji5, emoji6].every(emoji => emoji != empty && emoji == emoji6) ||
+                    [emoji7, emoji8, emoji9].every(emoji => emoji != empty && emoji == emoji9) ||
+                    //vertical
+                    [emoji1, emoji4, emoji7].every(emoji => emoji != empty && emoji == emoji1) ||
+                    [emoji2, emoji5, emoji8].every(emoji => emoji != empty && emoji == emoji2) ||
+                    [emoji3, emoji6, emoji9].every(emoji => emoji != empty && emoji == emoji3) ||
+                    //diagonal
+                    [emoji1, emoji5, emoji9].every(emoji => emoji != empty && emoji == emoji1) ||
+                    [emoji3, emoji5, emoji7].every(emoji => emoji != empty && emoji == emoji3)
+                ) {
+
+                    let otherPlayer = player1;
+
+                    if (playerRound.id == player1.id) {
+                        vitoriasP1++;
+                        otherPlayer = player2
+                    }
+                    else vitoriasP2++
+
+                    let resultEmbed = new Discord.MessageEmbed()
+                        .setColor('#00ffff')
+                        .setTitle('⭕ Fim de jogo ❎')
+                        .setDescription(`🎉 Parabéns ${playerRound}. Você ganhou!\n😭 Sinto muito ${otherPlayer}. você perdeu!`)
+                        .addFields(
+                            { name: 'partidas', value: partidas.toString() },
+                            { name: `vitórias de ${player1.tag}`, value: vitoriasP1.toString() },
+                            { name: `vitórias de ${player2.tag}`, value: vitoriasP2.toString() },
+                            { name: 'empates', value: empates.toString() }
+                        );
+
+                    let playAgainButton = new Discord.MessageActionRow()
+                        .addComponents(
+                            new Discord.MessageButton()
+                                .setCustomId('again')
+                                .setLabel('jogar novamente')
+                                .setEmoji('🔁')
+                                .setStyle('SUCCESS')
+                        );
+
+                    if (aposta === true && betValue != NaN && betValue > 0) {
+
+                        let profileUpdate1 = await profileModel.findOneAndUpdate({ userID: playerRound.id },
+                            {
+                                $inc: { coins: betValue },
+                                lastEditMoney: Date.now()
+                            }
+                        );
+                        profileUpdate1.save();
+
+                        let profileUpdate2 = await profileModel.findOneAndUpdate({ userID: otherPlayer.id },
+                            {
+                                $inc: { coins: -betValue },
+                                lastEditMoney: Date.now()
+                            }
+                        );
+                        profileUpdate2.save();
+
+                    }
+
+                    //desabilitar todos os botões pra ninguém alterar a partida finalizada
+                    newLine1.components.forEach(component => {
+                        component.setDisabled(true)
+                    });
+                    newLine2.components.forEach(component => {
+                        component.setDisabled(true)
+                    });
+                    newLine3.components.forEach(component => {
+                        component.setDisabled(true)
+                    });
+
+                    gameMessage.edit({
+                        embeds: [resultEmbed],
+                        components: [newLine1, newLine2, newLine3, playAgainButton]
+                    });
+
+                //--VERIFICAR SE DEU VELHA--//
+                } else if (round == 9) {
+                    empates++
+                    let resultEmbed = new Discord.MessageEmbed()
+                        .setColor('#00ffff')
+                        .setTitle('⭕ Fim de jogo ❎')
+                        .setDescription(`Deu velha! empate 🤝`)
+                        .addFields(
+                            { name: 'partidas', value: partidas.toString() },
+                            { name: `vitórias de ${player1.tag}`, value: vitoriasP1.toString() },
+                            { name: `vitórias de ${player2.tag}`, value: vitoriasP2.toString() },
+                            { name: 'empates', value: empates.toString() }
+                        );
+
+                    let playAgainButton = new Discord.MessageActionRow()
+                        .addComponents(
+                            new Discord.MessageButton()
+                                .setCustomId('again')
+                                .setLabel('jogar novamente')
+                                .setEmoji('🔁')
+                                .setStyle('SUCCESS')
+                        );
+
+                    gameMessage.edit({
+                        embeds: [resultEmbed],
+                        components: [newLine1, newLine2, newLine3, playAgainButton]
+                    });
+                }
+
+                if (playerRound.id == player2.id) playerRound = player1;
+                else playerRound = player2;
+
+                interaction.deleteReply();
+
+            }
+            else if (interaction.customId == 'again' && !playAgain.includes(interaction.user.id)) {
+
+                await interaction.deferReply({ ephemeral: false });
+
+                playAgain.push(interaction.user.id);
+                let otherPlayer = player1;
+                if (interaction.user.id == player1.id) otherPlayer = player2
+
+                if (playAgain.length == 1) return interaction.editReply({
+                    content: `Okay ${interaction.user}, você votou para jogar mais uma partida. esperando ${otherPlayer} votar`
+                });
+
+
+                //resetar valores da partida
+                playAgain = [];
+                round = 1;
+                i = 1;
+                numbers.forEach(number => {
+                    let line;
+                    if (i >= 1 && i <= 3) line = line1
+                    else if (i >= 4 && i <= 6) line = line2
+                    else line = line3;
+
+                    line.addComponents(
+                        new Discord.MessageButton()
+                            .setCustomId(number)
+                            .setLabel(empty)
+                            .setStyle('PRIMARY')
+                    );
+
+                    emojis.set(number, empty);
+
+                    i++
+                });
+
+                partidas++
+
+                //começar outra emocionante partida
+                gameMessage.edit({
+                    embeds: [startEmbed],
+                    components: [line1, line2, line3]
+                });
+
+            }
+
+
+        })
 
     }
-    )
-
-  }
 }
