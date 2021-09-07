@@ -139,9 +139,9 @@ module.exports = {
                 (interaction.user.id == player1.id && interaction.user.id == player2.id)
             ) return;
 
-            if (numbers.includes(interaction.customId) && playerRound.id == interaction.user.id) {
+            await interaction.deferReply({ ephemeral: false });
 
-                await interaction.deferReply({ ephemeral: false });
+            if (numbers.includes(interaction.customId) && playerRound.id == interaction.user.id) {
 
                 if (round % 2 != 0) playerEmoji = '❎';
                 else playerEmoji = '⭕';
@@ -314,8 +314,6 @@ module.exports = {
 
             }
             else if (interaction.customId == 'again' && !playAgain.includes(interaction.user.id)) {
-
-                await interaction.deferReply({ ephemeral: false });
 
                 playAgain.push(interaction.user.id);
                 let otherPlayer = player1;
