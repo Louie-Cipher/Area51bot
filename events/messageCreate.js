@@ -120,12 +120,9 @@ module.exports = async (client, message, commands) => {
     let nextCmd = new Date(cooldownCommands.get(message.author.id).getTime() + 4000)
     let timeLeft = new Date(nextCmd.getTime() - dateNow.getTime());
 
-    let timeLeftFormated = '';
-    if (timeLeft.getSeconds() == 0) { timeLeft = 'alguns milissegundos' }
-    else {
-      timeLeftFormated = timeLeft.getSeconds().toString() + ' segundo';
-      if (timeLeft.getSeconds() > 1) timeLeftFormated += 's';
-    }
+    let timeLeftFormated = `${timeLeft.getSeconds()} segundo`;
+    if (timeLeft.getSeconds() == 0) timeLeftFormated = 'alguns milissegundos'
+    if (timeLeft.getSeconds() > 1) timeLeftFormated += 's';
 
     return message.reply({ content: `Epa, você está usando comandos muito rápido!\nTente novamente em ${timeLeftFormated}` });
 
