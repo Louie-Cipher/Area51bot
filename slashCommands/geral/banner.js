@@ -5,6 +5,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('banner')
         .setDescription('exibe o banner (foto de capa) de um usuário')
+        .setDefaultPermission(false)
         .addUserOption(option =>
             option.setName('usuário')
                 .setDescription('o usuário para ver o banner')
