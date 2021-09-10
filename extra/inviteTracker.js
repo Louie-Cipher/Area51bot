@@ -15,7 +15,7 @@ module.exports = {
         for (const inviteCached of client.invites) {
 
             const actualInvite = await member.guild.invites.cache.get(inviteCached[0]);
-            const inviter = await client.users.fetch(inviteCached[1].inviter);
+            const inviter = await client.users.fetch(inviteCached[1].inviter.id);
 
             if (!actualInvite || actualInvites[1].uses != actualInvite.uses) {
 
