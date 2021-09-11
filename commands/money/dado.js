@@ -27,6 +27,7 @@ module.exports = {
     }
     else if (args[0] && !args[1]) {
       let d1 = Math.random() * parseInt(args[0], 10);
+      if (d1 == NaN) return message.reply({ content: `O valor "${args[0]}" do dado é inválido` });
       let result = Math.ceil(d1);
       embed.setDescription(`resultado: ${result}`);
     }
