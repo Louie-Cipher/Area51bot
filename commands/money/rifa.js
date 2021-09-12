@@ -77,6 +77,8 @@ module.exports = {
             lotteryData.winners.forEach(user => {
                 if (user == message.author.id) { userWins++ }
             });
+            
+            const vitoriaPercent = ((userTickets * 100) / lotteryData.users.length).toFixed(2);
 
             let infoEmbed = new Discord.MessageEmbed()
                 .setColor('#00ffff')
@@ -84,6 +86,7 @@ module.exports = {
                 .addFields(
                     { name: 'Suas estatísticas', value: '\u200B' },
                     { name: 'Hoje você comprou', value: userTickets.toString() + ' bilhetes', inline: true },
+                    { name: 'Chances de vitória hoje', value: vitoriaPercent.toString(), inline: true },
                     { name: 'Você já venceu', value: userWins.toString() + ' vezes', inline: true },
                     { name: '\u200B', value: '\u200B' },
                     { name: 'Estatísticas gerais', value: '\u200B' },
