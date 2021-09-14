@@ -14,10 +14,6 @@ let cooldownCommands = new Map();
 
 module.exports = async (client, message, commands) => {
 
-  if (message.author.id == '297153970613387264' && message.embeds) {
-    require('../extra/loritta').trigger(client, message)
-  }
-
   if (message.author.bot) return;
 
   let dateNow = new Date();
