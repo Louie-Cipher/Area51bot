@@ -60,7 +60,7 @@ module.exports = {
       .setTitle('Valor alterado com sucesso')
       .addFields(
         { name: 'Usuário', value: user.toString() },
-        { name: 'valor', value: valor.toString( },
+        { name: 'valor', value: valor.toString() },
         { name: 'valor atual na carteira', value: (profileData.coins) },
         { name: 'saldo atual no banco', value: (profileData.bank + valor) }
       );
