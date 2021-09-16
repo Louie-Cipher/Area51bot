@@ -11,7 +11,7 @@ module.exports = {
             option.setName('opções')
                 .setDescription('escolha comprar ou ver estatísticas')
                 .addChoice('comprar', 'comprar')
-                .addChoice('estatisticas', 'estatísticas')
+                .addChoice('estatísticas', 'estatisticas')
                 .setRequired(true)
         ),
 
