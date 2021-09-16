@@ -61,6 +61,17 @@ module.exports = {
 
         let mainMessage = await interaction.fetchReply();
 
+
+        let member = await interaction.guild.members.fetch(interaction.user.id);
+
+        let values = new Discord.Collection()
+        values.set('bronze', { preco: 3000, cargo: '836413042547359744' });
+        values.set('prata', { preco: 6000, cargo: '836413054157062186' });
+        values.set('ouro', { preco: 15000, cargo: '836413059861053441' });
+        values.set('diamante', { preco: 24000, cargo: '836414249341026334' });
+        values.set('platinum', { preco: 30000, cargo: '836414253807697974' });
+
+
         client.on('interactionCreate', async buttonInteraction => {
 
             await buttonInteraction.fetchReply({ ephemeral: true });
@@ -72,13 +83,8 @@ module.exports = {
 
             let profileData = await profileModel.findOne({ userID: interaction.user.id });
 
-            let preco = 0;
-
-            if (buttonInteraction.customId == 'bronze') preco = 3000
-            else if (buttonInteraction.customId == 'prata') preco = 6000
-            else if (buttonInteraction.customId == 'ouro') preco = 15000
-            else if (buttonInteraction.customId == 'diamante') preco = 24000
-            else if (buttonInteraction.customId == 'platinum') preco = 30000
+            let preco = values.get(buttonInteraction.customId).preco;
+            let cargo = values.get(buttonInteraction.customId).cargo;
 
             if (profileData.coins < preco) return buttonInteraction.editReply({
                 embeds: [{
@@ -87,19 +93,11 @@ module.exports = {
                 }]
             });
 
-
-            let cargo;
-            if (buttonInteraction.customId == 'bronze') cargo = '836413042547359744'
-            else if (buttonInteraction.customId == 'prata') cargo = '836413054157062186'
-            else if (buttonInteraction.customId == 'ouro') cargo = '836413059861053441'
-            else if (buttonInteraction.customId == 'diamante') cargo = '836414249341026334'
-            else if (buttonInteraction.customId == 'platinum') cargo = '836414253807697974'
-
-            if (buttonInteraction.member.roles.cache.has(cargo)) return buttonInteraction.editReply({
+            if (member.roles.cache.has(cargo)) return buttonInteraction.editReply({
                 content: 'Você já possui esse cargo. Não é possivel comprar o mesmo cargo mais de uma vez'
             });
 
-            let profileUpdate = await profileModel.findOneAndUpdate({ userID: interaction.user.id },
+            let profileUpdate = await profileModel.findOneAndUpdate({ userID: buttonInteraction.user.id },
                 {
                     $inc: { coins: -preco },
                     lastEditMoney: Date.now()
@@ -107,13 +105,13 @@ module.exports = {
             );
             profileUpdate.save();
 
-            buttonInteraction.member.roles.add(cargo, 'Compra de cargo VIP');
+            await member.roles.add(cargo, 'Compra de cargo VIP');
 
             buttonInteraction.editReply({
                 embeds: [{
                     title: 'Item adquirido com sucesso!',
                     description: `Parabéns por adquirir o item "${buttonInteraction.customId}"`,
-                    footer: {text: 'Caso o item seja um cargo, ele já foi adicionado automaticamente no seu perfil!\ncaso seja outro tipo de item, ele estará presente no seu inventário'}
+                    footer: { text: 'Caso o item seja um cargo, ele já foi adicionado automaticamente no seu perfil!\ncaso seja outro tipo de item, ele estará presente no seu inventário' }
                 }]
             })
 
