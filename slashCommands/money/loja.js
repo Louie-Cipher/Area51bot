@@ -33,23 +33,28 @@ module.exports = {
                 new Discord.MessageButton()
                     .setCustomId('bronze')
                     .setEmoji('🥉')
-                    .setLabel('VIP bronze'),
+                    .setLabel('VIP bronze')
+                    .setStyle('PRIMARY'),
                 new Discord.MessageButton()
                     .setCustomId('prata')
                     .setEmoji('🥈')
-                    .setLabel('VIP Prata'),
+                    .setLabel('VIP Prata')
+                    .setStyle('PRIMARY'),
                 new Discord.MessageButton()
                     .setCustomId('ouro')
                     .setEmoji('🥇')
-                    .setLabel('VIP Gold'),
+                    .setLabel('VIP Gold')
+                    .setStyle('PRIMARY'),
                 new Discord.MessageButton()
                     .setCustomId('diamante')
                     .setEmoji('💎')
-                    .setLabel('VIP Diamond'),
+                    .setLabel('VIP Diamond')
+                    .setStyle('PRIMARY'),
                 new Discord.MessageButton()
                     .setCustomId('platinum')
                     .setEmoji('👑')
-                    .setLabel('VIP Platinum'),
+                    .setLabel('VIP Platinum')
+                    .setStyle('PRIMARY'),
             );
 
         interaction.reply({ embeds: [embed], components: [buttons], ephemeral: false });
