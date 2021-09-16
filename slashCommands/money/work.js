@@ -36,7 +36,7 @@ module.exports = {
             if (dateNow.getTime() - lastWork.getTime() < 7200000) {
 
                 let timeLeftString = require('../../extra/dateFormatter')({
-                    oldestDate: lastWork,
+                    oldestDate: dateNow,
                     latestDate: nextWork,
                     ignoreMilliseconds: true,
                     ignoreSeconds: true
@@ -45,14 +45,13 @@ module.exports = {
                 let failEmbed = new Discord.MessageEmbed()
                     .setColor('RED')
                     .setTitle('⏳ Você já trabalhou nas últimas 2 horas')
-                    .setFooter('dica: Você sabia que sendo booster do servidor,\nvocê ganha 30 estrelas a mais no work?')
-                    .setDescription(`Volte para trabalhar novamente em ${timeLeftString.main}`);
+                    .setDescription(`Volte para trabalhar novamente em ${timeLeftString.main}`)
+                    .setFooter('dica: Você sabia que sendo booster do servidor,\nvocê ganha 30 estrelas a mais no work?');
 
                 return interaction.editReply({ embeds: [failEmbed] });
             }
 
         }
-
 
         profileData = await profileModel.findOneAndUpdate(
             {
