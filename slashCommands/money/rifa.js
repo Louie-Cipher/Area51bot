@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require('discord.js');
 const profileModel = require('../../mongoSchema/profile');
+const lotteryDB = require('../../mongoSchema/lottery');
 
 module.exports = {
     data: new SlashCommandBuilder()
