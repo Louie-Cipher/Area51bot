@@ -35,7 +35,7 @@ module.exports = {
 
     let profileData = await profileModel.findOne({ userID: user.id });
 
-    if (!profileDate || profileData == undefined) return message.reply({
+    if (!profileData || profileData == undefined) return message.reply({
       embeds: [{
         color: '#f0f000',
         title: 'Usuário informado não possui um perfil no bot',
