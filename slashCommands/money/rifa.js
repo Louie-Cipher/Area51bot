@@ -73,7 +73,7 @@ module.exports = {
                 }]
             })
 
-        } else if (option == 'estatisticas') {
+        } else {
 
             let lotteryData = await lotteryDB.findOne({ true: true });
 
