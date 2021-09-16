@@ -52,7 +52,7 @@ module.exports = {
                     .setLabel('VIP Platinum'),
             );
 
-        interaction.reply({ embeds: [embed], components: [buttons], ephemeral: true });
+        interaction.reply({ embeds: [embed], components: [buttons], ephemeral: false });
 
         let mainMessage = await interaction.fetchReply();
 
