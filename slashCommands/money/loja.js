@@ -63,7 +63,7 @@ module.exports = {
 
         client.on('interactionCreate', async buttonInteraction => {
 
-            buttonInteraction.fetchReply({ ephemeral: true });
+            await buttonInteraction.fetchReply({ ephemeral: true });
 
             if (
                 !buttonInteraction.inGuild() || !buttonInteraction.isButton() ||
