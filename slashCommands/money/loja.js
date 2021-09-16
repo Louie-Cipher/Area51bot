@@ -74,12 +74,12 @@ module.exports = {
 
         client.on('interactionCreate', async buttonInteraction => {
 
-            await buttonInteraction.fetchReply({ ephemeral: true });
-
             if (
                 !buttonInteraction.inGuild() || !buttonInteraction.isButton() ||
                 buttonInteraction.message.id != mainMessage.id || buttonInteraction.user.id != interaction.user.id
             ) return;
+            
+            await buttonInteraction.deferReply({ ephemeral: true });
 
             let profileData = await profileModel.findOne({ userID: interaction.user.id });
 
