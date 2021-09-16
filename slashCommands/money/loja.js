@@ -87,15 +87,12 @@ module.exports = {
                 }]
             });
 
-            let cargos = new Discord.Collection();
-
-            cargos.set('bronze', '836413042547359744');
-            cargos.set('prata', '836413054157062186');
-            cargos.set('ouro', '836413059861053441');
-            cargos.set('diamante', '836414249341026334');
-            cargos.set('platinum', '836414253807697974');
-
-            let cargo = cargos.get(buttonInteraction.customId);
+            let cargo;
+            if (buttonInteraction.customId == 'bronze') cargo = '836413042547359744'
+            else if (buttonInteraction.customId == 'prata') cargo = '836413054157062186'
+            else if (buttonInteraction.customId == 'ouro') cargo = '836413059861053441'
+            else if (buttonInteraction.customId == 'diamante') cargo = '836414249341026334'
+            else if (buttonInteraction.customId == 'platinum') cargo = '836414253807697974'
 
             let member = await interaction.guild.members.fetch(interaction.user.id);
 
