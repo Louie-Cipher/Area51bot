@@ -59,8 +59,8 @@ module.exports = {
       .setColor('#00ffff')
       .setTitle('Valor alterado com sucesso')
       .addFields(
-        { name: 'Usuário', value: user },
-        { name: 'valor', value: valor },
+        { name: 'Usuário', value: user.toString() },
+        { name: 'valor', value: valor.toString( },
         { name: 'valor atual na carteira', value: (profileData.coins) },
         { name: 'saldo atual no banco', value: (profileData.bank + valor) }
       );
