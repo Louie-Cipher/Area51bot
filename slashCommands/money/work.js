@@ -46,7 +46,7 @@ module.exports = {
                     .setColor('RED')
                     .setTitle('⏳ Você já trabalhou nas últimas 2 horas')
                     .setFooter('dica: Você sabia que sendo booster do servidor,\nvocê ganha 30 estrelas a mais no work?')
-                    .setDescription(`Volte para trabalhar novamente em ${timeLeftString}`);
+                    .setDescription(`Volte para trabalhar novamente em ${timeLeftString.main}`);
 
                 return interaction.editReply({ embeds: [failEmbed] });
             }
