@@ -106,6 +106,9 @@ module.exports = {
             profileUpdate.save();
 
             await member.roles.add(cargo, 'Compra de cargo VIP');
+            
+            if (['ouro', 'diamante', 'platinum'].includes(selectInteraction.customId))
+                await member.roles.add('883929285293916161', 'Compra de cargo VIP');
 
             buttonInteraction.editReply({
                 embeds: [{
