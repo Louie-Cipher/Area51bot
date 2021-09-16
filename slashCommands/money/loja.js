@@ -87,6 +87,7 @@ module.exports = {
                 }]
             });
 
+
             let cargo;
             if (buttonInteraction.customId == 'bronze') cargo = '836413042547359744'
             else if (buttonInteraction.customId == 'prata') cargo = '836413054157062186'
@@ -94,9 +95,7 @@ module.exports = {
             else if (buttonInteraction.customId == 'diamante') cargo = '836414249341026334'
             else if (buttonInteraction.customId == 'platinum') cargo = '836414253807697974'
 
-            let member = await interaction.guild.members.fetch(interaction.user.id);
-
-            if (member.roles.cache.has(cargo)) return buttonInteraction.editReply({
+            if (buttonInteraction.member.roles.cache.has(cargo)) return buttonInteraction.editReply({
                 content: 'Você já possui esse cargo. Não é possivel comprar o mesmo cargo mais de uma vez'
             });
 
@@ -108,7 +107,7 @@ module.exports = {
             );
             profileUpdate.save();
 
-            member.roles.add(cargo);
+            buttonInteraction.member.roles.add(cargo, 'Compra de cargo VIP');
 
             buttonInteraction.editReply({
                 embeds: [{
