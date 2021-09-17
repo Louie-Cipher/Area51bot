@@ -61,6 +61,7 @@ module.exports = {
             .addComponents(
                 new Discord.MessageSelectMenu()
                     .setPlaceholder('Selecione o item desejado')
+                    .setCustomId('selecao')
                     .setMinValues(1)
                     .setMaxValues(1)
                     .addOptions([
