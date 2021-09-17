@@ -17,7 +17,7 @@ module.exports = {
         let embed = new Discord.MessageEmbed()
             .setColor('GREEN')
             .setTitle('Loja intergaláctica')
-            .setDescription('Para comprar um item, selecione os botões abaixo de acordo com o item desejado')
+            .setDescription('Para comprar um item, selecione-o na lista abaixo')
             .addFields(
                 { name: 'Tabela de preços', value: '\u200B' },
                 { name: 'VIP Bronze', value: '3.000 estrelas', inline: true },
@@ -57,7 +57,22 @@ module.exports = {
                     .setStyle('PRIMARY'),
             );
 
-        interaction.reply({ embeds: [embed], components: [buttons], ephemeral: false });
+        let menuItens = new Discord.MessageActionRow()
+            .addComponents(
+                new Discord.MessageSelectMenu()
+                    .setPlaceholder('Selecione o item desejado')
+                    .setMinValues(1)
+                    .setMaxValues(1)
+                    .addOptions([
+                        { value: 'bronze', label: 'VIP bronze', emoji: '🥉' },
+                        { value: 'prata', label: 'VIP prata', emoji: '🥈' },
+                        { value: 'ouro', label: 'VIP Gold', emoji: '🥇' },
+                        { value: 'diamante', label: 'VIP Diamond', emoji: '💎' },
+                        { value: 'platinum', label: 'VIP Platinum', emoji: '👑' },
+                    ])
+            )
+
+        interaction.reply({ embeds: [embed], components: [menuItens], ephemeral: false });
 
         let mainMessage = await interaction.fetchReply();
 
@@ -72,32 +87,35 @@ module.exports = {
         values.set('platinum', { preco: 30000, cargo: '836414253807697974' });
 
 
-        client.on('interactionCreate', async buttonInteraction => {
+        client.on('interactionCreate', async selectInteraction => {
 
             if (
-                !buttonInteraction.inGuild() || !buttonInteraction.isButton() ||
-                buttonInteraction.message.id != mainMessage.id || buttonInteraction.user.id != interaction.user.id
+                !selectInteraction.inGuild() || !selectInteraction.isSelectMenu() ||
+                selectInteraction.message.id != mainMessage.id || selectInteraction.user.id != interaction.user.id
             ) return;
-            
-            await buttonInteraction.deferReply({ ephemeral: true });
 
-            let profileData = await profileModel.findOne({ userID: interaction.user.id });
+            await selectInteraction.deferReply({ ephemeral: true });
 
-            let preco = values.get(buttonInteraction.customId).preco;
-            let cargo = values.get(buttonInteraction.customId).cargo;
+            selectInteraction.values[0]
 
-            if (profileData.coins < preco) return buttonInteraction.editReply({
+            let profileData = await profileModel.findOne({ userID: selectInteraction.user.id });
+
+            let preco = values.get(selectInteraction.values[0]).preco;
+            let cargo = values.get(selectInteraction.values[0]).cargo;
+
+            if (profileData.coins < preco) return selectInteraction.editReply({
                 embeds: [{
+                    color: 'RED',
                     title: 'Saldo insuficiente para comprar esse item',
                     description: `Seu saldo em carteira atualmente é de ${profileData.coins} estrelas\nE o saldo em banco é de ${profileData.bank} estrelas`
                 }]
             });
 
-            if (member.roles.cache.has(cargo)) return buttonInteraction.editReply({
+            if (member.roles.cache.has(cargo)) return selectInteraction.editReply({
                 content: 'Você já possui esse cargo. Não é possivel comprar o mesmo cargo mais de uma vez'
             });
 
-            let profileUpdate = await profileModel.findOneAndUpdate({ userID: buttonInteraction.user.id },
+            let profileUpdate = await profileModel.findOneAndUpdate({ userID: selectInteraction.user.id },
                 {
                     $inc: { coins: -preco },
                     lastEditMoney: Date.now()
@@ -106,14 +124,15 @@ module.exports = {
             profileUpdate.save();
 
             await member.roles.add(cargo, 'Compra de cargo VIP');
-            
-            if (['ouro', 'diamante', 'platinum'].includes(selectInteraction.customId))
+
+            if (['ouro', 'diamante', 'platinum'].includes(selectInteraction.values[0]))
                 await member.roles.add('883929285293916161', 'Compra de cargo VIP');
 
-            buttonInteraction.editReply({
+            selectInteraction.editReply({
                 embeds: [{
+                    color: 'GREEN',
                     title: 'Item adquirido com sucesso!',
-                    description: `Parabéns por adquirir o item "${buttonInteraction.customId}"`,
+                    description: `Parabéns por adquirir o item "${selectInteraction.values[0]}"`,
                     footer: { text: 'Caso o item seja um cargo, ele já foi adicionado automaticamente no seu perfil!\ncaso seja outro tipo de item, ele estará presente no seu inventário' }
                 }]
             })
