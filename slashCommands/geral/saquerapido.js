@@ -17,16 +17,16 @@ module.exports = {
 
         let startEmbed = new Discord.MessageEmbed()
             .setColor('YELLOW')
-            .setTitle('🔫 Saque Rápido ')
+            .setTitle('🔫 Gatilho Rápido ')
             .setThumbnail('https://64.media.tumblr.com/7587c2cea0235edbd082b54aa93334c4/df4f8432524595f1-e8/s540x810/3a90cf31314ccffa349fe212617cb6a068829e26.gif')
             .setDescription(`Clique nos botões abaixo para jogar`)
             .addField('Regras', `Você começa com 1 bala.
             você tem 3 opções a cada rodada:
-            1 - Recarregar: acrescenta 1 bala a sua munição;
-            2 - Atirar: Disparar contra o inimigo diminuindo uma bala
-            3 - Defender: Usa seu escudo e bloqueia o tiro do inimigo\n
+            **1 •** Recarregar: acrescenta 1 bala a sua munição;
+            **2 •** Atirar: Dispara contra o inimigo diminuindo uma bala
+            **3 •** Defender: Usa seu escudo e bloqueia o tiro do inimigo\n
             O vencedor é aquele que conseguir atingir o inimigo primeiro
-            Boa sorte, forasteiro!`)
+            🤠 Boa sorte, forasteiro!`)
 
         let startButtons = new Discord.MessageActionRow()
             .addComponents(
@@ -98,7 +98,14 @@ module.exports = {
                 let description = '';
 
                 if (playerJogada == 'atirar' && playerBalas == 0) {
-                    roundEmbed.setDescription('Ei, você está sem balas!\Tente outra ação');
+                    roundEmbed.setDescription('Ei, você está sem balas!\Tente outra ação')
+                        .addFields(
+                            { name: 'Round', value: `${round}`, inline: true },
+                            { name: 'Suas balas', value: `${playerBalas}`, inline: true },
+                            { name: 'Minhas balas', value: `${botBalas}`, inline: true },
+                        );
+
+                    buttonInteraction.deleteReply();
                     return gameMessage.edit({ embeds: [roundEmbed] });
                 }
 
@@ -120,7 +127,9 @@ module.exports = {
                     (playerJogada == 'recarregar' && botJogada == 'recarregar') ||
                     (playerJogada == 'recarregar' && botJogada == 'defender') ||
                     (playerJogada == 'defender' && botJogada == 'recarregar') ||
-                    (playerJogada == 'defender' && botJogada == 'defender')   // Jogadas sem disparos que dão empate
+                    (playerJogada == 'defender' && botJogada == 'defender') ||
+                    (playerJogada == 'atirar' && botJogada == 'defender') ||
+                    (playerJogada == 'defender' && botJogada == 'atirar') // Jogadas que não terminam o jogo
                 ) {
 
                     description += '⏳ Prepare-se para o próximo round e faça sua nova ação';
@@ -132,29 +141,7 @@ module.exports = {
                     });
 
                 }
-                // Empates com disparos
-                else if (playerJogada == 'atirar' && botJogada == 'defender') {
-
-                    description += '⏳ Prepare-se para o próximo round e faça sua nova ação';
-                    roundEmbed.setDescription(description);
-
-                    gameMessage.edit({
-                        embeds: [roundEmbed],
-                        components: [startButtons]
-                    });
-
-                } else if (playerJogada == 'defender' && botJogada == 'atirar') {
-
-                    description += '⏳ Prepare-se para o próximo round e faça sua nova ação';
-                    roundEmbed.setDescription(description);
-
-                    gameMessage.edit({
-                        embeds: [roundEmbed],
-                        components: [startButtons]
-                    });
-
-                }
-                // Empate morte dupla
+                // Empate morte dupla - game over
                 else if (playerJogada == 'atirar' && botJogada == 'atirar') {
 
                     empates++
@@ -162,8 +149,9 @@ module.exports = {
                     roundEmbed.setDescription(description)
                         .addFields(
                             { name: 'partidas', value: `${partidas}` },
-                            { name: 'vitorias', value: `${vitorias}` },
-                            { name: 'derrotas', value: `${derrotas}` },
+                            { name: 'vitorias', value: `${vitorias}`, inline: true },
+                            { name: 'empates', value: `${empates}`, inline: true },
+                            { name: 'derrotas', value: `${derrotas}`, inline: true },
                         );
 
                     gameMessage.edit({
@@ -181,8 +169,9 @@ module.exports = {
                         .setColor('RED')
                         .addFields(
                             { name: 'partidas', value: `${partidas}` },
-                            { name: 'vitorias', value: `${vitorias}` },
-                            { name: 'derrotas', value: `${derrotas}` },
+                            { name: 'vitorias', value: `${vitorias}`, inline: true },
+                            { name: 'empates', value: `${empates}`, inline: true },
+                            { name: 'derrotas', value: `${derrotas}`, inline: true },
                         );;
 
                     gameMessage.edit({
@@ -199,8 +188,9 @@ module.exports = {
                     roundEmbed.setDescription(description).setColor('GREEN')
                         .addFields(
                             { name: 'partidas', value: `${partidas}` },
-                            { name: 'vitorias', value: `${vitorias}` },
-                            { name: 'derrotas', value: `${derrotas}` },
+                            { name: 'vitorias', value: `${vitorias}`, inline: true },
+                            { name: 'empates', value: `${empates}`, inline: true },
+                            { name: 'derrotas', value: `${derrotas}`, inline: true },
                         );;
 
                     gameMessage.edit({
