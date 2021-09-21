@@ -33,7 +33,7 @@ module.exports = {
                 return interaction.editReply({ content: 'Ops, houve um erro de comunicação no banco de dados.\nTente novamente mais tarde' });
             }
 
-            if (profileData.coins < betValue) interaction.editReply({ content: 'Ei, você não possui esse valor em carteira' });
+            if (profileData.coins < betValue) return interaction.editReply({ content: 'Ei, você não possui esse valor em carteira para apostar' });
         }
 
         let startEmbed = new Discord.MessageEmbed()
