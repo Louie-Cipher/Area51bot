@@ -32,6 +32,8 @@ module.exports = {
             } catch (err) {
                 return interaction.editReply({ content: 'Ops, houve um erro de comunicação no banco de dados.\nTente novamente mais tarde' });
             }
+
+            if (profileData.coins < betValue) interaction.editReply({ content: 'Ei, você não possui esse valor em carteira' });
         }
 
         let startEmbed = new Discord.MessageEmbed()
@@ -226,7 +228,7 @@ module.exports = {
 
                     if (aposta === true) {
                         let profileUpdate = await profileModel.findOneAndUpdate({ userID: interaction.user.id }, {
-                            $inc: { coins: -betValue }
+                            $inc: { coins: betValue }
                         });
                         profileUpdate.save();
 
