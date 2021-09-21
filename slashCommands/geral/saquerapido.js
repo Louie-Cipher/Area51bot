@@ -55,6 +55,11 @@ module.exports = {
         const movimentos = ['recarregar', 'atirar', 'defender'];
         const emojis = ['🔄', '🔫', '🛡'];
 
+        let partidas = 1;
+        let vitorias = 0;
+        let derrotas = 0;
+        let empates = 0;
+
         let playAgainButton = new Discord.MessageActionRow()
             .addComponents(
                 new Discord.MessageButton()
@@ -85,14 +90,17 @@ module.exports = {
                 const playerEmoji = emojis[playerNumber];
                 const botEmoji = emojis[botNumber];
 
-                if (playerJogada == 'atirar' && playerBalas == 0) return buttonInteraction.editReply({ content: 'Ei, você está sem balas!\Tente outra ação' });
-
                 let roundEmbed = new Discord.MessageEmbed()
                     .setColor(startEmbed.color)
                     .setTitle(startEmbed.title)
                     .setThumbnail(startEmbed.thumbnail.url);
 
                 let description = '';
+
+                if (playerJogada == 'atirar' && playerBalas == 0) {
+                    roundEmbed.setDescription('Ei, você está sem balas!\Tente outra ação');
+                    return gameMessage.edit({ embeds: [roundEmbed] });
+                }
 
                 if (playerJogada == 'recarregar') playerBalas++
                 else if (playerJogada == 'atirar') playerBalas--
@@ -115,7 +123,7 @@ module.exports = {
                     (playerJogada == 'defender' && botJogada == 'defender')   // Jogadas sem disparos que dão empate
                 ) {
 
-                    description += 'Prepare-se para o próximo round';
+                    description += '⏳ Prepare-se para o próximo round e faça sua nova ação';
                     roundEmbed.setDescription(description);
 
                     gameMessage.edit({
@@ -127,7 +135,7 @@ module.exports = {
                 // Empates com disparos
                 else if (playerJogada == 'atirar' && botJogada == 'defender') {
 
-                    description += 'Prepare-se para o próximo round';
+                    description += '⏳ Prepare-se para o próximo round e faça sua nova ação';
                     roundEmbed.setDescription(description);
 
                     gameMessage.edit({
@@ -137,7 +145,7 @@ module.exports = {
 
                 } else if (playerJogada == 'defender' && botJogada == 'atirar') {
 
-                    description += 'Prepare-se para o próximo round';
+                    description += '⏳ Prepare-se para o próximo round e faça sua nova ação';
                     roundEmbed.setDescription(description);
 
                     gameMessage.edit({
@@ -149,8 +157,14 @@ module.exports = {
                 // Empate morte dupla
                 else if (playerJogada == 'atirar' && botJogada == 'atirar') {
 
+                    empates++
                     description += '☠ Fogo cruzado! Fim de jogo para nós 2';
-                    roundEmbed.setDescription(description);
+                    roundEmbed.setDescription(description)
+                        .addFields(
+                            { name: 'partidas', value: `${partidas}` },
+                            { name: 'vitorias', value: `${vitorias}` },
+                            { name: 'derrotas', value: `${derrotas}` },
+                        );
 
                     gameMessage.edit({
                         embeds: [roundEmbed],
@@ -161,8 +175,15 @@ module.exports = {
                 // Derrota player
                 else if (playerJogada == 'recarregar' && botJogada == 'atirar') {
 
+                    derrotas++
                     description += '☠ Você perdeu, forasteiro!';
-                    roundEmbed.setDescription(description).setColor('RED');
+                    roundEmbed.setDescription(description)
+                        .setColor('RED')
+                        .addFields(
+                            { name: 'partidas', value: `${partidas}` },
+                            { name: 'vitorias', value: `${vitorias}` },
+                            { name: 'derrotas', value: `${derrotas}` },
+                        );;
 
                     gameMessage.edit({
                         embeds: [roundEmbed],
@@ -173,8 +194,14 @@ module.exports = {
                 // Vitória player
                 else if (playerJogada == 'atirar' && botJogada == 'recarregar') {
 
-                    description += 'Parabéns, você venceu! ';
-                    roundEmbed.setDescription(description).setColor('GREEN');
+                    vitorias++
+                    description += '🎉 Parabéns, você venceu! ';
+                    roundEmbed.setDescription(description).setColor('GREEN')
+                        .addFields(
+                            { name: 'partidas', value: `${partidas}` },
+                            { name: 'vitorias', value: `${vitorias}` },
+                            { name: 'derrotas', value: `${derrotas}` },
+                        );;
 
                     gameMessage.edit({
                         embeds: [roundEmbed],
@@ -183,7 +210,7 @@ module.exports = {
 
                 }
 
-
+                round++
 
             } // botões de movimentos end
             else if (buttonInteraction.customId == 'again') {
@@ -191,6 +218,7 @@ module.exports = {
                 round = 0;
                 playerBalas = 1;
                 botBalas = 1;
+                partidas++
 
                 gameMessage.edit({
                     embeds: [startEmbed],
@@ -206,19 +234,3 @@ module.exports = {
 
     }
 }
-
-
-/*
-                if (botJogada == 'atirar') {
-                    let gameOverEmbed = new Discord.MessageEmbed()
-                        .setColor('DARK_RED')
-                        .setTitle('🔫 Saque Rápido - Fim de jogo ☠')
-                        .description('Seu inimigo atirou enquanto você estava recarregando!\nFim de jogo, forasteiro')
-
-                    gameMessage.edit({
-                        embeds: [gameOverEmbed],
-                        components: [playAgainButton]
-                    });
-                }
-                else if (botJogada == 'recarregar') botBalas++
- */
