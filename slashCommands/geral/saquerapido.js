@@ -178,7 +178,7 @@ module.exports = {
                             { name: 'empates', value: `${empates}`, inline: true },
                             { name: 'derrotas', value: `${derrotas}`, inline: true },
                         );
-                    if (aposta === true) startEmbed.addField('Lucro/prejuízo', `${lucro}`, true);
+                    if (aposta === true) roundEmbed.addField('Lucro/prejuízo', `${lucro}`, true);
 
                     gameMessage.edit({
                         embeds: [roundEmbed],
@@ -211,7 +211,7 @@ module.exports = {
                             { name: 'empates', value: `${empates}`, inline: true },
                             { name: 'derrotas', value: `${derrotas}`, inline: true },
                         );
-                    if (aposta === true) startEmbed.addField('Lucro/prejuízo', `${lucro}`, true);
+                    if (aposta === true) roundEmbed.addField('Lucro/prejuízo', `${lucro}`, true);
 
                     gameMessage.edit({
                         embeds: [roundEmbed],
@@ -241,7 +241,7 @@ module.exports = {
                             { name: 'empates', value: `${empates}`, inline: true },
                             { name: 'derrotas', value: `${derrotas}`, inline: true },
                         );;
-                    if (aposta === true) startEmbed.addField('Lucro/prejuízo', `${lucro}`, true);
+                    if (aposta === true) roundEmbed.addField('Lucro/prejuízo', `${lucro}`, true);
 
                     gameMessage.edit({
                         embeds: [roundEmbed],
