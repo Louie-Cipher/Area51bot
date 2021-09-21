@@ -1,10 +1,16 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require('discord.js');
+const profileModel = require('../../mongoSchema/profile');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('gatilho-rapido')
-        .setDescription('um jogo de atirar e recarregar sua arma'),
+        .setDescription('um jogo de atirar e recarregar sua arma')
+        .addIntegerOption(input => input
+            .setName('valor')
+            .setDescription('Caso deseje apostar, informe o valor')
+            .setRequired(false)
+        ),
 
     /**
      * @param {Discord.Client} client
@@ -13,7 +19,20 @@ module.exports = {
 
     async execute(client, interaction) {
 
-        await interaction.deferReply({ ephemeral: false })
+        await interaction.deferReply({ ephemeral: false });
+
+        let betValue = interaction.options.getInteger('valor', false);
+        let aposta = false;
+        let profileData;
+
+        if (valor && valor > 0) {
+            aposta = true;
+            try {
+                profileData = await profileModel.findOne({ userID: interaction.user.id });
+            } catch (err) {
+                return interaction.editReply({ content: 'Ops, houve um erro de comunicação no banco de dados.\nTente novamente mais tarde' });
+            }
+        }
 
         let startEmbed = new Discord.MessageEmbed()
             .setColor('YELLOW')
@@ -27,6 +46,8 @@ module.exports = {
             **3 •** Defender: Usa seu escudo e bloqueia o tiro do inimigo\n
             O vencedor é aquele que conseguir atingir o inimigo primeiro
             🤠 Boa sorte, forasteiro!`)
+
+        if (aposta === true) startEmbed.addField('Valor da aposta', `${betValue}`);
 
         let startButtons = new Discord.MessageActionRow()
             .addComponents(
@@ -54,7 +75,7 @@ module.exports = {
         let round = 1;
         const movimentos = ['recarregar', 'atirar', 'defender'];
         const emojis = ['🔄', '🔫', '🛡'];
-
+        let lucro = 0;
         let partidas = 1;
         let vitorias = 0;
         let derrotas = 0;
@@ -73,9 +94,9 @@ module.exports = {
 
             if (!buttonInteraction.isButton() || buttonInteraction.message.id != gameMessage.id || buttonInteraction.user.id != interaction.user.id) return;
 
-            await buttonInteraction.deferReply({ ephemeral: false });
-
             if (movimentos.includes(buttonInteraction.customId)) {
+
+                await buttonInteraction.deferReply({ ephemeral: false });
 
                 const playerNumber = movimentos.indexOf(buttonInteraction.customId);
                 let botNumber = Math.floor(Math.random() * 3);
@@ -143,9 +164,11 @@ module.exports = {
                 }
                 // Empate morte dupla - game over
                 else if (playerJogada == 'atirar' && botJogada == 'atirar') {
-
                     empates++
+
                     description += '☠ Fogo cruzado! Fim de jogo para nós 2';
+                    if (aposta === true) description += `\n\nVocê não ganhou ou perdeu suas ${betValue} estrelas`
+
                     roundEmbed.setDescription(description)
                         .addFields(
                             { name: 'partidas', value: `${partidas}` },
@@ -153,6 +176,7 @@ module.exports = {
                             { name: 'empates', value: `${empates}`, inline: true },
                             { name: 'derrotas', value: `${derrotas}`, inline: true },
                         );
+                    if (aposta === true) startEmbed.addField('Lucro/prejuízo', `${lucro}`, true);
 
                     gameMessage.edit({
                         embeds: [roundEmbed],
@@ -162,9 +186,21 @@ module.exports = {
                 }
                 // Derrota player
                 else if (playerJogada == 'recarregar' && botJogada == 'atirar') {
+                    derrotas++;
+                    lucro -= betValue;
 
-                    derrotas++
                     description += '☠ Você perdeu, forasteiro!';
+                    
+                    if (aposta === true) {
+                        let profileUpdate = await profileModel.findOneAndUpdate({ userID: interaction.user.id }, {
+                            $inc: { coins: -betValue }
+                        });
+                        profileUpdate.save();
+
+                        description += `\n\nVocê perdeu ${betValue} estrelas`
+                    }
+
+
                     roundEmbed.setDescription(description)
                         .setColor('RED')
                         .addFields(
@@ -172,7 +208,8 @@ module.exports = {
                             { name: 'vitorias', value: `${vitorias}`, inline: true },
                             { name: 'empates', value: `${empates}`, inline: true },
                             { name: 'derrotas', value: `${derrotas}`, inline: true },
-                        );;
+                        );
+                    if (aposta === true) startEmbed.addField('Lucro/prejuízo', `${lucro}`, true);
 
                     gameMessage.edit({
                         embeds: [roundEmbed],
@@ -182,9 +219,19 @@ module.exports = {
                 }
                 // Vitória player
                 else if (playerJogada == 'atirar' && botJogada == 'recarregar') {
+                    vitorias++;
+                    lucro += betValue;
 
-                    vitorias++
                     description += '🎉 Parabéns, você venceu! ';
+
+                    if (aposta === true) {
+                        let profileUpdate = await profileModel.findOneAndUpdate({ userID: interaction.user.id }, {
+                            $inc: { coins: -betValue }
+                        });
+                        profileUpdate.save();
+
+                        description += `\n\nVocê ganhou ${betValue} estrelas`
+                    }
                     roundEmbed.setDescription(description).setColor('GREEN')
                         .addFields(
                             { name: 'partidas', value: `${partidas}` },
@@ -192,6 +239,7 @@ module.exports = {
                             { name: 'empates', value: `${empates}`, inline: true },
                             { name: 'derrotas', value: `${derrotas}`, inline: true },
                         );;
+                    if (aposta === true) startEmbed.addField('Lucro/prejuízo', `${lucro}`, true);
 
                     gameMessage.edit({
                         embeds: [roundEmbed],
@@ -201,9 +249,14 @@ module.exports = {
                 }
 
                 round++
+                buttonInteraction.deleteReply();
 
             } // botões de movimentos end
             else if (buttonInteraction.customId == 'again') {
+
+                if (aposta === true && profileData.coins < betValue) return buttonInteraction.reply({ content: 'Você não possui mais saldo suficiente para continuar essa aposta', ephemeral: true });
+
+                await buttonInteraction.deferReply({ ephemeral: false });
 
                 round = 0;
                 playerBalas = 1;
@@ -215,10 +268,9 @@ module.exports = {
                     components: [startButtons]
                 });
 
+                buttonInteraction.deleteReply();
+
             }
-
-            buttonInteraction.deleteReply();
-
 
         }); // buttonInteraction event end
 
