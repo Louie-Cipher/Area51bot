@@ -6,7 +6,7 @@ const lotteryDB = require('./mongoSchema/lottery');
 const { prefix } = require('./config.json');
 
 const client = new Discord.Client({
-    intents: 8191
+    intents: 32767
 });
 
 client.player = new Player(client, {
