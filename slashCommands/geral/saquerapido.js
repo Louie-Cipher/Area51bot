@@ -25,7 +25,7 @@ module.exports = {
         let aposta = false;
         let profileData;
 
-        if (valor && valor > 0) {
+        if (betValue && betValue > 0) {
             aposta = true;
             try {
                 profileData = await profileModel.findOne({ userID: interaction.user.id });
@@ -190,7 +190,7 @@ module.exports = {
                     lucro -= betValue;
 
                     description += '☠ Você perdeu, forasteiro!';
-                    
+
                     if (aposta === true) {
                         let profileUpdate = await profileModel.findOneAndUpdate({ userID: interaction.user.id }, {
                             $inc: { coins: -betValue }
