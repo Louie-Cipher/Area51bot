@@ -1,5 +1,9 @@
 const Discord = require('discord.js');
 
+const desabafoChannel = '880547880065187901';
+const cupidoChannel = '873198743405600798';
+const hateChannel = '874146568930983936';
+
 /**
  * @param {Discord.Client} client 
  * @param {Discord.CommandInteraction} interaction
@@ -30,6 +34,32 @@ module.exports = async (client, interaction, slashCommands) => {
             cmd.execute(client, interaction);
         } catch (error) {
             console.error(error);
+        }
+
+    }
+
+    if (interaction.isButton()) {
+
+        if (interaction.channelId == desabafoChannel) {
+            try {
+                require('../extra/buttonEvents/desabafo')(client, interaction)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        else if (interaction.channelId == cupidoChannel) {
+            try {
+                require('../extra/buttonEvents/cupido')(client, interaction)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        else if (interaction.channelId == hateChannel) {
+            try {
+                require('../extra/buttonEvents/hate')(client, interaction)
+            } catch (error) {
+                console.log(error)
+            }
         }
 
     }

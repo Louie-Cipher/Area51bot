@@ -18,7 +18,7 @@ module.exports = {
 
     async execute(client, interaction) {
 
-        await interaction.deferReply({ephemeral: true });
+        await interaction.deferReply({ ephemeral: true });
 
         let mensagem = await interaction.options.getString('mensagem', true)
 
@@ -29,15 +29,9 @@ module.exports = {
         for (const word of words) {
 
             if (word.length == 18) {
-
-                i = 0
-                word.split('').forEach(letter => {
-                    if (Number(letter) != NaN) i++
-                })
-
-                if (i == 18) { texto += `<@${word}> ` }
+                let snowFlake = Discord.SnowflakeUtil.deconstruct(word)
+                if (snowFlake && snowFlake.date) { texto += `<@${word}> ` }
                 else { texto += word }
-
             }
             else if (word == undefined || word == 'undefined') { }
             else if (word == '@everyone') { texto += `@ everyone ` }
@@ -57,7 +51,7 @@ module.exports = {
 
         interaction.editReply({
             embeds: [{
-                color: '#00f000',
+                color: 'GREEN',
                 title: 'Mensagem enviada com sucesso',
                 description: 'Aguardando aprovação de um Cupido da staff para a mensagem ser publicada no chat Correio Amoroso',
             }]
@@ -68,12 +62,18 @@ module.exports = {
             .setTitle('Novo Correio Amoroso')
             .setDescription(texto)
             .addField('Mensagem de', interaction.user.toString())
-            .setFooter('Reaja com o emoji 💌 abaixo para aprovar essa mensagem');
+            .setFooter('Clique no botão abaixo para aprovar essa mensagem');
 
-        let aproveMessage = await aproveChannel.send({ embeds: [aproveEmbed] })
+        let buttons = new Discord.MessageActionRow()
+            .addComponents(
+                new Discord.MessageButton()
+                    .setCustomId('aprovar')
+                    .setLabel('Aprovar')
+                    .setStyle('PRIMARY')
+                    .setEmoji('✅')
+            );
 
-        aproveMessage.react('💌');
-
+        aproveChannel.send({ embeds: [aproveEmbed], components: [buttons] });
 
     }
 }
