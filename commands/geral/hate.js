@@ -77,7 +77,7 @@ module.exports = {
       .setColor('#ffff00')
       .setTitle('Novo Correio do Ódio')
       .setDescription(texto)
-      .addField('Mensagem de', message.author)
+      .addField('Mensagem de', `${message.author}`)
       .setFooter('Clique no botão abaixo para aprovar essa mensagem');
 
     let buttons = new Discord.MessageActionRow()

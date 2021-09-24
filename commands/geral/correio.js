@@ -81,7 +81,7 @@ module.exports = {
       .setColor('#ffff00')
       .setTitle('Novo Correio Amoroso')
       .setDescription(texto)
-      .addField('Mensagem de', message.author.toString())
+      .addField('Mensagem de', `${message.author}`)
       .setFooter('Clique no botão abaixo para aprovar essa mensagem');
 
     let buttons = new Discord.MessageActionRow()

@@ -70,7 +70,7 @@ module.exports = {
       .setColor('#ffff00')
       .setTitle('Nova mensagem de desabafo')
       .setDescription(texto)
-      .addField('Mensagem de', message.author)
+      .addField('Mensagem de', `${message.author}`)
       .setFooter('Clique no botão abaixo para aprovar essa mensagem');
 
     let buttons = new Discord.MessageActionRow()
