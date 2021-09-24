@@ -5,13 +5,21 @@ module.exports = {
   aliases: ['cupido'],
   description: "envia sua mensagem amorosa no chat \"correio amoroso\"",
   dmAllow: true,
-
+  /**
+   * @param {Discord.Client} client 
+   * @param {Discord.Message} message 
+   * @param {String[]} args 
+   */
   async execute(client, message, args) {
 
-    if(!args[0]) return message.reply({embeds: [{
-      color: '#ff00a2',
-      title: 'Correio Amoroso',
-      description: `digite sua carta do correio amoroso junto com o comando
+    const isDM = message.channel.type == 'DM' ? true : false;
+
+    if (!args[0]) {
+      let reply = await message.reply({
+        embeds: [{
+          color: '#ff00a2',
+          title: 'Correio Amoroso',
+          description: `digite sua carta do correio amoroso junto com o comando
       caso deseje mencionar o destinatário, informe o ID na parte que deseja mencionar
 
       **exemplo:**
@@ -19,77 +27,88 @@ module.exports = {
 
       essa mensagem de exemplo sairia como:
       "para @Area51bot uma carta do correio amoroso aqui, com muito amor"`,
-      footer: {
-        text: `Obs: por padrão, o correio elegante é pseudo-anônimo\n(apenas a staff pode ver o remetente, para evitar usos indevidos do comando, não irá ser mostrado publicamente no chat Correio Amoroso)\nmas caso queira se identificar, apenas acrescente seu nome na própria mensagem onde quiser`
-	    }
-    }]})
+          footer: {
+            text: `Obs: por padrão, o correio elegante é pseudo-anônimo\n(apenas a staff pode ver o remetente, para evitar usos indevidos do comando, não irá ser mostrado publicamente no chat Correio Amoroso)\nmas caso queira se identificar, apenas acrescente seu nome na própria mensagem onde quiser`
+          }
+        }]
+      });
 
-    let totalMessage = args.join(' ');
-    let texto
-    let destinatario
+      if (isDM === false) {
+        try { message.delete() } catch (err) { }
+        setTimeout(() => {
+          try { reply.delete() } catch (err) { }
+        }, 10 * 1000);
+      }
+      return;
+    }
 
-    for (const argm of args) {
+    let texto = ''
 
-      if(argm.length == 18) {
-        
-        i=0
-        argm.split('').forEach(letter => {
-          if(Number(letter) != NaN) i++
-        })
+    for (const word of args) {
 
-        if(i==18) { texto += `<@${argm}> ` }
-        else { texto += argm }
+      if (word.length == 18) {
+
+        const snowFlake = Discord.SnowflakeUtil.deconstruct(word)
+
+        if (snowFlake && snowFlake.date) texto += `<@${word}> `
+        else texto += word
 
       }
-      else if (argm == undefined || argm == 'undefined') {  }
-      else if (argm == '@everyone') {texto += `@ everyone `}
-      else {
-        texto += `${argm} `
-      }
+      else if (word == undefined || word == 'undefined') { }
+      else if (word == '@everyone') texto += `@ everyone `
+      else texto += `${word} `
 
     }
 
-    if (texto.length > 2048) return message.reply({embeds: [{ color: '#ff00a2', description: `O tamanho limite do correio é de 2048 caracteres. sua mensagem possui ${texto.length} caracteres` }]})
+    if (texto.length > 2048) {
+      let reply = await message.reply({ embeds: [{ color: '#ff00a2', description: `O tamanho limite do correio é de 2048 caracteres. sua mensagem possui ${texto.length} caracteres` }] })
 
-    if (texto.startsWith('undefined')) {
-      texto = texto.substring(9);
-    }
-
-    /*if(totalMessage.includes('|')) {
-      
-      texto = totalMessage.split('|')[0]
-
-      if (totalMessage.split('|')[1].startsWith(' ')) { 
-        destinatario = await client.users.cache.get(totalMessage.split('|')[1].substring(1));
+      if (isDM === false) {
+        try { message.delete() } catch (err) { }
+        setTimeout(() => {
+          try { reply.delete() } catch (err) { }
+        }, 10 * 4000);
       }
-      else {
-        destinatario = await client.users.cache.get(totalMessage.split('|')[1])
-      }
+
+      return;
+
     }
-    else {
-      texto = args.join(' ');
-    }*/
+    if (texto.startsWith('undefined')) texto = texto.substring(9);
 
     let aproveChannel = await client.channels.fetch('873198743405600798');
-
-    message.react('✅')
-
-    message.reply({embeds: [{
-      color: '#00f000',
-      title: 'Mensagem enviada com sucesso',
-      description: 'Aguardando aprovação de um Cupido da staff para a mensagem ser publicada no chat Correio Amoroso',
-    }]})
 
     let aproveEmbed = new Discord.MessageEmbed()
       .setColor('#ffff00')
       .setTitle('Novo Correio Amoroso')
-      .setDescription(texto) 
+      .setDescription(texto)
       .addField('Mensagem de', message.author.toString())
-      .setFooter('Reaja com o emoji 💌 abaixo para aprovar essa mensagem');
+      .setFooter('Clique no botão abaixo para aprovar essa mensagem');
 
-    let aproveMessage = await aproveChannel.send({embeds: [aproveEmbed]})
+    let buttons = new Discord.MessageActionRow()
+      .addComponents(
+        new Discord.MessageButton()
+          .setCustomId('aprovar')
+          .setLabel('Aprovar')
+          .setStyle('PRIMARY')
+          .setEmoji('✅')
+      );
 
-    aproveMessage.react('💌');
+    let reply = await message.reply({
+      embeds: [{
+        color: 'GREEN',
+        title: 'Mensagem enviada com sucesso',
+        description: 'Aguardando aprovação de um Cupido da staff para a mensagem ser publicada no chat Correio Amoroso',
+      }]
+    });
+
+    try { message.delete(); } catch (err) { }
+
+    setTimeout(() => {
+      reply.delete()
+    }, 4 * 1000);
+
+    aproveChannel.send({ embeds: [aproveEmbed], components: [buttons] });
+
 
   }
 }
