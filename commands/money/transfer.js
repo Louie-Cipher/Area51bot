@@ -8,7 +8,7 @@ module.exports = {
 
   async execute(client, message, args) {
 
-    let valor = parseInt(args[1]);
+    let valor = parseInt(args[1], 10);
 
     let user2 = message.mentions.users.first() || client.users.cache.get(args[0]);
 
@@ -87,9 +87,9 @@ module.exports = {
       .setColor('#00ffff')
       .setTitle('📤Transferência efetuada com sucesso📥')
       .addFields(
-        { name: 'valor', value: valor, },
-        { name: 'seu saldo atual', value: (profileData1.coins - valor) },
-        { name: `saldo atual de ${user2.username}`, value: (profileData2.bank + valor) }
+        { name: 'valor', value: valor.toString() },
+        { name: 'seu saldo atual', value: (profileData1.coins - valor).toString() },
+        { name: `saldo atual de ${user2.username}`, value: (profileData2.bank + valor).toString() }
       );
 
     message.reply({ embeds: [embed] });
