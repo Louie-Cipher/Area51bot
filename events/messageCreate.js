@@ -3,6 +3,8 @@ const profileModel = require('../mongoSchema/profile');
 const { prefix, commandChannels } = require('../config.json');
 const embeds = require('../embeds');
 
+const permissions = Discord.Permissions.FLAGS
+
 let cooldownXP = new Map();
 let cooldownCommands = new Map();
 
@@ -61,22 +63,15 @@ module.exports = async (client, message, commands) => {
       console.log(erro)
     }
 
-  }
-  else {
-
     cooldownXP.set(message.author.id, dateNow);
 
     setTimeout(() => {
       cooldownXP.delete(message.author.id);
     }, 1000 * 15);
+
   }
 
-
-  if (message.guild) {
-    if (message.channel.id == '874731227729498123' || message.channel.id == '874877733447012402') {
-      message.react('<a:carregando:833798958165786706>')
-    }
-  }
+  if (message.guild && ['874731227729498123', '874877733447012402'].includes(message.channel.id)) message.react('<a:carregando:833798958165786706>')
 
   const triggerWords = process.env['trigger_warning'].split(' ');
   const msgContent = message.content.toLowerCase();
@@ -92,20 +87,17 @@ module.exports = async (client, message, commands) => {
     return message.react('😴');
   if (msgContent == 'cu' || msgContent == 'cu?' && !message.author.bot) {
     message.react('🇨').then(message.react('🇺'));
-    message.reply({ embeds: [{ description: 'CU' }] });
+    return message.reply({ embeds: [{ description: 'CU' }] });
   }
-  if (msgContent == 'fodase' || msgContent == 'foda-se' || msgContent == 'foda-se?' || msgContent == 'fodase?' && !message.author.bot)
+  if (['fodase', 'foda-se', 'foda-se?', 'fodase?'].includes(msgContent) && !message.author.bot)
     return message.react('<:fodase:867536967004717057>');
 
-  if (message.author.bot || !msgContent.startsWith(prefix)) return;
+  if (!msgContent.startsWith(prefix)) return;
 
   const args = message.content.slice(prefix.length).split(/ +/);
   let cmdName = args.shift().toLowerCase();
 
-  if (!cmdName || cmdName.length == 0) {
-    cmdName = args[0];
-    args.shift();
-  }
+  if (!cmdName || cmdName.length == 0) cmdName = args.shift().toLowerCase();
 
   const cmd = commands.get(cmdName) || commands.find(cmd => cmd.aliases && cmd.aliases.includes(cmdName));
 
@@ -116,11 +108,11 @@ module.exports = async (client, message, commands) => {
     let nextCmd = new Date(cooldownCommands.get(message.author.id).getTime() + 4000)
     let timeLeft = new Date(nextCmd.getTime() - dateNow.getTime());
 
-    let timeLeftFormated = `${timeLeft.getSeconds()} segundo`;
-    if (timeLeft.getSeconds() == 0) timeLeftFormated = 'alguns milissegundos'
-    if (timeLeft.getSeconds() > 1) timeLeftFormated += 's';
+    let timeLeftString = `${timeLeft.getSeconds()} segundo`;
+    if (timeLeft.getSeconds() == 0) timeLeftString = 'alguns milissegundos'
+    if (timeLeft.getSeconds() > 1) timeLeftString += 's';
 
-    return message.reply({ content: `Epa, você está usando comandos muito rápido!\nTente novamente em ${timeLeftFormated}` });
+    return message.reply({ content: `Epa, você está usando comandos muito rápido!\nTente novamente em ${timeLeftString}` });
 
   } else {
     cooldownCommands.set(message.author.id, dateNow);
@@ -132,23 +124,16 @@ module.exports = async (client, message, commands) => {
 
   if (message.guild) {
 
-    let clientMember = message.guild.me;
+    const clientMember = message.guild.me;
 
-    if (!commandChannels.includes(message.channel.id) && !message.member.permissions.has('MANAGE_MESSAGES'))
+    if (!commandChannels.includes(message.channel.id) && !message.member.permissions.has(permissions.MANAGE_MESSAGES))
       return message.reply({ embeds: [embeds.blockedCommands] });
 
-    if (cmd.booster && !message.member.roles.cache.has('828983379135299634') && !message.member.permissions.has('MANAGE_MESSAGES'))
+    if (cmd.booster && !message.member.roles.cache.has('828983379135299634') && !message.member.permissions.has(permissions.MANAGE_MESSAGES))
       return message.reply({ embeds: [embeds.booster] });
 
-    if (cmd.userPermissions) {
-      if (!message.member.permissions.has(cmd.userPermissions))
-        return embeds.userPermission(client, message, cmd);
-    }
-
-    if (cmd.botPermissions) {
-      if (!clientMember.permissions.has(cmd.botPermissions))
-        return message.reply({ embeds: [embeds.botPermission] });
-    }
+    if (cmd.userPermissions && !message.member.permissions.has(cmd.userPermissions))
+      return embeds.userPermission(client, message, cmd);
 
     if (cmd.nsfw && !message.channel.nsfw)
       return message.reply({ embeds: [embeds.nsfw] });
@@ -161,9 +146,8 @@ module.exports = async (client, message, commands) => {
     }
   }
   else {
-    if (!cmd.dmAllow) return message.reply({ content: '❌ Esse comando só pode ser utilizado dentro do servidor\n Atualmente, os unicos comandos disponíveis via DM são os comando `a.cupido`, `a.hate`, `a.desabafo`' })
+    if (!cmd.dmAllow) return message.reply({ content: '❌ Esse comando só pode ser utilizado dentro do servidor\n Atualmente, os comandos disponíveis via DM são: `a.cupido`, `a.hate`, `a.desabafo`' })
   }
-
 
   try {
     cmd.execute(client, message, args);
