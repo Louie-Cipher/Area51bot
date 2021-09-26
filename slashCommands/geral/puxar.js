@@ -42,7 +42,7 @@ module.exports = {
             content: 'Você precisa estar em seu canal VIP para usar esse comando!'
         });
 
-        const user = interaction.options.getUser('membro', true);
+        const user = interaction.options.getUser('usuário', true);
         const member = await interaction.guild.members.fetch(user.id);
 
         if (!member.voice.channel || member.voice.channel.id != esperaChannel) return interaction.editReply({
