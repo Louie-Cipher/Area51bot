@@ -83,7 +83,7 @@ module.exports = {
                 )
 
             let coinMessage = await message.channel.send({
-                content: `Olá ${player2}.\n${player1} deseja apostar ${valor} estrelas com você. aceitar?`,
+                content: `Olá ${player2}\n${player1} deseja apostar ${valor} estrelas com você. aceitar?`,
                 embeds: [startEmbed],
                 components: [button]
             });
@@ -94,63 +94,40 @@ module.exports = {
             });
 
             collector.on('collect', async buttonInteraction => {
-
-                if (!buttonInteraction.isButton()) return;
-
                 buttonInteraction.deferReply({ ephemeral: false });
 
                 const rand = Math.round(Math.random());
+                const winner = rand == 0 ? player1 : player2;
+                const looser = rand == 0 ? player2 : player1;
 
                 let resultEmbed = new Discord.MessageEmbed()
                     .setColor('AQUA')
                     .setTitle('👤 Cara ou Coroa 👑')
+                    .setDescription(`🎉 Parabéns ${winner}, você venceu, e ganhou ${valor} Stars ✨\n\n😭 Sinto muito ${looser}, você perdeu`);
 
-                if (rand == 0) { // Vitória P1
-                    resultEmbed.setDescription(`🎉Parabéns ${player1}, você venceu, e ganhou ${valor} Stars ✨\n
-                    😭 Sinto muito ${player2}, você perdeu 😭`);
+                let profileUpdate1 = await profileModel.findOneAndUpdate({ userID: winner.id, },
+                    {
+                        $inc: { coins: valor },
+                        lastEditMoney: Date.now()
+                    }
+                );
+                profileUpdate1.save();
 
-                    let profileUpdate1 = await profileModel.findOneAndUpdate({ userID: player1.id, },
-                        {
-                            $inc: { coins: valor },
-                            lastEditMoney: Date.now()
-                        }
-                    );
-                    profileUpdate1.save();
+                let profileUpdate2 = await profileModel.findOneAndUpdate({ userID: looser.id },
+                    {
+                        $inc: { coins: -valor },
+                        lastEditMoney: Date.now()
+                    }
+                );
+                profileUpdate2.save();
 
-                    let profileUpdate2 = await profileModel.findOneAndUpdate({ userID: player2.id },
-                        {
-                            $inc: { coins: -valor },
-                            lastEditMoney: Date.now()
-                        }
-                    );
-                    profileUpdate2.save();
-                }
-                else { // Vitória P2
-                    resultEmbed.setDescription(`🎉Parabéns ${player2}, você venceu, e ganhou ${valor} Stars ✨\n
-                    😭 Sinto muito ${player1}, você perdeu 😭`);
-
-                    let profileUpdate1 = await profileModel.findOneAndUpdate({ userID: player1.id },
-                        {
-                            $inc: { coins: -valor },
-                            lastEditMoney: Date.now()
-                        }
-                    );
-                    profileUpdate1.save();
-
-                    let profileUpdate2 = await profileModel.findOneAndUpdate({ userID: player2.id },
-                        {
-                            $inc: { coins: valor },
-                            lastEditMoney: Date.now()
-                        }
-                    );
-                    profileUpdate2.save();
-                }
-
-                buttonInteraction.editReply({
+                coinMessage.edit({
                     content: `Resultado da aposta de ${player1} e ${player2}`,
                     embeds: [resultEmbed],
                     components: []
                 });
+
+                buttonInteraction.deleteReply();
 
             }); // Collector event end
 
@@ -165,37 +142,29 @@ module.exports = {
             if (rand == 0) {
 
                 resultEmbed
-                    .setDescription(`Parabéns ${player1}, você venceu, e ganhou ${valor} Stars🎉\nInfelizmente, eu perdi 😭`)
-                    .setColor('#00ff00');
+                    .setDescription(`🎉 Parabéns ${player1}, você venceu, e ganhou ${valor} Stars\nInfelizmente, eu perdi 😭`)
+                    .setColor('GREEN');
 
-                let profileUpdate1 = await profileModel.findOneAndUpdate(
+                let profileUpdate = await profileModel.findOneAndUpdate({ userID: player1.id, },
                     {
-                        userID: player1.id,
-                    }, {
-                    $inc: {
-                        coins: valor
-                    },
-                    lastEditMoney: Date.now()
-                }
+                        $inc: { coins: valor },
+                        lastEditMoney: Date.now()
+                    }
                 );
-                profileUpdate1.save();
+                profileUpdate.save();
 
             } else {
 
                 resultEmbed
-                    .setDescription(`Sinto muito ${player1}, você perdeu. prejuízo de ${valor} Stars😭\nEba, eu venci! 🎉`)
-                    .setColor('#ff0000')
-                let profileUpdate1 = await profileModel.findOneAndUpdate(
+                    .setDescription(`😭 Sinto muito ${player1}, você perdeu. prejuízo de ${valor} Stars\nEba, eu venci! 🎉`)
+                    .setColor('RED')
+                let profileUpdate = await profileModel.findOneAndUpdate({ userID: player1.id, },
                     {
-                        userID: player1.id,
-                    }, {
-                    $inc: {
-                        coins: -valor
-                    },
-                    lastEditMoney: Date.now()
-                }
+                        $inc: { coins: -valor },
+                        lastEditMoney: Date.now()
+                    }
                 );
-                profileUpdate1.save();
+                profileUpdate.save();
 
             }
 
