@@ -13,6 +13,10 @@ module.exports = {
                 .addChoice('comprar', 'comprar')
                 .addChoice('estatísticas', 'estatisticas')
                 .setRequired(true)
+        )
+        .addIntegerOption(input => input
+            .setName('quantidade')
+            .setDescription('a quantidade de rifas para comprar')
         ),
 
     /**
@@ -22,15 +26,19 @@ module.exports = {
 
     async execute(client, interaction) {
 
+        await interaction.deferReply({ ephemeral: false });
+
         let option = interaction.options.getString('opções', true);
 
-        await interaction.deferReply({ ephemeral: true });
+        let quantidade = interaction.options.getInteger('quantidade', false);
 
         if (option == 'comprar') {
 
+            let price = (quantidade) ? quantidade * 100 : 100;
+
             let profileData = await profileModel.findOne({ userID: interaction.user.id });
 
-            if (profileData.coins < 100) return interaction.editReply({
+            if (profileData.coins < price) return interaction.editReply({
                 embeds: [{
                     color: 'RED',
                     title: 'Saldo insuficiente para realizar a compra',
@@ -40,7 +48,7 @@ module.exports = {
 
             let profileUpdate = await profileModel.findOneAndUpdate({ userID: interaction.user.id },
                 {
-                    $inc: { coins: -100 },
+                    $inc: { coins: -price },
                     lastEditMoney: Date.now()
                 }
             )
@@ -58,20 +66,31 @@ module.exports = {
                 createLottery.save();
             }
 
+            let addToDB = [];
+
+            if (quantidade) {
+                for (let i = 0; i < quantidade; i++) addToDB.push(interaction.user.id)
+            }
+            else addToDB.push(interaction.user.id)
+
             let lotteryUpdate = await lotteryDB.findOneAndUpdate({ true: true },
                 {
-                    $push: { users: interaction.user.id }
+                    $push: { users: addToDB }
                 }
             );
-            lotteryUpdate.save()
+            lotteryUpdate.save();
+
+            const plural = quantidade ? 's' : ''
+
+            let embed = new Discord.MessageEmbed()
+                .setColor('AQUA')
+                .setTitle(`Bilhete${plural} da Rifa Intergaláctica adquirido${plural} com sucesso`)
+                .setDescription('O sorteio ocorrerá as 21:00, no chat <#862354794323902474>\nPara ver mais informações sobre o sorteio de hoje, utilize \`/rifa estatisticas\`');
+            if (quantidade) embed.addField('quantidade de bilhetes', `${quantidade}`);
 
             interaction.editReply({
-                embeds: [{
-                    color: '#00ff30',
-                    title: 'Bilhete da Rifa Intergaláctica adquirido com sucesso',
-                    description: `O sorteio ocorrerá as 21:00, no chat <#862354794323902474>\nPara ver mais informações sobre o sorteio de hoje, utilize \`/rifa estatisticas\``
-                }]
-            })
+                embeds: [embed]
+            });
 
         } else {
 
