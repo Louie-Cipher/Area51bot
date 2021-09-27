@@ -73,9 +73,19 @@ module.exports = {
                 .setDescription('Para aceitar, clique no botão abaixo')
                 .addField('Valor da aposta', `${valor}`);
 
+            let button = new Discord.MessageActionRow()
+                .addComponents(
+                    new Discord.MessageButton()
+                        .setCustomId('aceitar')
+                        .setLabel('Aceitar')
+                        .setEmoji('✅')
+                        .setStyle('PRIMARY')
+                )
+
             let coinMessage = await message.channel.send({
                 content: `Olá ${player2}.\n${player1} deseja apostar ${valor} estrelas com você. aceitar?`,
-                embeds: [startEmbed]
+                embeds: [startEmbed],
+                components: [button]
             });
 
             let collector = coinMessage.createMessageComponentCollector({
