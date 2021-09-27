@@ -117,7 +117,7 @@ module.exports = {
                     { name: 'Suas estatísticas', value: '\u200B' },
                     { name: 'Hoje você comprou', value: userTickets.toString() + ' bilhetes', inline: true },
                     { name: 'Chances de vitória hoje', value: `${vitoriaPercent} %`, inline: true },
-                    { name: 'Você já venceu', value: `{userWins} vezes`, inline: true },
+                    { name: 'Você já venceu', value: `${userWins} vezes`, inline: true },
                     { name: '\u200B', value: '\u200B' },
                     { name: 'Estatísticas gerais', value: '\u200B' },
                     { name: 'Concorrendo hoje', value: `${lotteryData.users.length}`, inline: true },
