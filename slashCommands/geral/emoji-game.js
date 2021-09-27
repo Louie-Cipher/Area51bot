@@ -35,7 +35,9 @@ module.exports = {
             [':file_folder:', ':open_file_folder:'], // 📁 // 📂
             [':bearded_person:', ':man_beard:'], // 🧔 // 🧔‍♂️
             [':man_office_worker:', ':office_worker:'], //👨‍💼 // 🧑‍💼
-            [':smile_cat:', ':smiley_cat:'] // 😸 // 😺
+            [':smile_cat:', ':smiley_cat:'], // 😸 // 😺
+            [':raised_hand:', ':hand_splayed:'], // ✋ // 🖐️
+            [':imp:', ':smiling_imp:'], // 👿 // 😈
         ];
 
         let boardObj = newBoard();
