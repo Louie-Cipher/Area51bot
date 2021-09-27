@@ -26,6 +26,9 @@ module.exports = {
         let profileData;
 
         if (betValue && betValue > 0) {
+
+            if (betValue > 10 * 1000) return interaction.editReply({ content: 'Ops, o valor máximo para apostas nesse jogo é de 10 mil estrelas' });
+
             aposta = true;
             try {
                 profileData = await profileModel.findOne({ userID: interaction.user.id });
