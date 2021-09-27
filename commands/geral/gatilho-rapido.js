@@ -3,7 +3,7 @@ const profileModel = require('../../mongoSchema/profile');
 
 module.exports = {
     name: 'gatilho-rapido',
-    aliases: ['gatilho-rápido', 'saque-rapido', 'saque-rápido'],
+    aliases: ['gatilho-rápido', 'saque-rapido', 'saque-rápido', 'gun'],
     description: "um jogo de atirar e recarregar sua arma",
 
     /**
@@ -141,13 +141,12 @@ module.exports = {
                 (interaction.user.id != player1.id && interaction.user.id != player2.id)
             ) return;
 
-            let roundPlayer = player1;
-            if (interaction.user.id == player1.id) roundPlayer = player2;
+            await interaction.deferReply({ ephemeral: false });
 
-            let otherPlayer = player1;
-            if (interaction.user.id == player1.id) otherPlayer = player2;
+            const roundPlayer = (interaction.user.id == player1.id) ? player1 : player2;
+            const otherPlayer = (interaction.user.id == player1.id) ? player2 : player1;
 
-            const move = interaction.customId
+            const move = interaction.customId;
 
             if (movimentos.includes(interaction.customId)) {
 
@@ -167,15 +166,13 @@ module.exports = {
 
                 playersMap.set(interaction.user.id, interaction.customId);
 
-                interaction.deferReply({ ephemeral: false });
-
                 if (playersMap.size == 0) {
                     let reply = await interaction.editReply({
                         content: `Okay ${roundPlayer}, você já escolheu seu movimento\nAguardando ${otherPlayer} fazer seu movimento também`,
                         fetchReply: true
                     });
 
-                    await setTimeout(() => { reply.delete(); }, 3000);
+                    setTimeout(() => { reply.delete(); }, 3000);
                     return;
                 }
 
@@ -207,14 +204,8 @@ module.exports = {
                 let description = `${player1} escolheu **${p1Move}** ${p1Emoji}\n\n${player2} escolheu **${p2Move}** ${p2Emoji}\n\n`
 
 
-                if (
-                    (p1Move == 'recarregar' && p2Move == 'recarregar') ||
-                    (p1Move == 'recarregar' && p2Move == 'defender') ||
-                    (p1Move == 'defender' && p2Move == 'recarregar') ||
-                    (p1Move == 'defender' && p2Move == 'defender') ||
-                    (p1Move == 'atirar' && p2Move == 'defender') ||
-                    (p1Move == 'defender' && p2Move == 'atirar') // Movimentos que não terminam o jogo
-                ) {
+                if ((p1Move == 'recarregar' && p2Move == 'recarregar') || p1Move == 'defender' || p2Move == 'defender') {
+                    // Movimentos que não terminam o jogo
 
                     description += '⏳ Preparem-se para o próximo round e façam suas novas ações';
                     roundEmbed.setDescription(description);
@@ -315,17 +306,18 @@ module.exports = {
 
                 }
 
+                playersMap.delete(player1.id);
+                playersMap.delete(player2.id);
+
                 interaction.deleteReply();
 
             }// botões de movimentos end
-            else if (interaction.customId == 'again') {
+            else if (interaction.customId == 'again') {''
 
                 if (playAgain.includes(interaction.user.id)) return interaction.reply({
                     content: `Você já votou por jogar novamente. espere ${otherPlayer.tag} decidir`,
                     ephemeral: true
                 });
-
-                await interaction.deferReply({ ephemeral: false });
 
                 if (aposta === true) {
                     let profileData;
