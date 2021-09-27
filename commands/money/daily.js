@@ -23,13 +23,13 @@ module.exports = {
       return message.reply({
         embeds: [{
           color: '#b3c20c',
-          title: '⏳ Ei, você já resgatou sua reconpensa hoje!',
+          title: '⏳ Ei, você já resgatou sua recompensa hoje!',
           description: '⏳⭐ Volte amanhã para resgatar mais estrelas',
           footer: {
             text: `OBS: se você começou a usar o bot hoje,\ndeve esperar até amanhã para resgatar sua primeira recompensa
         
 dica: Você sabia que sendo booster do servidor,
-você ganha até 100 moedas a mais no daily?` }
+você ganha até 200 moedas a mais no daily?` }
         }]
       });
 
