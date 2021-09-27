@@ -18,7 +18,7 @@ module.exports = {
         let betValue = 0;
 
         const player1 = message.author;
-        const player2 = message.mentions.members.first() || client.users.cache.get(args[0]);
+        const player2 = message.mentions.users.first() || client.users.cache.get(args[0]);
 
         if (!player2) return message.reply({ content: 'usuário informado não encontrado' });
 
@@ -104,7 +104,7 @@ module.exports = {
             );
 
         let gameMessage = await message.reply({
-            content: `Olá ${player2}\n${player1} deseja desafiar você para um desafio de "gatilho rápido"?`,
+            content: `Olá ${player2}\n${player1} deseja desafiar você para um desafio de "gatilho rápido"`,
             embeds: [startEmbed],
             components: [startButtons]
         });
@@ -130,6 +130,9 @@ module.exports = {
         let vitoriasP2 = 0;
         let empates = 0;
 
+        let lucroP1 = 0;
+        let lucroP2 = 0;
+
         let playAgain = [];
 
         let playersMap = new Discord.Collection();
@@ -140,8 +143,6 @@ module.exports = {
                 !interaction.inGuild() || !interaction.isButton() || interaction.message.id != gameMessage.id ||
                 (interaction.user.id != player1.id && interaction.user.id != player2.id)
             ) return;
-
-            await interaction.deferReply({ ephemeral: false });
 
             const roundPlayer = (interaction.user.id == player1.id) ? player1 : player2;
             const otherPlayer = (interaction.user.id == player1.id) ? player2 : player1;
@@ -164,17 +165,11 @@ module.exports = {
                     ephemeral: true
                 });
 
+                await interaction.deferReply({ ephemeral: false });
+
                 playersMap.set(interaction.user.id, interaction.customId);
 
-                if (playersMap.size == 0) {
-                    let reply = await interaction.editReply({
-                        content: `Okay ${roundPlayer}, você já escolheu seu movimento\nAguardando ${otherPlayer} fazer seu movimento também`,
-                        fetchReply: true
-                    });
-
-                    setTimeout(() => { reply.delete(); }, 3000);
-                    return;
-                }
+                if (playersMap.size == 1) return interaction.deleteReply();
 
                 round++
 
@@ -201,7 +196,7 @@ module.exports = {
                         { name: `Balas de ${player2.username}`, value: `${p2Balas}`, inline: true },
                     );
 
-                let description = `${player1} escolheu **${p1Move}** ${p1Emoji}\n\n${player2} escolheu **${p2Move}** ${p2Emoji}\n\n`
+                let description = `${player1.username} escolheu **${p1Move}** ${p1Emoji}\n\n${player2.username} escolheu **${p2Move}** ${p2Emoji}\n\n`
 
 
                 if ((p1Move == 'recarregar' && p2Move == 'recarregar') || p1Move == 'defender' || p2Move == 'defender') {
@@ -211,6 +206,7 @@ module.exports = {
                     roundEmbed.setDescription(description);
 
                     gameMessage.edit({
+                        content: `Partida de ${player1} e ${player2}`,
                         embeds: [roundEmbed],
                         components: [startButtons]
                     });
@@ -233,6 +229,7 @@ module.exports = {
                     if (aposta === true) roundEmbed.addField('Lucro/prejuízo', `${lucro}`, true);
 
                     gameMessage.edit({
+                        content: `Partida de ${player1} e ${player2}`,
                         embeds: [roundEmbed],
                         components: [playAgainButton]
                     });
@@ -242,9 +239,10 @@ module.exports = {
                 else if (p1Move == 'atirar' && p2Move == 'recarregar') {
                     vitoriasP1++;
 
-                    description += `☠ ${player2} perdeu`;
+                    description += `🎉 Parabéns ${player1.username}, você venceu!\n\n☠ ${player2.username} perdeu`;
 
                     if (aposta === true) {
+                        lucroP1 += betValue;
                         let profileUpdate1 = await profileModel.findOneAndUpdate({ userID: player1.id }, {
                             $inc: { coins: betValue }
                         });
@@ -255,7 +253,7 @@ module.exports = {
                         });
                         profileUpdate2.save();
 
-                        description += `\n\n${player1} ganhou ${betValue} estrelas`
+                        description += `\n\n${player1.username} ganhou ${betValue} estrelas`
                     }
                     roundEmbed.setDescription(description)
                         .addFields(
@@ -266,6 +264,7 @@ module.exports = {
                         );
 
                     gameMessage.edit({
+                        content: `Partida de ${player1} e ${player2}`,
                         embeds: [roundEmbed],
                         components: [playAgainButton]
                     });
@@ -275,9 +274,10 @@ module.exports = {
                 else if (p1Move == 'recarregar' && p2Move == 'atirar') {
                     vitoriasP2++;
 
-                    description += `☠ ${player1} perdeu`;
+                    description += `🎉 Parabéns ${player2.username}, você venceu!\n\n☠ ${player1} perdeu`;
 
                     if (aposta === true) {
+                        lucroP2 += betValue
                         let profileUpdate1 = await profileModel.findOneAndUpdate({ userID: player1.id }, {
                             $inc: { coins: -betValue }
                         });
@@ -299,7 +299,13 @@ module.exports = {
                             { name: 'empates', value: `${empates}`, inline: true },
                         );
 
+                    if (aposta === true) roundEmbed.addFields(
+                        { name: `Lucro de ${player1.username}`, value: `${lucroP1}`, inline: true },
+                        { name: `Lucro de ${player2.username}`, value: `${lucroP2}`, inline: true }
+                    );
+
                     gameMessage.edit({
+                        content: `Partida de ${player1} e ${player2}`,
                         embeds: [roundEmbed],
                         components: [playAgainButton]
                     });
@@ -312,26 +318,40 @@ module.exports = {
                 interaction.deleteReply();
 
             }// botões de movimentos end
-            else if (interaction.customId == 'again') {''
+            else if (interaction.customId == 'again') {
 
                 if (playAgain.includes(interaction.user.id)) return interaction.reply({
                     content: `Você já votou por jogar novamente. espere ${otherPlayer.tag} decidir`,
                     ephemeral: true
                 });
 
-                if (aposta === true) {
-                    let profileData;
-                    if (interaction.user.id == player1.id) profileData = profile1Data
-                    else profileData = profile2Data
+                await interaction.deferReply({ ephemeral: false });
 
-                    if (profileData.coins < betValue) return interaction.editReply({
-                        content: 'Você não possui mais saldo suficiente para continuar essa aposta'
-                    });
+                if (aposta === true) {
+
+                    let profileData;
+                    if (interaction.user.id == player1.id) profileData = profile1Data;
+                    else profileData = profile2Data;
+
+                    if ((roundPlayer.id == player1.id && profileData.coins < lucroP2) || (roundPlayer.id == player2.id && profileData.coins < lucroP1))
+                        return interaction.editReply({
+                            content: `${interaction.user}, Você não possui mais saldo suficiente para continuar essa aposta`
+                        });
                 }
 
-                if (playAgain.length == 1) return interaction.editReply({
-                    content: `Okay ${interaction.user}. você votou por jogar novamente. Aguardando ${otherPlayer} decidir`
-                });
+                playAgain.push(interaction.user.id);
+
+                if (playAgain.length == 1) {
+                    let reply = await interaction.editReply({
+                        content: `Okay ${interaction.user}. você votou por jogar novamente. Aguardando ${otherPlayer} decidir`
+                    });
+
+                    setTimeout(() => {
+                        try { reply.delete() }
+                        catch (err) { }
+                    }, 5000);
+                    return;
+                }
 
                 playAgain = []
                 playersMap.delete(player1.id);
@@ -350,7 +370,6 @@ module.exports = {
                 interaction.deleteReply();
 
             }
-
 
         }); // interaction event end
 
