@@ -28,13 +28,13 @@ module.exports = {
 
         await interaction.deferReply({ ephemeral: false });
 
-        let option = interaction.options.getString('opções', true);
+        const option = interaction.options.getString('opções', true);
 
-        let quantidade = interaction.options.getInteger('quantidade', false);
+        const quantidade = interaction.options.getInteger('quantidade', false);
 
         if (option == 'comprar') {
 
-            let price = (quantidade) ? quantidade * 100 : 100;
+            const price = (quantidade) ? quantidade * 100 : 100;
 
             let profileData = await profileModel.findOne({ userID: interaction.user.id });
 
@@ -96,19 +96,21 @@ module.exports = {
 
             let lotteryData = await lotteryDB.findOne({ true: true });
 
-            let lastWinner = await client.users.fetch(lotteryData.winners[lotteryData.winners.length - 1]);
+            const lastWinner = await client.users.fetch(lotteryData.winners[lotteryData.winners.length - 1]);
 
             let userTickets = 0;
             lotteryData.users.forEach(user => {
-                if (user == interaction.user.id) { userTickets++ }
+                if (user == interaction.user.id) userTickets++
             });
 
             let userWins = 0;
             lotteryData.winners.forEach(user => {
-                if (user == interaction.user.id) { userWins++ }
+                if (user == interaction.user.id) userWins++
             });
 
-            const vitoriaPercent = ((userTickets * 100) / lotteryData.users.length).toFixed(2);
+            let vitoriaPercent = ((userTickets * 100) / lotteryData.users.length).toFixed(2);
+            while (vitoriaPercent.endsWith('0')) vitoriaPercent.slice(0, -1);
+            if (vitoriaPercent.endsWith('.')) vitoriaPercent.slice(0, -1);
 
             let infoEmbed = new Discord.MessageEmbed()
                 .setColor('#00ffff')
