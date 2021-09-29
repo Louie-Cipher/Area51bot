@@ -69,18 +69,6 @@ module.exports = {
             )
             profileUpdate.save();
 
-            let lotteryData = await lotteryDB.findOne({ true: true });
-
-            if (!lotteryData) {
-                let createLottery = await lotteryDB.create({
-                    true: true,
-                    users: [interaction.user.id],
-                    lastSort: Date.now(),
-                    winners: []
-                })
-                createLottery.save();
-            }
-
             let addToDB = [];
 
             if (quantidade) {
