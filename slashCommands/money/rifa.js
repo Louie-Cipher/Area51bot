@@ -29,7 +29,6 @@ module.exports = {
         await interaction.deferReply({ ephemeral: false });
 
         const option = interaction.options.getString('opções', true);
-
         const quantidade = interaction.options.getInteger('quantidade', false);
 
         if (option == 'comprar') {
@@ -41,7 +40,7 @@ module.exports = {
                 if (user == interaction.user.id) userTickets++
             });
 
-            if (userTickets == 30 || (quantidade && userTickets + quantidade > 30)) return interaction.editReply({
+            if (userTickets >= 30 || (quantidade && userTickets + quantidade > 30)) return interaction.editReply({
                 embeds: [{
                     color: 'RED',
                     title: 'Limite de bilhetes da rifa',
@@ -49,7 +48,7 @@ module.exports = {
                 }]
             });
 
-            const price = (quantidade) ? quantidade * 100 : 100;
+            const price = (quantidade && quantidade != undefined) ? 100 * quantidade : 100;
 
             let profileData = await profileModel.findOne({ userID: interaction.user.id });
 
@@ -76,11 +75,9 @@ module.exports = {
             }
             else addToDB.push(interaction.user.id)
 
-            let lotteryUpdate = await lotteryDB.findOneAndUpdate({ true: true },
-                {
-                    $push: { users: addToDB }
-                }
-            );
+            let lotteryUpdate = await lotteryDB.findOneAndUpdate({ true: true }, {
+                $push: { users: addToDB }
+            });
             lotteryUpdate.save();
 
             const plural = quantidade ? 's' : ''
@@ -89,17 +86,19 @@ module.exports = {
                 .setColor('AQUA')
                 .setTitle(`Bilhete${plural} da Rifa Intergaláctica adquirido${plural} com sucesso`)
                 .setDescription('O sorteio ocorrerá as 21:00, no chat <#862354794323902474>\nPara ver mais informações sobre o sorteio de hoje, utilize \`/rifa estatisticas\`');
+
             if (quantidade) embed.addField('quantidade de bilhetes', `${quantidade}`);
 
             interaction.editReply({
                 embeds: [embed]
             });
 
-        } else {
+        }
+        else {
 
             let lotteryData = await lotteryDB.findOne({ true: true });
 
-            const lastWinner = await client.users.fetch(lotteryData.winners[lotteryData.winners.length - 1]);
+            const lastWinner = await client.users.cache.get(lotteryData.winners[lotteryData.winners.length - 1]);
 
             let userTickets = 0;
             lotteryData.users.forEach(user => {
@@ -112,15 +111,15 @@ module.exports = {
             });
 
             let vitoriaPercent = ((userTickets * 100) / lotteryData.users.length).toFixed(2);
-            while (vitoriaPercent.endsWith('0')) vitoriaPercent.slice(0, -1);
-            if (vitoriaPercent.endsWith('.')) vitoriaPercent.slice(0, -1);
+            while (vitoriaPercent.endsWith('0')) vitoriaPercent = vitoriaPercent.slice(0, -1);
+            if (vitoriaPercent.endsWith('.')) vitoriaPercent = vitoriaPercent.slice(0, -1);
 
             let infoEmbed = new Discord.MessageEmbed()
                 .setColor('#00ffff')
                 .setTitle('💰 Rifa Intergaláctica - Estatísticas 📊')
                 .addFields(
                     { name: 'Suas estatísticas', value: '\u200B' },
-                    { name: 'Hoje você comprou', value: userTickets.toString() + ' bilhetes', inline: true },
+                    { name: 'Hoje você comprou', value: `${userTickets} bilhetes`, inline: true },
                     { name: 'Chances de vitória hoje', value: `${vitoriaPercent} %`, inline: true },
                     { name: 'Você já venceu', value: `${userWins} vezes`, inline: true },
                     { name: '\u200B', value: '\u200B' },
