@@ -34,6 +34,21 @@ module.exports = {
 
         if (option == 'comprar') {
 
+            let lotteryData = await lotteryDB.findOne({ true: true });
+
+            let userTickets = 0;
+            lotteryData.users.forEach(user => {
+                if (user == interaction.user.id) userTickets++
+            });
+
+            if (userTickets == 30 || (quantidade && userTickets + quantidade > 30)) return interaction.editReply({
+                embeds: [{
+                    color: 'RED',
+                    title: 'Limite de bilhetes da rifa',
+                    description: `O limite da Rifa Intergaláctica são 30 tickets por dia. você já tem ${userTickets} tickets`
+                }]
+            });
+
             const price = (quantidade) ? quantidade * 100 : 100;
 
             let profileData = await profileModel.findOne({ userID: interaction.user.id });

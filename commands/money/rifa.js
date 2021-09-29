@@ -17,6 +17,21 @@ module.exports = {
 
         if (['comprar', 'buy', 'compra'].includes(args[0])) {
 
+            let lotteryData = await lotteryDB.findOne({ true: true });
+
+            let userTickets = 0;
+            lotteryData.users.forEach(user => {
+                if (user == message.author.id) userTickets++
+            });
+
+            if (userTickets == 30) return message.reply({
+                embeds: [{
+                    color: 'RED',
+                    title: 'Limite de bilhetes da rifa',
+                    description: `Você já comprou 30 bilhetes da Rifa Intergaláctica hoje! Não é possível adquirir mais tickets`
+                }]
+            });
+
             let profileData = await profileModel.findOne({ userID: message.author.id });
 
             if (profileData.coins < 100) return message.reply({
@@ -35,17 +50,6 @@ module.exports = {
             )
             profileUpdate.save();
 
-            let lotteryData = await lotteryDB.findOne({ true: true });
-
-            if (!lotteryData) {
-                let createLottery = await lotteryDB.create({
-                    true: true,
-                    users: [message.author.id],
-                    lastSort: Date.now(),
-                    winners: [process.env.louie]
-                })
-                createLottery.save();
-            }
 
             let lotteryUpdate = await lotteryDB.findOneAndUpdate({ true: true },
                 {
@@ -77,7 +81,7 @@ module.exports = {
             lotteryData.winners.forEach(user => {
                 if (user == message.author.id) { userWins++ }
             });
-            
+
             const vitoriaPercent = ((userTickets * 100) / lotteryData.users.length).toFixed(2);
 
             let infoEmbed = new Discord.MessageEmbed()
@@ -86,7 +90,7 @@ module.exports = {
                 .addFields(
                     { name: 'Suas estatísticas', value: '\u200B' },
                     { name: 'Hoje você comprou', value: userTickets.toString() + ' bilhetes', inline: true },
-                    { name: 'Chances de vitória hoje', value: vitoriaPercent.toString()+  ' %', inline: true },
+                    { name: 'Chances de vitória hoje', value: vitoriaPercent.toString() + ' %', inline: true },
                     { name: 'Você já venceu', value: userWins.toString() + ' vezes', inline: true },
                     { name: '\u200B', value: '\u200B' },
                     { name: 'Estatísticas gerais', value: '\u200B' },
