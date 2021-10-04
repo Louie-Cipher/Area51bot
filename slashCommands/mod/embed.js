@@ -132,9 +132,9 @@ module.exports = {
                 .setColor('#ff0000')
                 .setTitle('Comando utilizado - embed')
                 .addFields(
-                    { name: 'conteúdo da mensagem', value: `${totalMessage}` },
-                    { name: 'enviado por', value: `${message.author}` },
-                    { name: 'canal', value: `${message.channel.id}` }
+                    { name: 'conteúdo da mensagem', value: `${titulo}\n${description}` },
+                    { name: 'enviado por', value: `${interaction.user}` },
+                    { name: 'canal', value: `${interaction.channel.name}` }
                 );
             secure.send({ embeds: [secureEmbed] });
         }
