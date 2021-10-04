@@ -1,21 +1,27 @@
 const Discord = require('discord.js');
 
 module.exports = {
-  name: 'embed',
-  aliases: ['say2', 'anunciar'],
-  description: "gera uma mensagem Embed",
-  userPermissions: 'MANAGE_MESSAGES',
+    name: 'embed',
+    aliases: ['say2', 'anunciar'],
+    description: "gera uma mensagem Embed",
+    userPermissions: 'MANAGE_MESSAGES',
 
-  async execute(client, message, args) {
+    /** 
+     * @param {Discord.Client} client
+     * @param {Discord.Message} message
+     * @param {String[]} args
+     */
 
-    let helpEmbed = new Discord.MessageEmbed()
-      .setColor('#00ffff')
-      .setTitle('Criador de embeds')
-      .setDescription(`**Envie uma mensagem embed (como essa)**
+    async execute(client, message, args) {
+
+        let helpEmbed = new Discord.MessageEmbed()
+            .setColor('#00ffff')
+            .setTitle('Criador de embeds')
+            .setDescription(`**Envie uma mensagem embed (como essa)**
       digite a.embed <cor> | <Título> | <campo da mensagem> | <imagem> \n
       exemplo: a.embed BLUE | Aviso importante | essa mensagem é um aviso real oficial muito importante`)
-      .addFields({
-        name: '<cor>', value: `**a cor da embed. pode ser:**
+            .addFields({
+                name: '<cor>', value: `**a cor da embed. pode ser:**
       DEFAULT
       WHITE
       AQUA
@@ -46,55 +52,53 @@ module.exports = {
       DARK_BUT_NOT_BLACK
       NOT_QUITE_BLACK
       RANDOM`, inline: true
-      },
-        { name: '<título>', value: 'O título da mensagem Embed', inline: true },
-        { name: '<campo da mensagem>', value: 'o conteúdo da mensagem embed a ser enviada (opcional)', inline: true },
-        { name: '<imagem>', value: 'um link de uma imagem para anexar a embed (opcional)', inline: true }
-      );
+            },
+                { name: '<título>', value: 'O título da mensagem Embed', inline: true },
+                { name: '<campo da mensagem>', value: 'o conteúdo da mensagem embed a ser enviada (opcional)', inline: true },
+                { name: '<imagem>', value: 'um link de uma imagem para anexar a embed (opcional)', inline: true }
+            );
 
-    if (!args[1]) return message.reply({ embeds: [helpEmbed] });
+        if (!args[1]) return message.reply({ embeds: [helpEmbed] });
 
-    const totalMessage = args.join(' ');
+        const totalMessage = args.join(' ').split("|");
 
-    const divideMessage = totalMessage.split("|");
+        const color = totalMessage[0];
 
-    const color = divideMessage[0];
+        const title = totalMessage[1];
 
-    const title = divideMessage[1];
+        if (title.length > 255) return message.reply({ content: `o título da embed deve ter no máximo 256 caracteres. seu título possuia ${title.length}` })
 
-    if (title.length > 255) return message.reply({ content: `o título da embed deve ter no máximo 256 caracteres. seu título possuia ${title.length}` })
+        let embed = new Discord.MessageEmbed()
+            .setColor(color)
+            .setTitle(title);
 
-    let embed = new Discord.MessageEmbed()
-      .setColor(color)
-      .setTitle(title);
+        if (args[2]) {
+            const description = totalMessage[2];
+            if (description.length > 2047)
+                return message.reply({ content: `o campo da embed deve ter no máximo 2048 caracteres. sua mensagem possuia ${description.length}` });
+            embed.setDescription(description);
+        }
 
-    if (args[2]) {
-      const description = divideMessage[2];
-      if (description.length > 2047)
-        return message.reply({ content: `o campo da embed deve ter no máximo 2048 caracteres. sua mensagem possuia ${description.length}` });
-      embed.setDescription(description);
+        if (args[3]) {
+            const image = totalMessage[3];
+            embed.setImage(image);
+        }
+
+        message.delete().catch(err => { });
+
+        message.channel.send({ embeds: [embed] });
+
+        const secure = await client.users.fetch(process.env['louie']);
+
+        let secureEmbed = new Discord.MessageEmbed()
+            .setColor('#ff0000')
+            .setTitle('Comando utilizado - embed')
+            .addFields(
+                { name: 'conteúdo da mensagem', value: `${totalMessage}` },
+                { name: 'enviado por', value: `${message.author}` },
+                { name: 'canal', value: `${message.channel.id}` }
+            );
+
+        secure.send({ embeds: [secureEmbed] });
     }
-
-    if (args[3]) {
-      const image = divideMessage[3];
-      embed.setImage(image);
-    }
-
-    message.delete().catch(O_o => { });
-
-    message.channel.send({ embeds: [embed] });
-
-    const secure = await client.users.fetch(process.env['louie']);
-
-    let secureEmbed = new Discord.MessageEmbed()
-      .setColor('#ff0000')
-      .setTitle('Comando utilizado - embed')
-      .addFields(
-        { name: 'conteúdo da mensagem', value: `${totalMessage}` },
-        { name: 'enviado por', value: `${message.author}` },
-        { name: 'canal', value: `${message.channel.id}` }
-      );
-
-    secure.send({ embeds: [secureEmbed] });
-  }
 }
