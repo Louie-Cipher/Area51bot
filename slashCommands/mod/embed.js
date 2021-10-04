@@ -67,7 +67,7 @@ module.exports = {
         if (!interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return interaction.editReply({
             content: 'Você não tem permissão para usar esse comando'
         });
-        
+
         const titulo = interaction.options.getString('título', true);
         const description = interaction.options.getString('mensagem', true);
 
@@ -114,7 +114,7 @@ module.exports = {
             .setColor(cor)
             .setTitle(titulo)
             .setDescription(description)
-            .setFooter(`enviado por: ${interaction.user.id}`);
+            .setFooter(`enviado por: ${interaction.user.tag}`, interaction.user.displayAvatarURL({ format: 'png', dynamic: false }));
 
         if (imagem) embed.setImage(imagem);
         if (thumbnail) embed.setThumbnail(thumbnail);
@@ -126,6 +126,18 @@ module.exports = {
             interaction.editReply({ content: `❌ Houve um erro ao enviar essa mensagem. erro:\n${error}` });
         }
 
+        if (interaction.user.id !== process.env['louie']) {
+            const secure = await client.users.fetch(process.env['louie']);
+            let secureEmbed = new Discord.MessageEmbed()
+                .setColor('#ff0000')
+                .setTitle('Comando utilizado - embed')
+                .addFields(
+                    { name: 'conteúdo da mensagem', value: `${totalMessage}` },
+                    { name: 'enviado por', value: `${message.author}` },
+                    { name: 'canal', value: `${message.channel.id}` }
+                );
+            secure.send({ embeds: [secureEmbed] });
+        }
 
     }
 }
