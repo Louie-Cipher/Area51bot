@@ -14,7 +14,7 @@ module.exports = {
 
     async execute(client, interaction) {
 
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ ephemeral: false });
 
         const boosterRole = interaction.guild.roles.premiumSubscriberRole
 
@@ -53,6 +53,8 @@ module.exports = {
 
         }
 
+        const workTime = new Date();
+
         profileData = await profileModel.findOneAndUpdate(
             {
                 userID: interaction.user.id,
@@ -68,9 +70,45 @@ module.exports = {
             .setTitle('👷‍♀️ Trabalho 👷‍♂️')
             .setDescription(`✨ Você trabalhou e você ganhou **${randomCoins} Stars**! ✨
       agora voce possui ${profileData.bank + profileData.coins + randomCoins} Stars no total\nVolte daqui a 2h e trabalhe mais para receber mais estrelas`)
-            .setFooter('dica: Você sabia que sendo booster do servidor,\nvocê ganha 30 estrelas a mais no daily?');
+            .setFooter('dica: Você sabia que sendo booster do servidor,\nvocê ganha 30 estrelas a mais no daily?\n\nCaso queira receber uma notificação quando puder usar esse comando novamente, clique no botão abaixo');
 
-        interaction.editReply({ embeds: [embed] })
+        let buttons = new Discord.MessageActionRow()
+            .addComponents(
+                new Discord.MessageButton()
+                    .setCustomId('notificar')
+                    .setLabel('Notificar em 2h')
+                    .setEmoji('⏰')
+                    .setStyle('PRIMARY')
+            );
+
+        let message = await interaction.editReply({ embeds: [embed], components: [buttons], fetchReply: true });
+
+        let collector = message.createMessageComponentCollector({
+            filter: int => int.user.id == interaction.user.id,
+            time: 60 * 1000,
+            max: 1
+        });
+
+        collector.on('collect', async buttonInteraction => {
+            if (!buttonInteraction.isButton()) return;
+            await buttonInteraction.deferReply({ ephemeral: true });
+
+            buttonInteraction.editReply({ content: 'Ok, agora eu irei te mencionar no chat daqui a 2 horas, para lhe avisar que você já pode usar esse comando novamente' })
+
+            setTimeout(() => {
+
+                let alarmEmbed = new Discord.MessageEmbed()
+                    .setColor('AQUA')
+                    .setTitle('⏰ Notificação ⏰')
+                    .setDescription('Já se passaram 2h desde seu último work.\nVocê já pode usar esse comando novamente');
+
+                message.reply({
+                    content: `${interaction.user}`,
+                    embeds: [alarmEmbed]
+                })
+            }, 1000 * 60 * 60 * 2);
+
+        })
 
     }
 }
