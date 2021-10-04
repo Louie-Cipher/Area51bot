@@ -38,6 +38,7 @@ module.exports = {
                 let timeLeftString = require('../../extra/dateFormatter')({
                     oldestDate: dateNow,
                     latestDate: nextWork,
+	ignoreDays: true,
                     ignoreMilliseconds: true,
                     ignoreSeconds: true
                 });
