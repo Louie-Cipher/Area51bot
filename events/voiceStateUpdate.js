@@ -34,10 +34,5 @@ module.exports = async (client, oldState, newState) => {
         }
     }
 
-    if (oldChannel.id == '886006766771519488' && (newChannel == undefined || newChannel.id == undefined)) {
-        if (newState.member.voice.mute) newState.member.voice.setMute(false, 'saindo da call do RPG');
-        if (newState.member.voice.deaf) newState.member.voice.setDeaf(false, 'saindo da call do RPG');
-    }
-
 }
 
